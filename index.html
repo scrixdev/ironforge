@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IRONFORGE — Prise de Masse</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRTYzOTQ2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I0ZGNkIzNSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBEYXJrIGJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzBhMGEwYyIvPgogIDwhLS0gSSAtLT4KICA8cmVjdCB4PSIxMCIgeT0iMTQiIHdpZHRoPSI4IiBoZWlnaHQ9IjM2IiByeD0iMSIgZmlsbD0idXJsKCNnKSIvPgogIDwhLS0gRiAtLT4KICA8cmVjdCB4PSIyNCIgeT0iMTQiIHdpZHRoPSI4IiBoZWlnaHQ9IjM2IiByeD0iMSIgZmlsbD0idXJsKCNnKSIvPgogIDxyZWN0IHg9IjMyIiB5PSIxNCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjgiIHJ4PSIxIiBmaWxsPSJ1cmwoI2cpIi8+CiAgPHJlY3QgeD0iMzIiIHk9IjI4IiB3aWR0aD0iMTQiIGhlaWdodD0iNyIgcng9IjEiIGZpbGw9InVybCgjZykiLz4KPC9zdmc+Cg==">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -220,33 +221,93 @@
   /* PROGRAMME */
   #programme { border-top: 1px solid rgba(255,255,255,0.05); }
 
-  .programme-tabs {
-    display: flex; gap: 0; margin-bottom: 48px;
-    background: var(--dark2);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 4px;
-    padding: 4px;
-    width: fit-content;
-    flex-wrap: wrap;
+  .tabs-wrapper {
+    margin-bottom: 48px;
   }
-
+  .tabs-group {
+    margin-bottom: 12px;
+  }
+  .tabs-group-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+  .programme-tabs {
+    display: flex;
+    gap: 0;
+    flex-wrap: nowrap;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
+    scrollbar-width: none;
+  }
+  .programme-tabs::-webkit-scrollbar { display: none; }
   .tab-btn {
     font-family: 'Barlow Condensed', sans-serif;
-    letter-spacing: 2px;
-    font-size: 0.85rem;
+    letter-spacing: 3px;
+    font-size: 0.82rem;
     text-transform: uppercase;
-    background: none;
+    background: var(--dark2);
     border: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
     color: var(--gray);
-    padding: 10px 28px;
+    white-space: nowrap;
+    flex: 1;
+    padding: 14px 8px;
     cursor: pointer;
-    border-radius: 2px;
-    transition: all 0.3s;
+    border-radius: 0;
+    transition: all 0.25s;
+    text-align: center;
   }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn:hover { background: rgba(255,255,255,0.04); color: var(--light); }
   .tab-btn.active {
-    background: linear-gradient(135deg, var(--red), var(--orange));
+    border-color: transparent;
     color: white;
+    box-shadow: none;
   }
+  .tab-btn.spe { border-color: rgba(255,255,255,0.08); }
+
+  /* ── Dégradés Programme Généraux ── */
+  .tab-btn[onclick*="'ppl'"].active         { background: linear-gradient(135deg, #e63946, #ff6b35); }
+  .tab-btn[onclick*="'fullbody'"].active    { background: linear-gradient(135deg, #c0392b, #e63946); }
+  .tab-btn[onclick*="'upper'"].active       { background: linear-gradient(135deg, #8e44ad, #c0392b); }
+  .tab-btn[onclick*="'debutant'"].active    { background: linear-gradient(135deg, #2980b9, #8e44ad); }
+  .tab-btn[onclick*="'perso'"].active       { background: linear-gradient(135deg, #f7971e, #ffb703); color: #0a0a0c; }
+
+  /* ── Dégradés Spécialisation ── */
+  .tab-btn[onclick*="'pecs'"].active        { background: linear-gradient(135deg, #e63946, #ff6b35); }
+  .tab-btn[onclick*="'abdos'"].active       { background: linear-gradient(135deg, #11998e, #38ef7d); color: #0a0a0c; }
+  .tab-btn[onclick*="'bras'"].active        { background: linear-gradient(135deg, #f7971e, #ffb703); color: #0a0a0c; }
+  .tab-btn[onclick*="'epaules'"].active     { background: linear-gradient(135deg, #2980b9, #6dd5fa); color: #0a0a0c; }
+  .tab-btn[onclick*="'dos'"].active         { background: linear-gradient(135deg, #8e44ad, #da70d6); }
+  .tab-btn[onclick*="'jambes'"].active      { background: linear-gradient(135deg, #c0392b, #ff6b35); }
+
+  /* ── Boutons Échauffement ── */
+  .wbtn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem; letter-spacing: 3px; text-transform: uppercase;
+    background: var(--dark2); border: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    color: var(--gray); flex: 1; padding: 14px 8px;
+    cursor: pointer; transition: all 0.25s; text-align: center;
+  }
+  .wbtn:hover { background: rgba(255,255,255,0.04); color: var(--light); }
+  #wbtn-general.active  { background: linear-gradient(135deg, #e63946, #ff6b35); color: white; }
+  #wbtn-pecs.active     { background: linear-gradient(135deg, #c0392b, #e63946); color: white; }
+  #wbtn-dos.active      { background: linear-gradient(135deg, #8e44ad, #da70d6); color: white; }
+  #wbtn-epaules.active  { background: linear-gradient(135deg, #2980b9, #6dd5fa); color: #0a0a0c; }
+  #wbtn-jambes.active   { background: linear-gradient(135deg, #11998e, #38ef7d); color: #0a0a0c; }
+
+  /* ── Dégradés Nutrition ── */
+  .tab-btn[onclick*="'budget'"].active      { background: linear-gradient(135deg, #11998e, #38ef7d); color: #0a0a0c; }
+  .tab-btn[onclick*="'standard'"].active    { background: linear-gradient(135deg, #e63946, #ff6b35); }
+  .tab-btn[onclick*="'premium'"].active     { background: linear-gradient(135deg, #f7971e, #ffb703); color: #0a0a0c; }
 
   .day-grid {
     display: grid;
@@ -394,38 +455,120 @@
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.9);
+    background: rgba(0,0,0,0.92);
     z-index: 2000;
     align-items: center; justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
   }
-  .modal-overlay.active { display: flex; }
+  .modal-overlay.active { display: flex; animation: modalFadeIn 0.25s ease both; }
+  @keyframes modalFadeIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
   .modal-content {
-    width: 90%; max-width: 900px;
+    width: 100%; max-width: 920px;
     background: var(--dark2);
-    border: 1px solid rgba(230,57,70,0.3);
-    border-radius: 8px;
+    border: 1px solid rgba(230,57,70,0.25);
+    border-radius: 12px;
     overflow: hidden;
     position: relative;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+    max-height: 90vh;
+    display: flex; flex-direction: column;
   }
   .modal-close {
-    position: absolute; top: 16px; right: 16px;
-    width: 36px; height: 36px;
-    background: rgba(230,57,70,0.2);
-    border: 1px solid rgba(230,57,70,0.4);
+    position: absolute; top: 14px; right: 14px;
+    width: 34px; height: 34px;
+    background: rgba(10,10,12,0.7);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 50%;
     color: white;
-    font-size: 1.2rem;
+    font-size: 1rem;
     cursor: pointer;
     z-index: 10;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
+    transition: background 0.2s, border-color 0.2s;
+    backdrop-filter: blur(8px);
   }
-  .modal-close:hover { background: var(--red); }
-  .modal-video { width: 100%; aspect-ratio: 16/9; }
-  .modal-video iframe { width: 100%; height: 100%; border: none; }
-  .modal-info { padding: 24px; }
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; margin-bottom: 8px; }
-  .modal-desc { color: var(--gray); line-height: 1.7; font-size: 0.9rem; }
+  .modal-close:hover { background: var(--red); border-color: var(--red); }
+  .modal-video {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    background: #000;
+    flex-shrink: 0;
+  }
+  .modal-video iframe { width: 100%; height: 100%; border: none; display: block; }
+  .modal-video-thumb {
+    position: absolute; inset: 0;
+    background: #000;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .modal-video-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+  .modal-video-thumb:hover img { opacity: 0.9; }
+  .modal-play-btn {
+    position: absolute;
+    width: 72px; height: 72px;
+    background: rgba(230,57,70,0.9);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 24px rgba(230,57,70,0.5);
+  }
+  .modal-video-thumb:hover .modal-play-btn { transform: scale(1.1); background: var(--red); }
+  .modal-play-btn::after {
+    content: '';
+    width: 0; height: 0;
+    border-style: solid;
+    border-width: 14px 0 14px 24px;
+    border-color: transparent transparent transparent white;
+    margin-left: 4px;
+  }
+  .modal-info {
+    padding: 20px 24px 24px;
+    overflow-y: auto;
+    flex-shrink: 1;
+  }
+  .modal-header {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    margin-bottom: 12px;
+  }
+  .modal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 2px;
+    line-height: 1.1;
+    background: linear-gradient(135deg, var(--light), var(--gray));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .modal-yt-btn {
+    flex-shrink: 0;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,0,0,0.15);
+    border: 1px solid rgba(255,0,0,0.3);
+    color: #ff4444;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s; white-space: nowrap;
+  }
+  .modal-yt-btn:hover { background: rgba(255,0,0,0.25); border-color: rgba(255,0,0,0.5); }
+  .modal-yt-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .modal-desc {
+    color: var(--gray); line-height: 1.75; font-size: 0.88rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding-top: 12px;
+  }
+  @media (max-width: 600px) {
+    .modal-info { padding: 16px; }
+    .modal-title { font-size: 1.3rem; }
+    .modal-play-btn { width: 56px; height: 56px; }
+  }
 
   /* CALORIE CALCULATOR */
   #calories { border-top: 1px solid rgba(255,255,255,0.05); }
@@ -552,14 +695,33 @@
   #nutrition { border-top: 1px solid rgba(255,255,255,0.05); }
 
   .meal-plan-tabs {
-    display: flex; gap: 0; margin-bottom: 48px;
-    background: var(--dark2);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 4px;
-    padding: 4px;
-    width: fit-content;
-    flex-wrap: wrap;
+    display: flex;
+    gap: 0;
+    margin-bottom: 48px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    overflow: hidden;
+    width: 100%;
   }
+  .meal-plan-tabs .tab-btn {
+    padding: 14px 8px;
+    font-size: 0.82rem;
+    letter-spacing: 3px;
+    border-radius: 0;
+    border: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    background: var(--dark2);
+    color: var(--gray);
+    transition: all 0.25s;
+    flex: 1; text-align: center;
+  }
+  .meal-plan-tabs .tab-btn:last-child { border-right: none; }
+  .meal-plan-tabs .tab-btn:not(.active):hover { background: rgba(255,255,255,0.04); color: var(--light); }
+
+  /* Dégradés Plan Nutritionnel */
+  .tab-btn[onclick*="'eco'"].active  { background: linear-gradient(135deg, #134e5e, #71b280); color: white; }
+  .tab-btn[onclick*="'mid'"].active  { background: linear-gradient(135deg, #2980b9, #6dd5fa); color: #0a0a0c; }
+  .tab-btn[onclick*="'pro'"].active  { background: linear-gradient(135deg, #8e44ad, #da70d6); color: white; }
 
   .meal-day-content { display: none; }
   .meal-day-content.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
@@ -745,6 +907,301 @@
   .supp-desc { font-size: 0.85rem; color: var(--gray); line-height: 1.7; }
   .supp-dose { margin-top: 12px; font-size: 0.82rem; color: #aaa; }
   .supp-dose span { color: var(--orange); font-weight: 600; }
+
+  /* GÉNÉRATEUR PERSO */
+  .gen-container {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  @media(max-width:900px){ .gen-container { grid-template-columns: 1fr; } }
+  .gen-form {
+    background: var(--dark2);
+    border: 1px solid rgba(255,183,3,0.2);
+    border-radius: 12px;
+    padding: 32px;
+  }
+  .gen-form-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gen-field { margin-bottom: 18px; }
+  .gen-label {
+    display: block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .gen-input, .gen-select {
+    width: 100%;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: var(--light);
+    padding: 11px 14px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.3s;
+    appearance: none;
+  }
+  .gen-input:focus, .gen-select:focus { border-color: var(--gold); }
+  .gen-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .gen-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gen-chip {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .gen-chip.selected {
+    background: rgba(255,183,3,0.15);
+    border-color: rgba(255,183,3,0.5);
+    color: var(--gold);
+  }
+  .gen-btn {
+    width: 100%;
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: white;
+    border: none;
+    padding: 15px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s;
+    margin-top: 8px;
+    box-shadow: 0 4px 20px rgba(230,57,70,0.35);
+  }
+  .gen-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(230,57,70,0.55); }
+
+  .gen-result {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    padding: 32px;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gen-result.has-content {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .gen-placeholder {
+    text-align: center;
+    color: var(--gray);
+  }
+  .gen-placeholder-icon { font-size: 3.5rem; margin-bottom: 16px; opacity: 0.3; }
+  .gen-result-content { width: 100%; }
+  .gen-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .gen-result-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .gen-result-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .gen-meta-badge {
+    background: rgba(255,255,255,0.07);
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray);
+  }
+  .gen-days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .gen-day {
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .gen-day-header {
+    padding: 12px 16px;
+    background: linear-gradient(135deg, rgba(230,57,70,0.15), rgba(255,107,53,0.07));
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .gen-day-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 2px; }
+  .gen-day-focus { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); }
+  .gen-ex { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; gap: 10px; align-items: center; cursor: pointer; transition: background 0.2s; }
+  .gen-ex:last-child { border-bottom: none; }
+  .gen-ex:hover { background: rgba(255,255,255,0.03); }
+  .gen-ex-num { font-family: 'Bebas Neue', sans-serif; color: var(--red); font-size: 1rem; min-width: 22px; }
+  .gen-ex-name { font-family: 'Barlow Condensed', sans-serif; font-size: 0.95rem; letter-spacing: 1px; flex: 1; }
+  .gen-ex-sets { font-size: 0.75rem; color: var(--gray); }
+  .gen-ex-play { width: 26px; height: 26px; background: rgba(230,57,70,0.15); border: 1px solid rgba(230,57,70,0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; flex-shrink: 0; transition: all 0.2s; }
+  .gen-ex:hover .gen-ex-play { background: var(--red); border-color: var(--red); }
+  .gen-rest-day {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
+
+  /* RECETTES */
+  #recettes { border-top: 1px solid rgba(255,255,255,0.05); }
+  .recipe-tabs { display: flex; gap: 0; margin-bottom: 48px; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; overflow: hidden; width: fit-content; }
+  .recipe-tab {
+    background: var(--dark2);
+    border: none;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    color: var(--gray);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: all 0.25s;
+    white-space: nowrap;
+  }
+  .recipe-tab:last-child { border-right: none; }
+  .recipe-tab:hover { background: rgba(255,255,255,0.04); color: var(--light); }
+  .recipe-tab[onclick*="budget"].active  {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: #0a0a0c; font-weight: 700;
+    box-shadow: inset 0 0 20px rgba(56,239,125,0.15);
+  }
+  .recipe-tab[onclick*="standard"].active {
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: white; font-weight: 700;
+    box-shadow: inset 0 0 20px rgba(230,57,70,0.2);
+  }
+  .recipe-tab[onclick*="premium"].active {
+    background: linear-gradient(135deg, #f7971e, var(--gold));
+    color: #0a0a0c; font-weight: 700;
+    box-shadow: inset 0 0 20px rgba(255,183,3,0.2);
+  }
+  .recipe-grid { display: none; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+  .recipe-grid.active { display: grid; }
+  .recipe-card {
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .recipe-card:hover { transform: translateY(-5px); border-color: rgba(255,107,53,0.4); box-shadow: 0 16px 50px rgba(0,0,0,0.4); }
+  .recipe-header {
+    padding: 20px 24px 16px;
+    background: linear-gradient(135deg, rgba(255,107,53,0.12), rgba(255,183,3,0.06));
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .recipe-emoji { font-size: 2rem; margin-bottom: 8px; }
+  .recipe-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 4px; }
+  .recipe-subtitle { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; color: var(--orange); }
+  .recipe-macros {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .recipe-macro {
+    padding: 12px 8px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .recipe-macro:last-child { border-right: none; }
+  .recipe-macro-val { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; }
+  .recipe-macro-lbl { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); }
+  .recipe-macro-val.prot { color: var(--red); }
+  .recipe-macro-val.cal { color: var(--orange); }
+  .recipe-macro-val.carb { color: #69b3ff; }
+  .recipe-macro-val.fat { color: var(--gold); }
+  .recipe-body { padding: 20px 24px; }
+  .recipe-cost {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,183,3,0.1);
+    border: 1px solid rgba(255,183,3,0.2);
+    border-radius: 4px;
+    padding: 4px 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .recipe-ingredients { margin-bottom: 14px; }
+  .recipe-ingredients-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin-bottom: 8px;
+  }
+  .recipe-ingredient {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 0.88rem;
+  }
+  .recipe-ingredient:last-child { border-bottom: none; }
+  .recipe-ingredient-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--orange); flex-shrink: 0; }
+  .recipe-tip {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(255,183,3,0.07);
+    border-left: 2px solid var(--gold);
+    border-radius: 0 4px 4px 0;
+    font-size: 0.82rem;
+    color: var(--gold);
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body>
@@ -756,9 +1213,11 @@
   <div class="logo">IRONFORGE</div>
   <ul class="nav-links">
     <li><a href="#programme">Programme</a></li>
+    <li><a href="#echauffement">Échauffement</a></li>
     <li><a href="#exercices">Exercices</a></li>
     <li><a href="#calories">Calories</a></li>
     <li><a href="#nutrition">Nutrition</a></li>
+    <li><a href="#recettes">Recettes</a></li>
     <li><a href="#conseils">Conseils</a></li>
     <li><a href="#supplements">Suppléments</a></li>
   </ul>
@@ -808,10 +1267,115 @@
     <div class="section-line"></div>
   </div>
 
-  <div class="programme-tabs fade-in-up">
-    <button class="tab-btn active" onclick="switchProgram('ppl')">PPL — Push/Pull/Legs</button>
-    <button class="tab-btn" onclick="switchProgram('fullbody')">Full Body</button>
-    <button class="tab-btn" onclick="switchProgram('upper')">Upper/Lower</button>
+  <div class="tabs-wrapper fade-in-up">
+    <div class="tabs-group">
+      <div class="tabs-group-label">Programmes généraux</div>
+      <div class="programme-tabs" id="prog-tabs-main">
+        <button class="tab-btn active" onclick="switchProgram('ppl')">PPL — Push/Pull/Legs</button>
+        <button class="tab-btn" onclick="switchProgram('fullbody')">Full Body</button>
+        <button class="tab-btn" onclick="switchProgram('upper')">Upper/Lower</button>
+        <button class="tab-btn" onclick="switchProgram('debutant')">Débutant 5×5</button>
+        <button class="tab-btn" onclick="switchProgram('perso')">Mon Programme Perso</button>
+      </div>
+    </div>
+    <div class="tabs-group" style="margin-top:12px;">
+      <div class="tabs-group-label">Spécialisation par muscle</div>
+      <div class="programme-tabs">
+        <button class="tab-btn spe" onclick="switchProgram('pecs')">Pectoraux</button>
+        <button class="tab-btn spe" onclick="switchProgram('abdos')">Abdominaux</button>
+        <button class="tab-btn spe" onclick="switchProgram('bras')">Bras</button>
+        <button class="tab-btn spe" onclick="switchProgram('epaules')">Épaules</button>
+        <button class="tab-btn spe" onclick="switchProgram('dos')">Dos</button>
+        <button class="tab-btn spe" onclick="switchProgram('jambes')">Jambes</button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRAMME PERSO GÉNÉRÉ -->
+  <div class="programme-content" id="prog-perso">
+    <div class="gen-container" style="grid-column: 1 / -1;">
+      <div class="gen-form">
+        <div class="gen-form-title">⚡ MON PROGRAMME PERSO</div>
+        <div class="gen-row">
+          <div class="gen-field">
+            <label class="gen-label">Poids (kg)</label>
+            <input type="number" class="gen-input" id="genWeight" placeholder="75" min="40" max="200">
+          </div>
+          <div class="gen-field">
+            <label class="gen-label">Taille (cm)</label>
+            <input type="number" class="gen-input" id="genHeight" placeholder="175" min="140" max="220">
+          </div>
+        </div>
+        <div class="gen-row">
+          <div class="gen-field">
+            <label class="gen-label">Âge</label>
+            <input type="number" class="gen-input" id="genAge" placeholder="25" min="15" max="70">
+          </div>
+          <div class="gen-field">
+            <label class="gen-label">Sexe</label>
+            <select class="gen-select" id="genSex">
+              <option value="m">Homme</option>
+              <option value="f">Femme</option>
+            </select>
+          </div>
+        </div>
+        <div class="gen-field">
+          <label class="gen-label">Niveau</label>
+          <select class="gen-select" id="genLevel">
+            <option value="debutant">Débutant (0-1 an)</option>
+            <option value="intermediaire">Intermédiaire (1-3 ans)</option>
+            <option value="avance">Avancé (3+ ans)</option>
+          </select>
+        </div>
+        <div class="gen-field">
+          <label class="gen-label">Jours dispo / semaine</label>
+          <select class="gen-select" id="genDays">
+            <option value="3">3 jours</option>
+            <option value="4">4 jours</option>
+            <option value="5" selected>5 jours</option>
+            <option value="6">6 jours</option>
+          </select>
+        </div>
+        <div class="gen-field">
+          <label class="gen-label">Objectif principal</label>
+          <select class="gen-select" id="genGoal">
+            <option value="masse">Prise de masse globale</option>
+            <option value="force">Force & puissance</option>
+            <option value="seche">Sèche / Définition</option>
+            <option value="athletique">Physique athlétique</option>
+          </select>
+        </div>
+        <div class="gen-field">
+          <label class="gen-label">Muscles prioritaires (plusieurs choix)</label>
+          <div class="gen-chips" id="genMuscles">
+            <div class="gen-chip" onclick="toggleChip(this,'pecs')">💪 Pecs</div>
+            <div class="gen-chip" onclick="toggleChip(this,'dos')">🔱 Dos</div>
+            <div class="gen-chip" onclick="toggleChip(this,'epaules')">🏋️ Épaules</div>
+            <div class="gen-chip" onclick="toggleChip(this,'bras')">🦾 Bras</div>
+            <div class="gen-chip" onclick="toggleChip(this,'abdos')">⚡ Abdos</div>
+            <div class="gen-chip" onclick="toggleChip(this,'jambes')">🦵 Jambes</div>
+            <div class="gen-chip" onclick="toggleChip(this,'fessiers')">🍑 Fessiers</div>
+          </div>
+        </div>
+        <div class="gen-field">
+          <label class="gen-label">Équipement disponible</label>
+          <select class="gen-select" id="genEquip">
+            <option value="salle">Salle complète</option>
+            <option value="halteres">Haltères seulement</option>
+            <option value="maison">Poids du corps / maison</option>
+          </select>
+        </div>
+        <button class="gen-btn" onclick="generateProgram()">⚡ GÉNÉRER MON PROGRAMME</button>
+      </div>
+      <div class="gen-result" id="genResult">
+        <div class="gen-placeholder">
+          <div class="gen-placeholder-icon">⚡</div>
+          <p style="font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Ton programme personnalisé</p>
+          <p style="font-size:0.85rem;line-height:1.8;">Remplis le formulaire et clique sur<br><strong style="color:var(--gold);">Générer mon programme</strong></p>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- PPL -->
@@ -1130,6 +1694,11 @@
         <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Couché Barre</div><div class="ex-sets">4×4-6 · Force</div></div><div class="ex-play">▶</div></div>
         <div class="exercise-item" onclick="openModal('row-barre')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Rowing Barre Pronation</div><div class="ex-sets">4×4-6 · Force</div></div><div class="ex-play">▶</div></div>
         <div class="exercise-item" onclick="openModal('ohp')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Développé Militaire</div><div class="ex-sets">3×8-10</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('incline-db')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Développé Incliné Haltères</div><div class="ex-sets">3×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pulldown')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Tirage Vertical Poulie</div><div class="ex-sets">3×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('lateral-raise')"><div class="ex-num">06</div><div class="ex-info"><div class="ex-name">Élévations Latérales</div><div class="ex-sets">3×15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-pushdown')"><div class="ex-num">07</div><div class="ex-info"><div class="ex-name">Extension Triceps Poulie</div><div class="ex-sets">3×12-15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bicep-curl')"><div class="ex-num">08</div><div class="ex-info"><div class="ex-name">Curl Biceps Barre</div><div class="ex-sets">3×12</div></div><div class="ex-play">▶</div></div>
       </div>
     </div>
     <div class="day-card fade-in-up">
@@ -1138,12 +1707,591 @@
         <div class="exercise-item" onclick="openModal('squat')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Squat Barre Haute</div><div class="ex-sets">4×4-6 · Force</div></div><div class="ex-play">▶</div></div>
         <div class="exercise-item" onclick="openModal('rdl')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Romanian Deadlift</div><div class="ex-sets">3×8-10</div></div><div class="ex-play">▶</div></div>
         <div class="exercise-item" onclick="openModal('leg-press')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Leg Press</div><div class="ex-sets">3×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hack-squat')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Hack Squat Machine</div><div class="ex-sets">3×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-curl')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Leg Curl Couché</div><div class="ex-sets">3×12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('calf-raises')"><div class="ex-num">06</div><div class="ex-info"><div class="ex-name">Mollets Debout</div><div class="ex-sets">4×15-20</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hyperextension')"><div class="ex-num">07</div><div class="ex-info"><div class="ex-name">Hyperextension</div><div class="ex-sets">3×15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ab-wheel')"><div class="ex-num">08</div><div class="ex-info"><div class="ex-name">Ab Wheel / Rouleau</div><div class="ex-sets">3×10-15</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">UPPER B</div><div class="day-focus">Jeudi — Hypertrophie</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('incline-barbell')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Incliné Barre</div><div class="ex-sets">4×8-10</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tbar-row')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">T-Bar Row</div><div class="ex-sets">4×8-10</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('arnold-press')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Développé Arnold</div><div class="ex-sets">3×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pec-deck')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Pec Deck (Butterfly)</div><div class="ex-sets">3×12-15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('seated-cable-row')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Tirage Horizontal Poulie</div><div class="ex-sets">3×12-15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('facepull')"><div class="ex-num">06</div><div class="ex-info"><div class="ex-name">Face Pull</div><div class="ex-sets">3×15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-dips')"><div class="ex-num">07</div><div class="ex-info"><div class="ex-name">Dips Triceps</div><div class="ex-sets">3×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hammer-curl')"><div class="ex-num">08</div><div class="ex-info"><div class="ex-name">Curl Marteau Haltères</div><div class="ex-sets">3×12</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">LOWER B</div><div class="day-focus">Vendredi — Hypertrophie</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('hack-squat')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Hack Squat Machine</div><div class="ex-sets">4×8-10</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bulgarian-squat')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Fentes Bulgares</div><div class="ex-sets">3×10 par jambe</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('rdl')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Romanian Deadlift</div><div class="ex-sets">4×10-12</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-curl')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Leg Curl Couché</div><div class="ex-sets">3×12-15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('calf-raises')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Mollets Assis Machine</div><div class="ex-sets">4×20</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hyperextension')"><div class="ex-num">06</div><div class="ex-info"><div class="ex-name">Hyperextension</div><div class="ex-sets">3×15</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ab-wheel')"><div class="ex-num">07</div><div class="ex-info"><div class="ex-name">Ab Wheel / Rouleau</div><div class="ex-sets">3×12</div></div><div class="ex-play">▶</div></div>
       </div>
     </div>
   </div>
+
+  <!-- DÉBUTANT 5x5 -->
+  <div class="programme-content" id="prog-debutant">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.2), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="color: var(--gold);">STRONGLIFTS 5×5 — DÉBUTANT</div>
+          <div class="day-focus" style="color: var(--orange);">Le programme le plus efficace pour débuter · 3 séances / semaine</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.6;">
+          <div class="ex-num" style="color:var(--gold);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--gold);">Principe : +2,5kg à chaque séance sur chaque exercice</div>
+            <div class="ex-sets">Alterne Séance A et Séance B · Lundi / Mercredi / Vendredi · Repos les autres jours</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.2), rgba(255,107,53,0.1));">
+        <div><div class="day-name">SÉANCE A</div><div class="day-focus">Lundi / Vendredi alternés</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('squat')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Squat Barre</div><div class="ex-sets">5 séries × 5 reps · +2,5kg / séance</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Développé Couché Barre</div><div class="ex-sets">5 séries × 5 reps · +2,5kg / séance</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('row-barre')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Rowing Barre</div><div class="ex-sets">5 séries × 5 reps · +2,5kg / séance</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.2), rgba(255,107,53,0.1));">
+        <div><div class="day-name">SÉANCE B</div><div class="day-focus">Mercredi alternés</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('squat')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Squat Barre</div><div class="ex-sets">5 séries × 5 reps · +2,5kg / séance</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ohp')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Développé Militaire</div><div class="ex-sets">5 séries × 5 reps · +2,5kg / séance</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('deadlift')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Soulevé de Terre</div><div class="ex-sets">1 série × 5 reps · +5kg / séance</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">RÈGLES D'OR 5×5</div><div class="day-focus" style="color: var(--gold);">Ne jamais déroger</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;">
+          <div class="ex-num" style="color:var(--gold);">✦</div>
+          <div class="ex-info"><div class="ex-name">Commence à 50% de ton max estimé</div><div class="ex-sets">Technique d'abord, charges ensuite</div></div>
+        </div>
+        <div class="exercise-item" style="pointer-events:none;">
+          <div class="ex-num" style="color:var(--gold);">✦</div>
+          <div class="ex-info"><div class="ex-name">Si tu rates 3 séries × 5 reps</div><div class="ex-sets">Réduis la charge de 10% et repars</div></div>
+        </div>
+        <div class="exercise-item" style="pointer-events:none;">
+          <div class="ex-num" style="color:var(--gold);">✦</div>
+          <div class="ex-info"><div class="ex-name">Repos 3-5 minutes entre les séries</div><div class="ex-sets">C'est du travail de force, pas du cardio</div></div>
+        </div>
+        <div class="exercise-item" style="pointer-events:none;">
+          <div class="ex-num" style="color:var(--gold);">✦</div>
+          <div class="ex-info"><div class="ex-name">Progression garantie 6-12 mois</div><div class="ex-sets">+50-100kg au squat la première année</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PECTORAUX -->
+  <div class="programme-content" id="prog-pecs">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.25), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="background: linear-gradient(90deg,var(--red),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PROGRAMME SPÉCIALISATION PECTORAUX</div>
+          <div class="day-focus">2 séances chest / semaine · Focus hypertrophie · 8-12 semaines</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.7;">
+          <div class="ex-num" style="color:var(--red);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--orange);">Principe : 1 séance force (lundi) + 1 séance volume/pump (jeudi)</div>
+            <div class="ex-sets">Travaille aussi le reste du corps 2×/semaine · Mange en surplus de 300-500 kcal · Dors 8h minimum</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE A — FORCE</div><div class="day-focus">Lundi · Charges lourdes</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Couché Barre</div><div class="ex-sets">5 × 4-6 reps · Repos 4 min · Charge max</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('incline-barbell')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Développé Incliné Barre</div><div class="ex-sets">4 × 6-8 reps · Repos 3 min</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('incline-db')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Développé Incliné Haltères</div><div class="ex-sets">3 × 8-10 reps · Repos 2 min</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-dips')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Dips (focus pecs, buste penché)</div><div class="ex-sets">3 × 8-12 reps · Poids ajouté si possible</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('cable-fly')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Écarté Poulie Basse</div><div class="ex-sets">3 × 12-15 reps · Repos 90 sec · Finition</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE B — VOLUME</div><div class="day-focus">Jeudi · Pump & hypertrophie</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('incline-db')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Incliné Haltères</div><div class="ex-sets">4 × 10-12 reps · Repos 2 min</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Développé Couché Haltères</div><div class="ex-sets">4 × 10-12 reps · Repos 2 min</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pec-deck')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Pec Deck Butterfly</div><div class="ex-sets">4 × 12-15 reps · Pause contraction 2 sec</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('cable-fly')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Écarté Poulie Croisée</div><div class="ex-sets">3 × 15 reps · Repos 90 sec</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Développé Couché Prise Serrée (triceps)</div><div class="ex-sets">3 × 12-15 reps · Finition</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">TECHNIQUES AVANCÉES</div><div class="day-focus" style="color:var(--gold);">Pour maximiser la croissance pectorale</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Stretching pecs entre chaque série</div><div class="ex-sets">30 sec en position étirée · Augmente la flexibilité et la croissance</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Dropsets sur le Pec Deck</div><div class="ex-sets">Réduis le poids de 30% et continue · 2-3 fois en fin de séance</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Pré-fatigue avec écarté avant développé</div><div class="ex-sets">Écarté poulie → immédiatement développé couché · Super-set puissant</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Descente lente 3-4 secondes</div><div class="ex-sets">La phase excentrique est clé pour l'hypertrophie pectorale</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABDOMINAUX -->
+  <div class="programme-content" id="prog-abdos">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.25), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="background: linear-gradient(90deg,var(--red),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PROGRAMME ABDOMINAUX — 6 PACK</div>
+          <div class="day-focus">3-4 séances abdos / semaine · Cardio + gainage + isolation · Résultats visibles en 8-12 semaines</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.7;">
+          <div class="ex-num" style="color:var(--red);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--orange);">Les abdos se font aussi en cuisine : sans déficit calorique, pas de 6 pack visible</div>
+            <div class="ex-sets">Programme abdos à ajouter à la fin de tes séances normales · 15-20 min suffisent · Intensité > durée</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE FORCE CORE</div><div class="day-focus">Lundi & Jeudi · Abdos profonds</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('ab-wheel')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Ab Wheel — Rouleau Abdominal</div><div class="ex-sets">4 × 8-12 reps · L'exercice roi du core</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('dragon-flag')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Dragon Flag (ou variante genou)</div><div class="ex-sets">3 × 6-10 reps · Force abdominale maximale</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hanging-knee')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Relevé de Genoux Suspendu</div><div class="ex-sets">4 × 15-20 reps · Bas du ventre</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('plank')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Planche Frontale</div><div class="ex-sets">3 × 45-60 sec · Gainage profond</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('side-plank')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Planche Latérale</div><div class="ex-sets">3 × 30-45 sec par côté · Obliques</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE VOLUME</div><div class="day-focus">Mardi & Vendredi · Pump abdominal</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('crunch-cable')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Crunch Poulie Haute</div><div class="ex-sets">4 × 15-20 reps · Avec résistance = hypertrophie réelle</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('russian-twist')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Russian Twist Lesté</div><div class="ex-sets">3 × 20 reps (10 par côté) · Obliques</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-raise')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Relevé de Jambes Allongé</div><div class="ex-sets">4 × 15-20 reps · Bas abdos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bicycle-crunch')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Bicycle Crunch</div><div class="ex-sets">3 × 30 reps (15 par côté) · Full abdos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ab-wheel')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Ab Wheel (finition)</div><div class="ex-sets">2 × max reps · Tout donner</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">LA VÉRITÉ SUR LES ABDOS</div><div class="day-focus" style="color:var(--gold);">Ce que personne ne te dit</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Les abdos : 30% entraînement, 70% alimentation</div><div class="ex-sets">Déficit de 300-500 kcal/jour · Cardio 2-3×/semaine · Patience 3-6 mois</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Entraîne les abdos comme n'importe quel muscle</div><div class="ex-sets">Avec résistance (poulie, disque) · Pas 500 crunchs à vide</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Le squat et le soulevé de terre = meilleurs exercices abdos</div><div class="ex-sets">Gainage naturel sous charge lourde = abdos solides et épais</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Protéines élevées pendant la sèche</div><div class="ex-sets">2,2-2,5g/kg pour préserver le muscle pendant le déficit</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BRAS -->
+  <div class="programme-content" id="prog-bras">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.25), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="background: linear-gradient(90deg,var(--red),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PROGRAMME SPÉCIALISATION BRAS</div>
+          <div class="day-focus">Biceps + Triceps + Avant-bras · 2 séances bras / semaine · +2-3 cm en 12 semaines</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.7;">
+          <div class="ex-num" style="color:var(--red);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--orange);">Les bras grossissent surtout avec le dos et la poitrine — ne néglige pas les exercices de base</div>
+            <div class="ex-sets">Les triceps représentent 2/3 du volume du bras · Travaille-les autant que les biceps</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE BICEPS</div><div class="day-focus">Mardi · Focus biceps complets</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('bicep-curl')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Curl Barre EZ ou Droite</div><div class="ex-sets">4 × 8-10 reps · Exercice de masse</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hammer-curl')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Curl Marteau Haltères</div><div class="ex-sets">4 × 10-12 reps · Épaisseur du bras</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('cable-curl')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Curl Poulie Basse</div><div class="ex-sets">3 × 12-15 reps · Tension constante</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bicep-curl')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Curl Concentré Haltère</div><div class="ex-sets">3 × 12-15 reps par bras · Pic du biceps</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('cable-curl')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Curl Poulie Haute (étirement)</div><div class="ex-sets">3 × 15 reps · Long chef du biceps</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE TRICEPS</div><div class="day-focus">Vendredi · Focus triceps 3 têtes</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('tricep-dips')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Dips Triceps Lestés</div><div class="ex-sets">4 × 8-10 reps · Masse globale triceps</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-pushdown')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Extension Poulie Haute (barre)</div><div class="ex-sets">4 × 10-12 reps · Chef latéral</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-pushdown')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Extension Poulie (corde)</div><div class="ex-sets">3 × 12-15 reps · Écartement en bas</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-pushdown')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Skull Crusher (Extension Couché)</div><div class="ex-sets">3 × 10-12 reps · Long chef triceps</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-pushdown')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Extension Triceps 1 Bras Poulie</div><div class="ex-sets">3 × 15 reps par bras · Isolation finale</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">SUPERSET BRAS (OPTIONNEL)</div><div class="day-focus" style="color:var(--gold);">Combiner biceps + triceps le même jour</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Superset 1 : Curl Barre + Extension Poulie</div><div class="ex-sets">4 × 10 + 10 · Repos 90 sec entre supersets</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Superset 2 : Curl Marteau + Dips</div><div class="ex-sets">4 × 12 + 12 · Pump extrême garanti</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Superset 3 : Curl Poulie + Skull Crusher</div><div class="ex-sets">3 × 15 + 12 · Finition totale</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Avant-bras : Curl de poignet + Reverse Curl</div><div class="ex-sets">3 × 20 reps · Pour des bras complets et proportionnés</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉPAULES -->
+  <div class="programme-content" id="prog-epaules">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.25), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="background: linear-gradient(90deg,var(--red),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PROGRAMME SPÉCIALISATION ÉPAULES</div>
+          <div class="day-focus">3 faisceaux · Deltoïdes larges et ronds · 2 séances / semaine · 10-12 semaines</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.7;">
+          <div class="ex-num" style="color:var(--red);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--orange);">Le faisceau latéral donne la largeur — c'est lui qui crée l'illusion d'un corps en V</div>
+            <div class="ex-sets">Le faisceau postérieur est souvent négligé — essentiel pour la santé et la symétrie · Toujours finir par le face pull</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE A — VOLUME</div><div class="day-focus">Lundi · Épaules larges et rondes</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('ohp')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Militaire Barre</div><div class="ex-sets">5 × 5-6 reps · Base de force épaules</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('arnold-press')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Développé Arnold Haltères</div><div class="ex-sets">4 × 10-12 reps · 3 faisceaux en 1 exercice</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('lateral-raise')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Élévations Latérales Haltères</div><div class="ex-sets">5 × 15-20 reps · Faisceau latéral = largeur</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('lateral-raise')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Élévations Latérales Poulie Basse</div><div class="ex-sets">3 × 20 reps par côté · Tension en bas</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('facepull')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Face Pull Poulie Haute</div><div class="ex-sets">4 × 15-20 reps · Arrière deltoïdes + coiffe</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE B — ISOLATION</div><div class="day-focus">Jeudi · Détail et définition</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('arnold-press')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Arnold Lourd</div><div class="ex-sets">4 × 8-10 reps · Puissance</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('lateral-raise')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Élévations Latérales Dropset</div><div class="ex-sets">4 × 15+10+5 · Réduction poids sans pause</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ohp')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Élévations Frontales Haltères</div><div class="ex-sets">3 × 12-15 reps · Faisceau antérieur</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('facepull')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Oiseau (Écarté Penché Haltères)</div><div class="ex-sets">4 × 15 reps · Arrière deltoïdes</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('facepull')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Face Pull (finition)</div><div class="ex-sets">3 × 20 reps · Santé de la coiffe</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">SECRETS DES ÉPAULES LARGES</div><div class="day-focus" style="color:var(--gold);">Ce qui fait vraiment la différence</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Volume élevé sur les latérales : 20-30 séries / semaine</div><div class="ex-sets">Le faisceau latéral répond mieux au volume qu'à l'intensité</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Ne monte jamais au-dessus des épaules sur les latérales</div><div class="ex-sets">Au-dessus = trapèzes, pas deltoïdes · Reste dans la bonne amplitude</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Toujours inclure le face pull pour la santé</div><div class="ex-sets">Prévient les blessures à la coiffe des rotateurs · 2 séries min par séance</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Commence léger sur les élévations latérales</div><div class="ex-sets">5-10kg max pour maîtriser · La forme prime sur la charge</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOS -->
+  <div class="programme-content" id="prog-dos">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.25), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="background: linear-gradient(90deg,var(--red),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PROGRAMME SPÉCIALISATION DOS</div>
+          <div class="day-focus">Largeur + Épaisseur + Lombaires · 2 séances / semaine · Dos en V massif</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.7;">
+          <div class="ex-num" style="color:var(--red);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--orange);">Largeur = tractions et tirages verticaux · Épaisseur = rowings et tirages horizontaux</div>
+            <div class="ex-sets">Le dos est le groupe musculaire le plus complexe · Varie les prises (pronation, supination, neutre) pour tout stimuler</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE A — LARGEUR</div><div class="day-focus">Lundi · Dos en V et grand dorsal</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('deadlift')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Soulevé de Terre</div><div class="ex-sets">4 × 4-5 reps · Roi de la masse dorsale</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pullups')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Tractions Pronation Large</div><div class="ex-sets">4 × max reps · Largeur du dos en V</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pulldown')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Tirage Vertical Poulie Large</div><div class="ex-sets">4 × 10-12 reps · Alternative assistée aux tractions</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pullups')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Tractions Supination (Chins)</div><div class="ex-sets">3 × 8-12 reps · Grand dorsal + biceps</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('cable-fly')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Pull-Over Poulie Haute</div><div class="ex-sets">3 × 15 reps · Étirement grand dorsal</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE B — ÉPAISSEUR</div><div class="day-focus">Jeudi · Rowings et masse dorsale</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('row-barre')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Rowing Barre Pronation</div><div class="ex-sets">5 × 5-6 reps · Force et masse du dos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tbar-row')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">T-Bar Row</div><div class="ex-sets">4 × 8-10 reps · Épaisseur centre du dos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('seated-cable-row')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Tirage Horizontal Poulie</div><div class="ex-sets">4 × 12-15 reps · Contraction parfaite</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hyperextension')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Hyperextension Lestée</div><div class="ex-sets">3 × 15 reps · Lombaires et bas du dos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('facepull')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Face Pull</div><div class="ex-sets">3 × 20 reps · Trapèzes moyens et arrière deltoïdes</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">CLÉS D'UN DOS MASSIF</div><div class="day-focus" style="color:var(--gold);">Techniques des pros</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Initie chaque rep avec les omoplates, pas les bras</div><div class="ex-sets">Descends les omoplates d'abord, puis tire · Connexion esprit-muscle</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Pense à "écraser un citron dans ton aisselle"</div><div class="ex-sets">Visualisation pour contracter le grand dorsal · Très efficace pour les débutants</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Varie les prises chaque séance</div><div class="ex-sets">Pronation large → supination → neutre → prise mixte · Stimulation complète</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Étire à fond sur chaque répétition</div><div class="ex-sets">La position basse = étirement complet = plus de croissance musculaire</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAMBES -->
+  <div class="programme-content" id="prog-jambes">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.25), rgba(255,107,53,0.1));">
+        <div>
+          <div class="day-name" style="background: linear-gradient(90deg,var(--red),var(--orange)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PROGRAMME SPÉCIALISATION JAMBES</div>
+          <div class="day-focus">Quadriceps + Ischios + Fessiers + Mollets · 2 séances / semaine · Jambes de compétition</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none; opacity:0.7;">
+          <div class="ex-num" style="color:var(--red);">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:var(--orange);">Les jambes = 50% de la masse musculaire du corps · Les entraîner sérieusement booste aussi le haut du corps (hormones)</div>
+            <div class="ex-sets">Récupération 72h minimum entre les séances jambes · Mange plus les jours de jambes · C'est le groupe le plus exigeant</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE A — QUADRICEPS</div><div class="day-focus">Lundi · Quad dominant</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('squat')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Squat Barre Haute</div><div class="ex-sets">5 × 5-6 reps · Roi des jambes</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('hack-squat')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Hack Squat Machine</div><div class="ex-sets">4 × 8-10 reps · Quadriceps isolés</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-press')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Leg Press (pieds bas)</div><div class="ex-sets">4 × 10-12 reps · Focus quadriceps</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bulgarian-squat')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Fentes Bulgares Haltères</div><div class="ex-sets">3 × 10 par jambe · Unilatéral</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('calf-raises')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Mollets Debout Machine</div><div class="ex-sets">5 × 15-20 reps · Gastrocnémiens</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">SÉANCE B — ISCHIOS / FESSIERS</div><div class="day-focus">Jeudi · Chaîne postérieure</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('deadlift')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Soulevé de Terre Roumain (sumo)</div><div class="ex-sets">4 × 6-8 reps · Ischios et fessiers</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('rdl')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Romanian Deadlift Haltères</div><div class="ex-sets">4 × 10-12 reps · Ischios étirement complet</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-curl')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Leg Curl Couché</div><div class="ex-sets">4 × 12-15 reps · Isolation ischios</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-press')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Leg Press (pieds hauts et larges)</div><div class="ex-sets">3 × 12-15 reps · Fessiers et ischios</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('calf-raises')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Mollets Assis (soléaires)</div><div class="ex-sets">4 × 20 reps · Muscle profond des mollets</div></div><div class="ex-play">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">JAMBES : LES ERREURS FATALES</div><div class="day-focus" style="color:var(--gold);">Ce que font les 90% qui stagnent</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Squatter trop haut (demi-squat)</div><div class="ex-sets">Descends jusqu'à la parallèle minimum · En dessous = plus de muscle · Ton égo est ton ennemi</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Négliger les ischios et les mollets</div><div class="ex-sets">Jambes déséquilibrées = blessures · Train legs complets à chaque séance</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Pas assez manger après la séance jambes</div><div class="ex-sets">C'est la séance la plus catabolique · +300 kcal supplémentaires ce jour-là</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">S'arrêter dès que ça brûle</div><div class="ex-sets">Les jambes répondent au volume et à l'inconfort · Le "leg day pain" est normal</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉCHAUFFEMENT -->
+
 </section>
 
-<!-- EXERCICES VIDEO -->
+<!-- ÉCHAUFFEMENT -->
+<section id="echauffement" style="background: var(--dark); max-width: 100%; padding: 100px 48px; border-top: 1px solid rgba(255,255,255,0.05);">
+<div style="max-width: 1400px; margin: 0 auto;">
+  <div class="section-header fade-in-up">
+    <span class="section-num">02</span>
+    <h2 class="section-title">ÉCHAUFFEMENT</h2>
+    <div class="section-line"></div>
+  </div>
+  <p class="fade-in-up" style="color: var(--gray); max-width: 640px; margin-bottom: 64px; line-height: 1.8;">
+    L'échauffement est la partie la plus négligée — et la plus importante. 10 minutes bien faites = zéro blessure, meilleures performances, et plus de progression sur le long terme.
+  </p>
+
+  <!-- TABS ÉCHAUFFEMENT -->
+  <div style="display:flex; gap:0; margin-bottom:48px; border:1px solid rgba(255,255,255,0.08); border-radius:6px; overflow:hidden; width:100%;" class="fade-in-up">
+    <button onclick="switchWarmup('general')" id="wbtn-general" class="wbtn active">GÉNÉRAL</button>
+    <button onclick="switchWarmup('pecs')"    id="wbtn-pecs"    class="wbtn">PECTORAUX</button>
+    <button onclick="switchWarmup('dos')"     id="wbtn-dos"     class="wbtn">DOS</button>
+    <button onclick="switchWarmup('epaules')" id="wbtn-epaules" class="wbtn">ÉPAULES</button>
+    <button onclick="switchWarmup('jambes')"  id="wbtn-jambes"  class="wbtn" style="border-right:none;">JAMBES</button>
+  </div>
+
+  <!-- GÉNÉRAL -->
+  <div id="warmup-general" class="day-grid">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(230,57,70,0.2), rgba(255,107,53,0.1));">
+        <div><div class="day-name">PROTOCOLE UNIVERSEL — TOUTES SÉANCES</div><div class="day-focus">10-15 minutes · À faire avant chaque entraînement sans exception</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">💡</div><div class="ex-info"><div class="ex-name" style="color:var(--orange);">Règle d'or : commence léger, monte progressivement</div><div class="ex-sets">L'échauffement prépare les articulations, les muscles ET le système nerveux · Ne saute jamais cette étape</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">PHASE 1 — CARDIO LÉGER</div><div class="day-focus">5 minutes · Élever la température corporelle</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Vélo elliptique ou rameur</div><div class="ex-sets">5 min · Intensité faible (4-5/10) · Ne pas fatiguer</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">—</div><div class="ex-info"><div class="ex-name">Alternative : corde à sauter</div><div class="ex-sets">2-3 min à rythme calme · Activation cardio-vasculaire douce</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">—</div><div class="ex-info"><div class="ex-name">Alternative : marche rapide inclinée</div><div class="ex-sets">5 min sur tapis roulant · Pente légère · Pour débuter</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">PHASE 2 — MOBILITÉ ARTICULAIRE</div><div class="day-focus">3 minutes · Lubrifier les articulations</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Rotations des épaules</div><div class="ex-sets">10 cercles vers l'avant + 10 vers l'arrière · Amplitude maximale</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">02</div><div class="ex-info"><div class="ex-name">Rotations des poignets et des coudes</div><div class="ex-sets">10 cercles dans chaque sens · Joints souvent négligés</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">03</div><div class="ex-info"><div class="ex-name">Rotations des hanches et du bassin</div><div class="ex-sets">10 cercles par côté · Essentiel pour le squat et le deadlift</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">04</div><div class="ex-info"><div class="ex-name">Rotation du cou (lente)</div><div class="ex-sets">5 cercles dans chaque sens · Très doucement · Déverrouille la nuque</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">PHASE 3 — ACTIVATION</div><div class="day-focus">3 minutes · Activer les muscles ciblés</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Pompes (push-ups) au poids du corps</div><div class="ex-sets">2 × 15 reps · Active pecs, épaules, triceps · Parfait avant toute séance push</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">02</div><div class="ex-info"><div class="ex-name">Squats au poids du corps</div><div class="ex-sets">2 × 15 reps lents · Active les jambes et le gainage · Avant séance legs</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">03</div><div class="ex-info"><div class="ex-name">Band pull-aparts (élastique)</div><div class="ex-sets">2 × 15 reps · Active les rhomboïdes · Avant séance dos ou épaules</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">04</div><div class="ex-info"><div class="ex-name">Planche 30 secondes</div><div class="ex-sets">1 × 30 sec · Engage le core avant chaque séance · Protège le dos</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">MONTÉE EN CHARGE</div><div class="day-focus" style="color:var(--gold);">La phase la plus importante avant un exercice lourd</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Série 1 — Barre vide (20 kg) × 10 reps</div><div class="ex-sets">Parfaire la technique · Sentir le mouvement · Jamais de fatigue</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Série 2 — 50% de ta charge de travail × 8 reps</div><div class="ex-sets">Commencer à charger · Toujours bien contrôlé · Repos 1 min</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Série 3 — 75% de ta charge de travail × 5 reps</div><div class="ex-sets">S'approcher du poids de travail · Repos 2 min</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Série 4 — 90% de ta charge de travail × 2-3 reps</div><div class="ex-sets">Finaliser l'activation neuro-musculaire · Repos 3 min · Puis travailler</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PECS -->
+  <div id="warmup-pecs" class="day-grid" style="display:none;">
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">ÉCHAUFFEMENT PECTORAUX</div><div class="day-focus">10 min · Avant développé couché / incliné</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Cardio léger 3-5 min</div><div class="ex-sets">Elliptique, vélo ou rameur · Température corporelle +1-2°C</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">02</div><div class="ex-info"><div class="ex-name">Rotations des épaules — 2 × 10</div><div class="ex-sets">Avant + arrière · Amplitude complète · Déverrouille la coiffe</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">03</div><div class="ex-info"><div class="ex-name">Pompes au poids du corps — 2 × 15</div><div class="ex-sets">Complètes, amplitude totale · Active pecs + stabilisateurs épaules</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">04</div><div class="ex-info"><div class="ex-name">Écarté haltères légers — 2 × 15</div><div class="ex-sets">Poids très léger (5-10 kg) · Étirement + activation pectorale · Lent</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">05</div><div class="ex-info"><div class="ex-name">Montée en charge au développé couché</div><div class="ex-sets">Barre vide × 10 → 50% × 6 → 75% × 3 → charge de travail</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">POINTS D'ATTENTION PECS</div><div class="day-focus" style="color:var(--gold);">Prévenir les blessures fréquentes</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Jamais de chaud-chaud ou de froid-froid sur les pecs</div><div class="ex-sets">Les insertions du grand pectoral sont très susceptibles aux déchirures · Monte progressivement</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Si douleur à l'épaule → stop immédiat</div><div class="ex-sets">Douleur articulaire ≠ douleur musculaire · Ne jamais forcer sur une douleur pointue</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Face pull en fin de séance toujours</div><div class="ex-sets">Rééquilibre les muscles de la coiffe · Prévient les déséquilibres ant/post épaule</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DOS -->
+  <div id="warmup-dos" class="day-grid" style="display:none;">
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">ÉCHAUFFEMENT DOS</div><div class="day-focus">10 min · Avant tractions / rowing / deadlift</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Cardio léger 3-5 min</div><div class="ex-sets">Rameur recommandé — active spécifiquement le dos</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">02</div><div class="ex-info"><div class="ex-name">Chat/Vache (Cat-Cow) — 2 × 10</div><div class="ex-sets">À 4 pattes · Mobilise la colonne vertébrale · Essentiel avant deadlift</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">03</div><div class="ex-info"><div class="ex-name">Suspension passive à la barre 30 sec</div><div class="ex-sets">Se laisser pendre, bras tendus · Décompresse la colonne · Étire le dos</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">04</div><div class="ex-info"><div class="ex-name">Tirage vertical léger poulie — 2 × 15</div><div class="ex-sets">Charge très légère · Active le grand dorsal · Connexion esprit-muscle</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">05</div><div class="ex-info"><div class="ex-name">Good mornings barre vide — 2 × 10</div><div class="ex-sets">Flexion hanches dos neutre · Active les lombaires et ischios · Avant deadlift</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">POINTS D'ATTENTION DOS</div><div class="day-focus" style="color:var(--gold);">Colonne vertébrale : zone critique</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Dos neutre TOUJOURS — jamais de flexion lombaire</div><div class="ex-sets">La cambrure sous charge = blessure immédiate · Préfère moins de poids à se blesser</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Inspirer avant la montée, expirer en haut</div><div class="ex-sets">Manœuvre de Valsalva pour les charges lourdes · Stabilise la pression intra-abdominale</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Ceinture lombaire uniquement au-dessus de 80% du max</div><div class="ex-sets">En dessous = musculature naturelle · La ceinture ne remplace pas une sangle musculaire forte</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÉPAULES -->
+  <div id="warmup-epaules" class="day-grid" style="display:none;">
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">ÉCHAUFFEMENT ÉPAULES</div><div class="day-focus">10 min · Avant développé militaire / élévations</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Cardio léger 3-5 min</div><div class="ex-sets">Rameur ou elliptique · Active tout le haut du corps</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">02</div><div class="ex-info"><div class="ex-name">Rotations des épaules — 3 × 10</div><div class="ex-sets">Grande amplitude · Avant + arrière · Obligatoire à chaque séance épaules</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">03</div><div class="ex-info"><div class="ex-name">Rotation externe avec élastique — 2 × 15</div><div class="ex-sets">Coude à 90° au corps · Active la coiffe des rotateurs · Prévention blessure</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">04</div><div class="ex-info"><div class="ex-name">Face pull léger poulie — 2 × 20</div><div class="ex-sets">Poids très léger · Active les arrière-deltoïdes et stabilisateurs</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">05</div><div class="ex-info"><div class="ex-name">Élévations latérales très légères — 2 × 15</div><div class="ex-sets">2-3 kg max · Activation ciblée des deltoïdes latéraux avant la séance</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">POINTS D'ATTENTION ÉPAULES</div><div class="day-focus" style="color:var(--gold);">Articulation la plus fragile du corps</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">L'épaule est l'articulation la plus complexe — la préparer sérieusement</div><div class="ex-sets">Coiffe des rotateurs + capsule articulaire + 3 faisceaux du deltoïde à activer</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Jamais de mouvement balistique à froid</div><div class="ex-sets">Aucun balancement, aucune rotation rapide · Tout est lent et contrôlé à l'échauffement</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Face pull = assurance vie pour les épaules</div><div class="ex-sets">2 min avant + 2 min après chaque séance · Investissement qui dure toute la carrière</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAMBES -->
+  <div id="warmup-jambes" class="day-grid" style="display:none;">
+    <div class="day-card fade-in-up">
+      <div class="day-header"><div><div class="day-name">ÉCHAUFFEMENT JAMBES</div><div class="day-focus">12-15 min · Avant squat / leg press / deadlift</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">01</div><div class="ex-info"><div class="ex-name">Vélo stationnaire 5 min</div><div class="ex-sets">Meilleur échauffement jambes · Lubrifie les genoux et les hanches</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">02</div><div class="ex-info"><div class="ex-name">Squats au poids du corps profonds — 2 × 15</div><div class="ex-sets">Lents, amplitude maximale · Mobilise chevilles, genoux, hanches · Descendrele plus bas possible</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">03</div><div class="ex-info"><div class="ex-name">Fentes dynamiques — 2 × 10 par jambe</div><div class="ex-sets">Marche avant avec rotation du buste · Ouvre les hanches · Active fessiers</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">04</div><div class="ex-info"><div class="ex-name">Cercles de hanches debout — 10 par sens</div><div class="ex-sets">Mains sur les hanches · Grande amplitude · Lubrifie les articulations coxo-fémorales</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">05</div><div class="ex-info"><div class="ex-name">Leg curl machine léger — 2 × 15</div><div class="ex-sets">Poids léger · Active les ischios avant le deadlift ou le RDL</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--red);">06</div><div class="ex-info"><div class="ex-name">Montée en charge squat obligatoire</div><div class="ex-sets">Barre vide × 10 → 50% × 6 → 75% × 3 → charge de travail · Jamais direct au lourd</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color: rgba(255,183,3,0.3);">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(255,183,3,0.15), rgba(255,183,3,0.05));">
+        <div><div class="day-name" style="color: var(--gold);">POINTS D'ATTENTION JAMBES</div><div class="day-focus" style="color:var(--gold);">Les erreurs qui blessent les genoux</div></div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Jamais de squat lourd sans échauffement des genoux</div><div class="ex-sets">Le cartilage a besoin de synovie pour être lubrifié · 5 min de vélo minimum</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Pas d'étirements statiques AVANT la séance jambes</div><div class="ex-sets">Réduisent temporairement la force de 5-8% · Les faire APRÈS la séance uniquement</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Genoux dans l'axe des orteils toujours</div><div class="ex-sets">Ni en dedans (valgus) ni en dehors · Signe précurseur de blessure aux ligaments</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Après la séance : 5 min d'étirements quadriceps/ischios</div><div class="ex-sets">Réduit les courbatures de 40% · Améliore la récupération · Ne pas sauter</div></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</section>
+
 <section id="exercices" style="background: var(--dark2); max-width: 100%; padding: 100px 48px;">
 <div style="max-width: 1400px; margin: 0 auto;">
   <div class="section-header fade-in-up">
@@ -1232,6 +2380,164 @@
         <div class="ex-card-title">ROWING BARRE PRONATION</div>
         <p class="ex-card-desc">Excellent pour l'épaisseur du dos. Permet de charger lourd et de construire une masse dorsale dense et puissante.</p>
         <div class="ex-card-tips">💡 Dos à 45° minimum, neutre. Tire vers le nombril, coudes raclent les flancs. Contracte le dos en haut. Ne balance pas le buste.</div>
+      </div>
+    </div>
+
+    <!-- NOUVEAUX EXERCICES -->
+
+    <div class="ex-card fade-in-up" onclick="openModal('hack-squat')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/R3yMhCbgMKs/hqdefault.jpg" alt="Hack Squat" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Quadriceps · Fessiers</span>
+        <div class="ex-card-title">HACK SQUAT MACHINE</div>
+        <p class="ex-card-desc">Alternative parfaite au squat barre pour isoler les quadriceps. La machine sécurise le mouvement et permet de charger très lourd en sécurité.</p>
+        <div class="ex-card-tips">💡 Pieds au milieu ou bas de la plateforme pour plus de quadriceps. Descends jusqu'à 90°. Pousse via les talons. Dos plaqué contre le dossier.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('pec-deck')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/Ns09hzN8FnQ/hqdefault.jpg" alt="Pec Deck" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Pectoraux · Deltoïdes Antérieurs</span>
+        <div class="ex-card-title">PEC DECK — BUTTERFLY</div>
+        <p class="ex-card-desc">Exercice d'isolation parfait pour les pectoraux. Excellent en fin de séance pour maximiser la congestion et le "pump" pectoral.</p>
+        <div class="ex-card-tips">💡 Dos plaqué au dossier. Coudes à hauteur des épaules. Contracte les pecs en fermant les bras. Retour lent et contrôlé pour l'étirement.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('seated-cable-row')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/GZbfZ033f74/hqdefault.jpg" alt="Tirage Horizontal" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Grand Dorsal · Trapèzes · Rhomboïdes</span>
+        <div class="ex-card-title">TIRAGE HORIZONTAL POULIE</div>
+        <p class="ex-card-desc">Construit l'épaisseur du dos de façon contrôlée. Tension constante sur tout le mouvement grâce à la poulie — supérieur au rowing barre pour l'isolation.</p>
+        <div class="ex-card-tips">💡 Dos droit, poitrine haute. Tire la poignée vers le nombril. Coudes proches du corps. Serre les omoplates en fin de mouvement. Retour contrôlé.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('tricep-pushdown')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/2-LAMcpzODU/hqdefault.jpg" alt="Tricep Pushdown" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Triceps · Anconé</span>
+        <div class="ex-card-title">EXTENSION TRICEPS POULIE</div>
+        <p class="ex-card-desc">L'exercice d'isolation triceps le plus utilisé en salle. Tension constante tout au long du mouvement grâce à la poulie haute.</p>
+        <div class="ex-card-tips">💡 Coudes fixes contre les flancs, légèrement devant le corps. Extension complète. Contraction maximale en bas. Remontée lente. Evite d'incliner le buste.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('cable-curl')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/ksLQtfxkG0c/hqdefault.jpg" alt="Cable Curl" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Biceps · Brachial</span>
+        <div class="ex-card-title">CURL POULIE BASSE</div>
+        <p class="ex-card-desc">Le curl à la poulie basse maintient une tension constante sur les biceps, contrairement aux haltères. Idéal pour maximiser l'hypertrophie en fin de séance.</p>
+        <div class="ex-card-tips">💡 Poulie basse, prise supination. Coudes fixes. Flexion complète. Maintiens 1 sec en haut. Descente lente en 3 sec. La tension ne relâche jamais.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('hammer-curl')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/zC3nLlEvin4/hqdefault.jpg" alt="Hammer Curl" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Biceps · Brachial · Brachioradial</span>
+        <div class="ex-card-title">CURL MARTEAU HALTÈRES</div>
+        <p class="ex-card-desc">Développe l'épaisseur et la largeur du bras grâce au travail du brachial et du brachioradial. Donne ce look "épais" au bras.</p>
+        <div class="ex-card-tips">💡 Prise neutre (pouce vers le haut). Coudes fixes. Monte les deux haltères en même temps ou en alternance. Idéal après le curl classique.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('arnold-press')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/6Z15_WdXmVw/hqdefault.jpg" alt="Arnold Press" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Deltoïdes (3 faisceaux) · Triceps</span>
+        <div class="ex-card-title">DÉVELOPPÉ ARNOLD</div>
+        <p class="ex-card-desc">Inventé par Arnold Schwarzenegger. La rotation du poignet engage les 3 faisceaux du deltoïde sur l'amplitude complète du mouvement.</p>
+        <div class="ex-card-tips">💡 Départ paumes vers toi, rotation en montant pour finir paumes vers l'avant. Mouvement fluide et contrôlé. Pas de triche avec le bas du dos.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('bulgarian-squat')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/2C-uNgKwPLE/hqdefault.jpg" alt="Bulgarian Split Squat" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Quadriceps · Fessiers · Ischios</span>
+        <div class="ex-card-title">FENTES BULGARES</div>
+        <p class="ex-card-desc">Un des exercices unilatéraux les plus efficaces. Corrige les déséquilibres gauche/droite et développe une force fonctionnelle exceptionnelle.</p>
+        <div class="ex-card-tips">💡 Pied arrière sur un banc à hauteur de genou. Descends verticalement, genou avant dans l'axe. Torse droit. Haltères ou barre sur les épaules.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('tbar-row')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/FD13bEGlQNc/hqdefault.jpg" alt="T-Bar Row" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Grand Dorsal · Trapèzes · Rhomboïdes · Biceps</span>
+        <div class="ex-card-title">T-BAR ROW</div>
+        <p class="ex-card-desc">Rowing avec une barre en T fixée au sol. Permet de charger plus lourd que le rowing classique avec une prise neutre qui préserve les épaules.</p>
+        <div class="ex-card-tips">💡 Corps à 45°, dos neutre. Prise neutre sur la poignée en V. Tire vers la poitrine basse. Coudes proches du corps. Contracte le dos en haut.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('incline-barbell')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/SrxSh9lLkn0/hqdefault.jpg" alt="Incline Barbell" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Pectoraux Supérieurs · Deltoïdes · Triceps</span>
+        <div class="ex-card-title">DÉVELOPPÉ INCLINÉ BARRE</div>
+        <p class="ex-card-desc">Développe spécifiquement le haut des pectoraux pour un look plein et complet. Souvent négligé mais essentiel pour une poitrine équilibrée.</p>
+        <div class="ex-card-tips">💡 Banc à 30-45°. Prise légèrement plus large que les épaules. Barre descend sur le haut des pec. Coudes à 75°. Omoplates serrées tout le mouvement.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('hyperextension')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/ph3pzWkPe6E/hqdefault.jpg" alt="Hyperextension" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Lombaires · Fessiers · Ischios</span>
+        <div class="ex-card-title">HYPEREXTENSION DOS</div>
+        <p class="ex-card-desc">Exercice fondamental pour renforcer les lombaires et prévenir les blessures. Indispensable pour sécuriser le soulevé de terre et le squat.</p>
+        <div class="ex-card-tips">💡 Hanche sur le coussin. Descent jusqu'à 90°. Remonte en contractant fessiers et lombaires. Dos neutre en haut (pas d'hyperextension). Poids sur la poitrine si trop facile.</div>
+      </div>
+    </div>
+
+    <div class="ex-card fade-in-up" onclick="openModal('ab-wheel')">
+      <div class="ex-video-thumb">
+        <img src="https://img.youtube.com/vi/p7_5UcRvHH8/hqdefault.jpg" alt="Ab Wheel" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">
+        <div class="ex-thumb-overlay"><div class="play-btn-large">▶</div></div>
+      </div>
+      <div class="ex-card-body">
+        <span class="ex-card-muscle">Abdominaux · Core · Dorsaux</span>
+        <div class="ex-card-title">AB WHEEL — ROULEAU ABDOMINAL</div>
+        <p class="ex-card-desc">Un des exercices de gainage les plus difficiles et efficaces. Travaille l'ensemble du core, les dorsaux et les épaules en un seul mouvement.</p>
+        <div class="ex-card-tips">💡 Commence genoux au sol. Corps gainé, hanches ni hautes ni basses. Extension maximale sans cambrer le bas du dos. Ramène en contractant les abdos, pas en tirant avec les bras.</div>
       </div>
     </div>
 
@@ -1351,13 +2657,13 @@
   </div>
 
   <div class="meal-plan-tabs fade-in-up">
-    <button class="tab-btn active" onclick="switchMeal('budget')">Petit Budget</button>
-    <button class="tab-btn" onclick="switchMeal('standard')">Standard</button>
-    <button class="tab-btn" onclick="switchMeal('premium')">Athlete Pro</button>
+    <button class="tab-btn active" onclick="switchMeal('eco')">Petit Budget</button>
+    <button class="tab-btn" onclick="switchMeal('mid')">Standard</button>
+    <button class="tab-btn" onclick="switchMeal('pro')">Athlete Pro</button>
   </div>
 
   <!-- PETIT BUDGET -->
-  <div class="meal-day-content active" id="meal-budget">
+  <div class="meal-day-content active" id="meal-eco">
     <div class="meal-card fade-in-up">
       <div class="meal-header">
         <div class="meal-time">🌅 RÉVEIL — 7h00</div>
@@ -1465,7 +2771,7 @@
   </div>
 
   <!-- STANDARD -->
-  <div class="meal-day-content" id="meal-standard">
+  <div class="meal-day-content" id="meal-mid">
     <div class="meal-card fade-in-up">
       <div class="meal-header"><div class="meal-time">🌅 PETIT-DÉJEUNER</div><div class="meal-cals">~700 kcal</div></div>
       <div class="meal-body">
@@ -1510,7 +2816,7 @@
   </div>
 
   <!-- PREMIUM -->
-  <div class="meal-day-content" id="meal-premium">
+  <div class="meal-day-content" id="meal-pro">
     <div class="meal-card fade-in-up">
       <div class="meal-header"><div class="meal-time">🌅 PREMIER REPAS</div><div class="meal-cals">~800 kcal</div></div>
       <div class="meal-body">
@@ -1612,6 +2918,493 @@
   </div>
 </div>
 </section>
+
+<!-- RECETTES PROTÉINÉES -->
+<section id="recettes" style="background: var(--dark2); max-width: 100%; padding: 100px 48px;">
+<div style="max-width: 1400px; margin: 0 auto;">
+  <div class="section-header fade-in-up">
+    <span class="section-num">07</span>
+    <h2 class="section-title">RECETTES PROTÉINÉES</h2>
+    <div class="section-line"></div>
+  </div>
+  <p class="fade-in-up" style="color: var(--gray); max-width: 600px; margin-bottom: 40px; line-height: 1.8;">
+    Des recettes riches en protéines adaptées à tous les budgets. Chaque recette indique les macros précis pour faciliter ton suivi nutritionnel.
+  </p>
+  <div style="display:flex; gap:0; margin-bottom:48px; border:1px solid rgba(255,255,255,0.08); border-radius:6px; overflow:hidden; width:fit-content;" class="recipe-tabs fade-in-up">
+    <button class="recipe-tab active" onclick="switchRecipe('budget')">Petit Budget (&lt;3€/repas)</button>
+    <button class="recipe-tab" onclick="switchRecipe('standard')">Standard (3-6€/repas)</button>
+    <button class="recipe-tab" onclick="switchRecipe('premium')">Premium (6€+/repas)</button>
+  </div>
+
+  <!-- PETIT BUDGET -->
+  <div class="recipe-grid active" id="recipe-budget">
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥚</div>
+        <div class="recipe-name">OMELETTE MASSIVE</div>
+        <div class="recipe-subtitle">Petit-déj ou dîner · 10 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">42g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">480</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">8g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">32g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~1,20€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>5 œufs entiers</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>100g fromage blanc 0%</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Sel, poivre, herbes de Provence</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 c.à.s huile d'olive</div>
+        </div>
+        <div class="recipe-tip">💡 Ajoute des champignons ou épinards pour les micronutriments sans changer les macros significativement.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🍚</div>
+        <div class="recipe-name">RIZ THON MAYO ALLÉGÉE</div>
+        <div class="recipe-subtitle">Déjeuner / Post-workout · 8 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">52g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">620</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">75g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">10g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~1,50€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g riz cuit (80g cru)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>2 boîtes thon au naturel (160g)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 c.à.s mayo allégée</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Sauce soja, citron</div>
+        </div>
+        <div class="recipe-tip">💡 Prépare 3-4 portions le dimanche (meal prep). Idéal post-workout grâce aux glucides rapides du riz blanc.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥣</div>
+        <div class="recipe-name">PORRIDGE PROTÉINÉ</div>
+        <div class="recipe-subtitle">Petit-déjeuner · 5 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">38g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">550</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">72g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">12g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~0,90€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>80g flocons d'avoine</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>300ml lait demi-écrémé</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>150g fromage blanc 0%</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 banane écrasée</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 c.à.c miel, cannelle</div>
+        </div>
+        <div class="recipe-tip">💡 Le fromage blanc se mélange froid après cuisson pour ne pas cailler. Très digeste avant l'entraînement.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥔</div>
+        <div class="recipe-name">POULET PATATE DOUCE</div>
+        <div class="recipe-subtitle">Déjeuner / Dîner · 25 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">58g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">680</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">65g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">14g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~2,50€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g blanc de poulet</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>250g patate douce</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Huile d'olive, épices (paprika, cumin)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Ail, oignon, sel</div>
+        </div>
+        <div class="recipe-tip">💡 Le combo poulet + patate douce est l'un des meilleurs post-workout. Index glycémique modéré + protéines rapides.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥛</div>
+        <div class="recipe-name">SHAKE FROMAGE BLANC BANANE</div>
+        <div class="recipe-subtitle">Collation · 2 min · Sans shaker</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">32g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">380</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">48g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">4g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~0,70€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>300g fromage blanc 0%</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 banane mûre</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200ml lait</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 c.à.c cacao ou vanille</div>
+        </div>
+        <div class="recipe-tip">💡 Alternative pas chère à la whey. Le fromage blanc 0% = 10g de protéines / 100g pour ~0,40€. Mixe tout au blender.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🫘</div>
+        <div class="recipe-name">PASTA THON LÉGUMES</div>
+        <div class="recipe-subtitle">Déjeuner · 15 min · Meal prep</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">55g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">720</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">90g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">12g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~1,80€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>100g pâtes (poids cru)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>2 boîtes thon naturel (160g)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Courgette, poivron, tomates cerises</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Huile d'olive, ail, basilic</div>
+        </div>
+        <div class="recipe-tip">💡 Cuit en 15 min, parfait pour le meal prep de la semaine. Stocke 4 jours au frigo. Ajoute du parmesan pour les calories.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- STANDARD -->
+  <div class="recipe-grid" id="recipe-standard">
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🍗</div>
+        <div class="recipe-name">BOWL POULET AVOCAT RIZ</div>
+        <div class="recipe-subtitle">Déjeuner · 20 min · Complet</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">60g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">780</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">70g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">28g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~4,50€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g blanc de poulet grillé</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g riz basmati cuit</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>½ avocat</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Épinards frais, tomates cerises</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Sauce : citron, huile d'olive, ail</div>
+        </div>
+        <div class="recipe-tip">💡 L'avocat apporte des graisses saines essentielles (oméga-9) et augmente la satiété. Parfait en déjeuner de récupération.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥩</div>
+        <div class="recipe-name">BŒUF HACHÉ QUINOA</div>
+        <div class="recipe-subtitle">Dîner · 20 min · Riche en fer</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">58g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">750</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">60g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">24g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~4€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>180g bœuf haché 5% MG</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>150g quinoa cuit (60g cru)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Poivrons, oignons, tomates</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Épices (paprika fumé, cumin, ail)</div>
+        </div>
+        <div class="recipe-tip">💡 Le quinoa est une protéine complète — il contient les 9 acides aminés essentiels contrairement au riz. Meilleur combo avec la viande rouge.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🐟</div>
+        <div class="recipe-name">SAUMON PATATE DOUCE BROCOLIS</div>
+        <div class="recipe-subtitle">Dîner · 25 min · Oméga-3</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">48g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">720</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">55g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">28g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~5€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>180g filet de saumon</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g patate douce rôtie</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g brocolis vapeur</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Huile d'olive, citron, aneth</div>
+        </div>
+        <div class="recipe-tip">💡 Le saumon 2x/semaine = besoins en oméga-3 couverts. Réduit l'inflammation et améliore la récupération musculaire significativement.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥗</div>
+        <div class="recipe-name">WRAP DINDE HUMMUS</div>
+        <div class="recipe-subtitle">Déjeuner rapide · 5 min · On-the-go</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">45g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">580</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">50g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">18g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~3,50€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>2 tortillas de blé complètes</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>150g escalope de dinde</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>80g hummus maison ou pot</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Salade, tomates, concombre</div>
+        </div>
+        <div class="recipe-tip">💡 Prépare les escalopes à l'avance et assemble le matin. Parfait pour le bureau ou post-entraînement rapide.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🍳</div>
+        <div class="recipe-name">PANCAKES PROTÉINÉS AVOINE</div>
+        <div class="recipe-subtitle">Petit-déjeuner · 15 min · Weekend</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">50g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">680</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">68g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">18g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~3€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (2 personnes / 6 pancakes)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g flocons d'avoine mixés (farine)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>4 œufs entiers</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g fromage blanc 0%</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 banane, 1 c.à.c levure, cannelle</div>
+        </div>
+        <div class="recipe-tip">💡 Mixe les flocons d'avoine pour obtenir une farine. Texture identique aux pancakes classiques mais avec 3x plus de protéines.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🍲</div>
+        <div class="recipe-name">CURRY POULET LENTILLES</div>
+        <div class="recipe-subtitle">Dîner · 30 min · Meal prep 4 jours</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">62g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">740</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">72g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">16g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~3,80€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>180g blanc de poulet</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>100g lentilles corail cuites</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200ml lait de coco allégé</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Curry, gingembre, ail, oignon</div>
+        </div>
+        <div class="recipe-tip">💡 Les lentilles ajoutent 9g de protéines végétales + beaucoup de fibres = satiété maximale et excellente digestion.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PREMIUM -->
+  <div class="recipe-grid" id="recipe-premium">
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥩</div>
+        <div class="recipe-name">STEAK TARTARE PROTÉINÉ</div>
+        <div class="recipe-subtitle">Dîner gastronomique · 15 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">65g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">720</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">20g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">38g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~8€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>220g bœuf haché fraîche qualité (5%MG)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>2 jaunes d'œufs</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Câpres, cornichons, échalote</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Moutarde, worcestershire, tabasco</div>
+        </div>
+        <div class="recipe-tip">💡 La viande crue préserve toutes les protéines et enzymes. Très digeste. Source d'acides aminés parfaitement biodisponibles + fer héminique.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🐟</div>
+        <div class="recipe-name">PAVÉ THON SÉSAME NOUILLES SOBA</div>
+        <div class="recipe-subtitle">Déjeuner gastronomique · 20 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">62g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">760</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">65g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">22g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~9€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g pavé de thon frais</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>100g nouilles soba (sarrasin)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Sésame, sauce soja, gingembre frais</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Edamames, avocat, algues wakamé</div>
+        </div>
+        <div class="recipe-tip">💡 Le thon frais = protéines de très haute qualité + oméga-3 EPA/DHA en quantité maximale. Bien supérieur au thon en boîte.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🍗</div>
+        <div class="recipe-name">POULET MARINÉ TERIYAKI EDAMAMES</div>
+        <div class="recipe-subtitle">Dîner · 30 min · Style japonais</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">72g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">820</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">68g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">20g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~7€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>250g cuisse de poulet désossée</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g riz japonais cuit</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>100g edamames</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Marinade : sauce soja, mirin, miel, ail</div>
+        </div>
+        <div class="recipe-tip">💡 Marine le poulet 2h minimum (ou toute la nuit). Les cuisses sont plus savoureuses et plus riches en graisses saines que les blancs.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🥣</div>
+        <div class="recipe-name">SMOOTHIE BOWL AÇAÏ PROTÉINÉ</div>
+        <div class="recipe-subtitle">Petit-déjeuner premium · 10 min</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">40g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">620</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">75g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">18g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~6,50€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>100g pulpe açaï congelée</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>1 dose whey vanille (30g)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g yaourt grec 10%</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Toppings : granola, myrtilles, beurre d'amandes, noix de coco</div>
+        </div>
+        <div class="recipe-tip">💡 L'açaï est riche en antioxydants qui réduisent l'inflammation post-entraînement. Le yaourt grec apporte 10g de caséine = protéine lente idéale le matin.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🐄</div>
+        <div class="recipe-name">ENTRECÔTE PATATE DOUCE ASPERGES</div>
+        <div class="recipe-subtitle">Dîner fort · 25 min · Jour de force</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">70g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">850</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">55g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">38g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~10€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>250g entrecôte de bœuf</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>250g patate douce rôtie au four</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g asperges vertes</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Beurre, ail, thym, fleur de sel</div>
+        </div>
+        <div class="recipe-tip">💡 La viande rouge 1-2x/semaine = fer héminique + zinc + créatine naturelle. Idéale les jours de séance lourde (squat, deadlift). Creatine naturelle = 5g/kg de bœuf.</div>
+      </div>
+    </div>
+
+    <div class="recipe-card">
+      <div class="recipe-header">
+        <div class="recipe-emoji">🍱</div>
+        <div class="recipe-name">BENTO PROTÉINÉ COMPLET</div>
+        <div class="recipe-subtitle">Meal prep premium · 35 min · 5 jours</div>
+      </div>
+      <div class="recipe-macros">
+        <div class="recipe-macro"><div class="recipe-macro-val prot">80g</div><div class="recipe-macro-lbl">Protéines</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val cal">950</div><div class="recipe-macro-lbl">Kcal</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val carb">85g</div><div class="recipe-macro-lbl">Glucides</div></div>
+        <div class="recipe-macro"><div class="recipe-macro-val fat">28g</div><div class="recipe-macro-lbl">Lipides</div></div>
+      </div>
+      <div class="recipe-body">
+        <div class="recipe-cost">💰 ~8€</div>
+        <div class="recipe-ingredients">
+          <div class="recipe-ingredients-title">Ingrédients (1 personne)</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>200g saumon ou poulet mariné</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>150g riz japonais + 50g quinoa</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>3 œufs mollets marinés soja</div>
+          <div class="recipe-ingredient"><div class="recipe-ingredient-dot"></div>Edamames, carotte, concombre, algues</div>
+        </div>
+        <div class="recipe-tip">💡 Le sunday meal prep idéal. Prépare 5 bentos en 35 min. Les œufs marinés dans la sauce soja diluée 12h = protéines + goût exceptionnel.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</section>
+
 
 <!-- CONSEILS -->
 <section id="conseils">
@@ -1728,26 +3521,288 @@
 </div>
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">IRONFORGE</div>
-  <p class="footer-text">Guide complet prise de masse • Programme · Nutrition · Exercices<br>
-  <br>⚠️ Consulte un médecin avant de commencer un programme intensif. Ces informations sont à titre éducatif uniquement.</p>
-</footer>
-
 <!-- VIDEO MODAL -->
 <div class="modal-overlay" id="videoModal" onclick="closeModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal()">✕</button>
     <div class="modal-video">
-      <iframe id="modalIframe" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen"></iframe>
+      <div class="modal-video-thumb" id="modalThumb" onclick="playVideo()">
+        <img id="modalThumbImg" src="" alt="">
+        <div class="modal-play-btn"></div>
+      </div>
+      <iframe id="modalIframe" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen" style="display:none;"></iframe>
     </div>
     <div class="modal-info">
-      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle"></div>
+        <a class="modal-yt-btn" id="modalYtLink" href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+          YouTube
+        </a>
+      </div>
       <div class="modal-desc" id="modalDesc"></div>
     </div>
   </div>
 </div>
+
+<!-- FOOTER -->
+<footer>
+  <div style="max-width: 1400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 20px;">
+    <div class="footer-logo">IRONFORGE</div>
+    <div style="display:flex; gap: 40px; flex-wrap:wrap; justify-content:center;">
+      <a href="#programme" style="color:var(--gray); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray)'">Programme</a>
+      <a href="#echauffement" style="color:var(--gray); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray)'">Échauffement</a>
+      <a href="#exercices" style="color:var(--gray); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray)'">Exercices</a>
+      <a href="#calories" style="color:var(--gray); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray)'">Calories</a>
+      <a href="#nutrition" style="color:var(--gray); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray)'">Nutrition</a>
+      <a href="#recettes" style="color:var(--gray); text-decoration:none; font-family:'Barlow Condensed',sans-serif; letter-spacing:2px; font-size:0.8rem; text-transform:uppercase; transition:color .2s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--gray)'">Recettes</a>
+    </div>
+    <div style="width:240px; height:1px; background:linear-gradient(90deg,transparent,rgba(230,57,70,0.4),transparent);"></div>
+    <p class="footer-text">Guide complet prise de masse &mdash; Programme &middot; Nutrition &middot; Exercices</p>
+    <p style="color:var(--gray); opacity:0.4; font-size:0.75rem; letter-spacing:1px; text-align:center; max-width:500px; line-height:1.6;">⚠ Consulte un professionnel de santé avant de commencer un programme intensif. Ces informations sont fournies à titre éducatif uniquement.</p>
+  </div>
+</footer>
+
+<script>
+function switchRecipe(plan) {
+  document.querySelectorAll('.recipe-grid').forEach(g => g.classList.remove('active'));
+  document.getElementById('recipe-' + plan).classList.add('active');
+  document.querySelectorAll('.recipe-tab').forEach(b => {
+    b.classList.toggle('active', b.onclick.toString().includes("'" + plan + "'"));
+  });
+}
+
+// Toggle chips
+const selectedMuscles = new Set();
+function toggleChip(el, muscle) {
+  if (selectedMuscles.has(muscle)) {
+    selectedMuscles.delete(muscle);
+    el.classList.remove('selected');
+  } else {
+    selectedMuscles.add(muscle);
+    el.classList.add('selected');
+  }
+}
+
+// PROGRAM GENERATOR
+function generateProgram() {
+  const weight = parseFloat(document.getElementById('genWeight').value) || 75;
+  const height = parseFloat(document.getElementById('genHeight').value) || 175;
+  const age = parseFloat(document.getElementById('genAge').value) || 25;
+  const sex = document.getElementById('genSex').value;
+  const level = document.getElementById('genLevel').value;
+  const days = parseInt(document.getElementById('genDays').value);
+  const goal = document.getElementById('genGoal').value;
+  const equip = document.getElementById('genEquip').value;
+  const muscles = [...selectedMuscles];
+
+  const bmi = (weight / ((height/100) ** 2)).toFixed(1);
+
+  // Build program based on inputs
+  const programs = {
+    3: buildProgram3Days(level, goal, muscles, equip),
+    4: buildProgram4Days(level, goal, muscles, equip),
+    5: buildProgram5Days(level, goal, muscles, equip),
+    6: buildProgram6Days(level, goal, muscles, equip),
+  };
+
+  const prog = programs[days];
+  const protNeeds = Math.round(weight * (goal === 'seche' ? 2.4 : 2.0));
+  const cals = goal === 'seche'
+    ? Math.round((10*weight + 6.25*height - 5*age + (sex==='m'?5:-161)) * 1.55 - 400)
+    : Math.round((10*weight + 6.25*height - 5*age + (sex==='m'?5:-161)) * 1.55 + 400);
+
+  const resultEl = document.getElementById('genResult');
+  resultEl.classList.add('has-content');
+  resultEl.innerHTML = `
+    <div class="gen-result-content" style="width:100%;">
+      <div class="gen-result-header">
+        <div>
+          <div class="gen-result-name">${prog.name}</div>
+          <div class="gen-result-meta">
+            <span class="gen-meta-badge">${days} jours / semaine</span>
+            <span class="gen-meta-badge">${levelLabel(level)}</span>
+            <span class="gen-meta-badge">${goalLabel(goal)}</span>
+            <span class="gen-meta-badge">IMC : ${bmi}</span>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);">${cals} kcal</div>
+          <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Objectif calorique · ${protNeeds}g protéines</div>
+        </div>
+      </div>
+      <div class="gen-days-grid">
+        ${prog.days.map(day => renderGenDay(day)).join('')}
+      </div>
+    </div>
+  `;
+  setTimeout(() => resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+function renderGenDay(day) {
+  if (day.rest) {
+    return `<div class="gen-day">
+      <div class="gen-day-header" style="background:linear-gradient(135deg,rgba(255,183,3,0.1),rgba(255,183,3,0.05));">
+        <div class="gen-day-name" style="color:var(--gold);">${day.name}</div>
+        <div class="gen-day-focus" style="color:var(--gold);">REPOS</div>
+      </div>
+      <div class="gen-rest-day">🛌 Récupération · Marche légère · Stretching</div>
+    </div>`;
+  }
+  return `<div class="gen-day">
+    <div class="gen-day-header">
+      <div class="gen-day-name">${day.name}</div>
+      <div class="gen-day-focus">${day.focus}</div>
+    </div>
+    ${day.exercises.map((ex, i) => `
+      <div class="gen-ex" onclick="openModal('${ex.id}')">
+        <div class="gen-ex-num">0${i+1}</div>
+        <div style="flex:1">
+          <div class="gen-ex-name">${ex.name}</div>
+          <div class="gen-ex-sets">${ex.sets}</div>
+        </div>
+        <div class="gen-ex-play">▶</div>
+      </div>
+    `).join('')}
+  </div>`;
+}
+
+function levelLabel(l) { return {debutant:'Débutant',intermediaire:'Intermédiaire',avance:'Avancé'}[l]; }
+function goalLabel(g) { return {masse:'Prise de masse',force:'Force',seche:'Sèche',athletique:'Physique athlétique'}[g]; }
+
+function buildProgram3Days(level, goal, muscles, equip) {
+  const isForce = goal === 'force';
+  const setsHeavy = isForce ? '5 × 3-5 reps · Repos 4 min' : '4 × 8-10 reps · Repos 2 min';
+  const setsLight = isForce ? '3 × 5-6 reps · Repos 3 min' : '3 × 12-15 reps · Repos 90 sec';
+  return {
+    name: isForce ? 'FULL BODY FORCE — 3 JOURS' : 'FULL BODY MASSE — 3 JOURS',
+    days: [
+      { name:'LUNDI', focus:'FULL BODY A', exercises:[
+        {id:'squat',name:'Squat Barre',sets:setsHeavy},
+        {id:'bench-press',name:'Développé Couché',sets:setsHeavy},
+        {id:'row-barre',name:'Rowing Barre',sets:setsHeavy},
+        {id:'ohp',name:'Développé Militaire',sets:setsLight},
+        ...(muscles.includes('abdos')?[{id:'ab-wheel',name:'Ab Wheel',sets:'3 × 10 reps'}]:[]),
+      ]},
+      { name:'MERCREDI', focus:'FULL BODY B', exercises:[
+        {id:'deadlift',name:'Soulevé de Terre',sets:isForce?'4 × 3 reps · Repos 5 min':'3 × 5 reps · Repos 4 min'},
+        {id:'incline-db',name:'Développé Incliné Haltères',sets:setsLight},
+        {id:'pullups',name:'Tractions',sets:setsHeavy},
+        {id:'lateral-raise',name:'Élévations Latérales',sets:'4 × 15 reps'},
+        ...(muscles.includes('bras')?[{id:'bicep-curl',name:'Curl Biceps',sets:'3 × 12 reps'}]:[]),
+      ]},
+      { name:'VENDREDI', focus:'FULL BODY C', exercises:[
+        {id:'squat',name:'Squat Gobelet',sets:setsLight},
+        {id:'bench-press',name:'Développé Couché Haltères',sets:setsLight},
+        {id:'seated-cable-row',name:'Tirage Horizontal Poulie',sets:setsLight},
+        {id:'rdl',name:'Romanian Deadlift',sets:setsLight},
+        ...(muscles.includes('abdos')||muscles.includes('jambes')?[{id:'leg-curl',name:'Leg Curl',sets:'3 × 12 reps'}]:[]),
+      ]},
+    ]
+  };
+}
+
+function buildProgram4Days(level, goal, muscles, equip) {
+  const hasPecs = muscles.includes('pecs');
+  const hasJambes = muscles.includes('jambes') || muscles.includes('fessiers');
+  return {
+    name: 'UPPER / LOWER — 4 JOURS',
+    days: [
+      { name:'LUNDI', focus:'UPPER — Force', exercises:[
+        {id:'bench-press',name:'Développé Couché Barre',sets:'5 × 5 reps · Repos 3 min'},
+        {id:'row-barre',name:'Rowing Barre',sets:'5 × 5 reps · Repos 3 min'},
+        {id:'ohp',name:'Développé Militaire',sets:'3 × 8 reps'},
+        {id:'pulldown',name:'Tirage Vertical Poulie',sets:'3 × 10 reps'},
+        ...(hasPecs?[{id:'pec-deck',name:'Pec Deck',sets:'3 × 15 reps'}]:[]),
+      ]},
+      { name:'MARDI', focus:'LOWER — Force', exercises:[
+        {id:'squat',name:'Squat Barre',sets:'5 × 5 reps · Repos 3 min'},
+        {id:'rdl',name:'Romanian Deadlift',sets:'4 × 6 reps'},
+        {id:'leg-press',name:'Leg Press',sets:'3 × 10 reps'},
+        {id:'leg-curl',name:'Leg Curl',sets:'3 × 12 reps'},
+        {id:'calf-raises',name:'Mollets',sets:'4 × 20 reps'},
+      ]},
+      { name:'JEUDI', focus:'UPPER — Volume', exercises:[
+        {id:'incline-db',name:'Développé Incliné Haltères',sets:'4 × 10 reps'},
+        {id:'tbar-row',name:'T-Bar Row',sets:'4 × 10 reps'},
+        {id:'arnold-press',name:'Développé Arnold',sets:'3 × 12 reps'},
+        {id:'bicep-curl',name:'Curl Biceps',sets:'3 × 12 reps'},
+        {id:'tricep-pushdown',name:'Extension Triceps Poulie',sets:'3 × 12 reps'},
+      ]},
+      { name:'VENDREDI', focus:'LOWER — Volume', exercises:[
+        {id:'hack-squat',name:'Hack Squat Machine',sets:'4 × 10 reps'},
+        {id:'bulgarian-squat',name:'Fentes Bulgares',sets:'3 × 10 par jambe'},
+        {id:'rdl',name:'Romanian Deadlift',sets:'3 × 12 reps'},
+        {id:'leg-curl',name:'Leg Curl',sets:'4 × 15 reps'},
+        ...(hasJambes?[{id:'hyperextension',name:'Hyperextension',sets:'3 × 15 reps'}]:[]),
+      ]},
+    ]
+  };
+}
+
+function buildProgram5Days(level, goal, muscles, equip) {
+  const hasPecs = muscles.includes('pecs');
+  const hasBras = muscles.includes('bras');
+  const hasEpaules = muscles.includes('epaules');
+  const hasDos = muscles.includes('dos');
+  return {
+    name: 'PPL PERSONNALISÉ — 5 JOURS',
+    days: [
+      { name:'LUNDI', focus:'PUSH — Pecs · Épaules · Triceps', exercises:[
+        {id:'bench-press',name:'Développé Couché Barre',sets:'4 × 6-8 reps'},
+        {id:hasPecs?'incline-barbell':'incline-db',name:hasPecs?'Développé Incliné Barre':'Développé Incliné Haltères',sets:'3 × 8-10 reps'},
+        {id:'ohp',name:'Développé Militaire',sets:'3 × 8 reps'},
+        {id:'lateral-raise',name:'Élévations Latérales',sets:hasEpaules?'5 × 15 reps':'3 × 12 reps'},
+        {id:'tricep-pushdown',name:'Extension Triceps Poulie',sets:'3 × 12-15 reps'},
+      ]},
+      { name:'MARDI', focus:'PULL — Dos · Biceps', exercises:[
+        {id:'deadlift',name:'Soulevé de Terre',sets:'4 × 4-5 reps'},
+        {id:'pullups',name:'Tractions Pronation',sets:'4 × max reps'},
+        {id:hasDos?'tbar-row':'row-barre',name:hasDos?'T-Bar Row':'Rowing Barre',sets:'4 × 6-8 reps'},
+        {id:'facepull',name:'Face Pull',sets:'3 × 15 reps'},
+        {id:'bicep-curl',name:'Curl Biceps Barre',sets:hasBras?'4 × 10 reps':'3 × 10 reps'},
+      ]},
+      { name:'MERCREDI', focus:'LEGS — Jambes complètes', exercises:[
+        {id:'squat',name:'Squat Barre',sets:'5 × 5 reps'},
+        {id:'hack-squat',name:'Hack Squat Machine',sets:'3 × 10 reps'},
+        {id:'rdl',name:'Romanian Deadlift',sets:'3 × 10 reps'},
+        {id:'leg-curl',name:'Leg Curl Couché',sets:'3 × 12 reps'},
+        {id:'calf-raises',name:'Mollets Debout',sets:'4 × 20 reps'},
+      ]},
+      { name:'VENDREDI', focus:'PUSH — Volume', exercises:[
+        {id:hasPecs?'pec-deck':'cable-fly',name:hasPecs?'Pec Deck Butterfly':'Écarté Poulie',sets:'4 × 12-15 reps'},
+        {id:'incline-db',name:'Développé Incliné Haltères',sets:'3 × 10 reps'},
+        {id:'arnold-press',name:'Développé Arnold',sets:'3 × 12 reps'},
+        {id:'lateral-raise',name:'Élévations Latérales Dropset',sets:'3 × 15+10+5'},
+        {id:'tricep-dips',name:'Dips Triceps',sets:'3 × 12 reps'},
+      ]},
+      { name:'SAMEDI', focus:'PULL — Volume', exercises:[
+        {id:'pulldown',name:'Tirage Vertical Poulie',sets:'4 × 10-12 reps'},
+        {id:'seated-cable-row',name:'Tirage Horizontal Poulie',sets:'4 × 12 reps'},
+        {id:'facepull',name:'Face Pull',sets:'3 × 20 reps'},
+        {id:hasBras?'hammer-curl':'cable-curl',name:hasBras?'Curl Marteau':'Curl Poulie',sets:'3 × 12 reps'},
+        ...(muscles.includes('abdos')?[{id:'ab-wheel',name:'Ab Wheel',sets:'3 × 10 reps'}]:[]),
+      ]},
+    ]
+  };
+}
+
+function buildProgram6Days(level, goal, muscles, equip) {
+  return {
+    name: 'PPL DOUBLE — 6 JOURS',
+    days: [
+      ...buildProgram5Days(level, goal, muscles, equip).days,
+      { name:'DIMANCHE', focus:'LEGS — Volume', exercises:[
+        {id:'bulgarian-squat',name:'Fentes Bulgares',sets:'4 × 10 par jambe'},
+        {id:'leg-press',name:'Leg Press',sets:'4 × 12 reps'},
+        {id:'rdl',name:'Romanian Deadlift',sets:'4 × 12 reps'},
+        {id:'hyperextension',name:'Hyperextension',sets:'3 × 15 reps'},
+        {id:'ab-wheel',name:'Ab Wheel',sets:'3 × 10 reps'},
+      ]},
+    ]
+  };
+}
+</script>
 
 <script>
 // VIDEO DATA
@@ -1836,33 +3891,170 @@ const videos = {
     title: 'TIRAGE VERTICAL POULIE — Alternative aux Tractions',
     url: 'https://www.youtube-nocookie.com/embed/CAwf7n6Luuc?autoplay=1&mute=1&rel=0',
     desc: 'Prise légèrement plus large que les épaules. Tire vers le haut de la poitrine en ramenant les coudes vers les hanches. Dos légèrement penché en arrière (10-15°). Ne tire pas derrière la nuque (risque de blessure). Contraction dorsale maximale en bas du mouvement.'
+  },
+  'hack-squat': {
+    title: 'HACK SQUAT MACHINE — Quadriceps Massifs',
+    url: 'https://www.youtube-nocookie.com/embed/R3yMhCbgMKs?autoplay=1&mute=1&rel=0',
+    desc: 'Régle la machine selon ta morphologie. Pieds au milieu ou bas de la plateforme pour maximaliser le travail des quadriceps. Descends jusqu\'à 90° minimum. Pousse via les talons, pas les orteils. Dos plaqué contre le dossier tout le mouvement. Ne verrouille jamais les genoux en extension.'
+  },
+  'pec-deck': {
+    title: 'PEC DECK BUTTERFLY — Isolation Pectoraux',
+    url: 'https://www.youtube-nocookie.com/embed/Ns09hzN8FnQ?autoplay=1&mute=1&rel=0',
+    desc: 'Règle la hauteur pour que les poignées soient à hauteur des épaules. Dos collé au dossier, poitrine haute. Coudes légèrement fléchis et fixes. Ferme en contractant les pecs au centre — imagine que tu essaies de rapprocher tes coudes. Retour lent pour maximiser l\'étirement. Exercice de finition idéal.'
+  },
+  'seated-cable-row': {
+    title: 'TIRAGE HORIZONTAL POULIE — Épaisseur du Dos',
+    url: 'https://www.youtube-nocookie.com/embed/GZbfZ033f74?autoplay=1&mute=1&rel=0',
+    desc: 'Assis, dos droit, jambes légèrement fléchies. Tire la poignée vers le nombril en gardant les coudes proches du corps. Serre les omoplates en fin de mouvement et maintiens 1 seconde. Retour lent et contrôlé en laissant les omoplates s\'étirer. Évite de te pencher en avant/arrière : le mouvement vient du dos, pas du buste.'
+  },
+  'tricep-pushdown': {
+    title: 'EXTENSION TRICEPS POULIE — Masse des Triceps',
+    url: 'https://www.youtube-nocookie.com/embed/2-LAMcpzODU?autoplay=1&mute=1&rel=0',
+    desc: 'Poulie haute, barre droite ou en V. Coudes fixes et collés aux flancs, légèrement devant le corps. Extension complète jusqu\'à verrouillage des coudes. Contraction maximale en bas, maintien 1 sec. Remontée lente. Évite de pencher le buste pour tricher. Varie les prises (barre, corde, prise inversée) pour stimuler différentes têtes du triceps.'
+  },
+  'cable-curl': {
+    title: 'CURL POULIE BASSE — Biceps Tension Constante',
+    url: 'https://www.youtube-nocookie.com/embed/ksLQtfxkG0c?autoplay=1&mute=1&rel=0',
+    desc: 'Poulie basse, barre droite ou EZ. Prise supination (paumes vers le haut). Coudes fixes contre les flancs. Flexion complète jusqu\'aux épaules. Maintiens 1 seconde en haut en contractant fort. Descente lente en 3 secondes : c\'est la phase excentrique qui crée le plus de dommages musculaires et donc d\'hypertrophie. La tension ne relâche jamais contrairement aux haltères.'
+  },
+  'hammer-curl': {
+    title: 'CURL MARTEAU — Volume et Épaisseur des Bras',
+    url: 'https://www.youtube-nocookie.com/embed/zC3nLlEvin4?autoplay=1&mute=1&rel=0',
+    desc: 'Prise neutre (pouce vers le haut). Coudes fixes contre les flancs. Monte les haltères simultanément ou en alternance. Le brachial et le brachioradial sont les muscles principaux — ils donnent l\'épaisseur et la largeur au bras. Idéal à combiner avec le curl classique pour des biceps complets. Descente contrôlée obligatoire.'
+  },
+  'arnold-press': {
+    title: 'DÉVELOPPÉ ARNOLD — Épaules Complètes',
+    url: 'https://www.youtube-nocookie.com/embed/6Z15_WdXmVw?autoplay=1&mute=1&rel=0',
+    desc: 'Assis, dos droit. Départ avec les haltères à hauteur des épaules, paumes vers toi. En montant, effectue une rotation des poignets pour finir paumes vers l\'avant au sommet. Descente en effectuant la rotation inverse. Ce mouvement engage les 3 faisceaux du deltoïde sur toute l\'amplitude. Commence léger pour maîtriser la rotation.'
+  },
+  'bulgarian-squat': {
+    title: 'FENTES BULGARES — Force Unilatérale',
+    url: 'https://www.youtube-nocookie.com/embed/2C-uNgKwPLE?autoplay=1&mute=1&rel=0',
+    desc: 'Pied arrière posé sur un banc ou une boîte à hauteur de genou. Jambe avant à environ 60-70 cm du banc. Descends verticalement en gardant le torse droit. Genou avant dans l\'axe des orteils. Remonte en poussant via le talon avant. Haltères dans chaque main ou barre sur les épaules. Excellent pour corriger les déséquilibres musculaires.'
+  },
+  'tbar-row': {
+    title: 'T-BAR ROW — Masse Dorsale Maximale',
+    url: 'https://www.youtube-nocookie.com/embed/FD13bEGlQNc?autoplay=1&mute=1&rel=0',
+    desc: 'Corps à 45°, dos neutre. Prise neutre sur la poignée en V pour préserver les épaules. Tire la barre vers la poitrine basse en gardant les coudes proches du corps. Contracte les omoplates en haut. Descente lente et complète. Permet de charger plus lourd que le rowing barre classique et de développer une masse dorsale impressionnante.'
+  },
+  'incline-barbell': {
+    title: 'DÉVELOPPÉ INCLINÉ BARRE — Haut des Pectoraux',
+    url: 'https://www.youtube-nocookie.com/embed/SrxSh9lLkn0?autoplay=1&mute=1&rel=0',
+    desc: 'Banc à 30-45° (trop incliné = épaules au lieu des pecs). Prise légèrement plus large que les épaules. Omoplates serrées et dos légèrement cambré. Barre descend sur le haut des pectoraux. Coudes à 75° (pas perpendiculaires). Extension explosive en contractant les pecs. Phase excentrique lente de 2-3 secondes pour maximiser l\'hypertrophie.'
+  },
+  'hyperextension': {
+    title: 'HYPEREXTENSION — Lombaires et Chaîne Postérieure',
+    url: 'https://www.youtube-nocookie.com/embed/ph3pzWkPe6E?autoplay=1&mute=1&rel=0',
+    desc: 'Hanche positionnée sur le coussin pour permettre une flexion complète. Descends jusqu\'à 90° en gardant le dos neutre. Remonte en contractant les fessiers puis les lombaires. Dos neutre en haut — évite l\'hyperextension lombaire. Mains sur la poitrine ou derrière la tête. Ajoute des poids une fois maîtrisé. Exercice indispensable pour prévenir les blessures au dos.'
+  },
+  'ab-wheel': {
+    title: 'AB WHEEL — Core Acier',
+    url: 'https://www.youtube-nocookie.com/embed/p7_5UcRvHH8?autoplay=1&mute=1&rel=0',
+    desc: 'Commence genoux au sol. Corps gainé comme une planche, hanches ni hautes ni basses. Roule lentement vers l\'avant jusqu\'à extension maximale sans cambrer le bas du dos. Le retour se fait en contractant les abdominaux, pas en tirant avec les bras ou les épaules. Progression : genoux → mi-chemin → extension complète debout. Un des exercices de core les plus difficiles qui soit.'
+  },
+  'dragon-flag': {
+    title: 'DRAGON FLAG — Force Abdominale Extrême',
+    url: 'https://www.youtube-nocookie.com/embed/pvz7k5gO-DE?autoplay=1&mute=1&rel=0',
+    desc: 'Allongé sur un banc, agrippe le derrière de la tête. Corps parfaitement droit, descends lentement en ne touchant que les épaules. Remonte en contractant l\'ensemble du core. Exercice inventé par Bruce Lee. Commence avec les genoux fléchis (variante plus facile) puis progresse vers le dragon flag complet jambes tendues. Très exigeant — ne force pas si tu n\'as pas encore la force de base.'
+  },
+  'hanging-knee': {
+    title: 'RELEVÉ DE GENOUX SUSPENDU — Bas des Abdos',
+    url: 'https://www.youtube-nocookie.com/embed/Pr1ieGZ5atk?autoplay=1&mute=1&rel=0',
+    desc: 'Suspendu à une barre, les bras légèrement fléchis. Ramène les genoux vers la poitrine en contractant les abdos inférieurs. Évite de balancer — le mouvement vient des abdos pas de l\'élan. Progression : genoux fléchis → jambes semi-tendues → jambes droites (hanging leg raise). Maintiens 1 sec en haut pour maximiser la contraction.'
+  },
+  'plank': {
+    title: 'PLANCHE FRONTALE — Gainage Core Profond',
+    url: 'https://www.youtube-nocookie.com/embed/pSHjTRCQxIw?autoplay=1&mute=1&rel=0',
+    desc: 'Avant-bras au sol, coudes sous les épaules. Corps parfaitement aligné de la tête aux talons. Serre les fesses, contracte les abdos, pousse le sol. Ne laisse jamais les hanches s\'affaisser ni monter. Respire normalement. Objectif progression : 30 sec → 60 sec → 90 sec → 2 min. Une fois à 2 min confortables, passe aux variantes plus difficiles (planche avec levé de jambe, planche sur une main).'
+  },
+  'side-plank': {
+    title: 'PLANCHE LATÉRALE — Obliques et Stabilité',
+    url: 'https://www.youtube-nocookie.com/embed/K2eulwSzkP4?autoplay=1&mute=1&rel=0',
+    desc: 'Sur le côté, appui sur un avant-bras. Corps aligné de la tête aux pieds. Hanche haute — ne la laisse pas s\'affaisser. Serre les obliques et le core. Regarde droit devant. Variante difficile : lever le bras ou la jambe du dessus. Travaille chaque côté de façon équilibrée pour prévenir les déséquilibres posturaux.'
+  },
+  'crunch-cable': {
+    title: 'CRUNCH POULIE HAUTE — Abdos avec Résistance',
+    url: 'https://www.youtube-nocookie.com/embed/2fbujeH3F0E?autoplay=1&mute=1&rel=0',
+    desc: 'A genoux face à la poulie haute, corde derrière la nuque. Fléchis le buste vers le bas en contractant les abdos — pas les hanches. Le mouvement est court et concentré. Pause et contraction maximale en bas. Remontée contrôlée. C\'est LE meilleur exercice pour hypertrophier les abdos car il utilise une résistance progressive comme n\'importe quel autre muscle. Augmente le poids régulièrement.'
+  },
+  'russian-twist': {
+    title: 'RUSSIAN TWIST LESTÉ — Obliques Épais',
+    url: 'https://www.youtube-nocookie.com/embed/wkD8rjkodUI?autoplay=1&mute=1&rel=0',
+    desc: 'Assis, jambes légèrement fléchies soulevées du sol. Buste à 45°. Tiens un disque, haltère ou médecine-ball. Tourne le buste de droite à gauche en touchant le sol de chaque côté. Le mouvement vient de la rotation du torse, pas des bras. Plus le buste est incliné, plus c\'est difficile. Pour progresser : augmente le poids ou ralentis la vitesse d\'exécution.'
+  },
+  'leg-raise': {
+    title: 'RELEVÉ DE JAMBES — Bas du Ventre',
+    url: 'https://www.youtube-nocookie.com/embed/l4kQd9eWclE?autoplay=1&mute=1&rel=0',
+    desc: 'Allongé sur le dos, mains sous les fesses ou à plat. Jambes tendues, monte-les jusqu\'à 90°. Descends lentement sans poser les talons au sol. Le bas du dos doit rester plaqué — si tu cambres, c\'est que tu vas trop bas ou que les abdos ne sont pas assez forts. Variante débutant : jambes fléchies. Variante avancée : descente à 15° du sol.'
+  },
+  'bicycle-crunch': {
+    title: 'BICYCLE CRUNCH — Abdos Complets',
+    url: 'https://www.youtube-nocookie.com/embed/9FGilxCbdz8?autoplay=1&mute=1&rel=0',
+    desc: 'Allongé, mains derrière la nuque sans tirer sur la tête. Ramène le coude droit vers le genou gauche en tendant la jambe droite, et vice versa. Le mouvement est lent et contrôlé — pas de mouvement de balancier rapide. La rotation du buste doit être maximale. Étude ACE : l\'un des 3 meilleurs exercices abdominaux. Idéal pour les obliques et le droit de l\'abdomen.'
   }
 };
 
 function openModal(exerciseId) {
   const video = videos[exerciseId];
   if (!video) return;
+  
+  // Extract video ID from YouTube embed URL
+  const match = video.url.match(/embed\/([^?]+)/);
+  const ytId = match ? match[1] : '';
+  const ytWatchUrl = ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#';
+  const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : '';
+  
   document.getElementById('modalTitle').textContent = video.title;
   document.getElementById('modalDesc').textContent = video.desc;
-  document.getElementById('modalIframe').src = video.url;
+  document.getElementById('modalIframe').src = '';
+  document.getElementById('modalIframe').style.display = 'none';
+  document.getElementById('modalThumb').style.display = 'flex';
+  document.getElementById('modalThumbImg').src = thumbUrl;
+  document.getElementById('modalYtLink').href = ytWatchUrl;
+  
+  // Store URL for playVideo
+  document.getElementById('modalIframe').dataset.src = video.url;
+  
   document.getElementById('videoModal').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
 
+function playVideo() {
+  const iframe = document.getElementById('modalIframe');
+  const thumb = document.getElementById('modalThumb');
+  iframe.src = iframe.dataset.src;
+  iframe.style.display = 'block';
+  thumb.style.display = 'none';
+}
+
 function closeModal(e) {
   if (e && e.target !== document.getElementById('videoModal')) return;
-  document.getElementById('modalIframe').src = '';
+  const iframe = document.getElementById('modalIframe');
+  iframe.src = '';
+  iframe.style.display = 'none';
+  document.getElementById('modalThumb').style.display = 'flex';
   document.getElementById('videoModal').classList.remove('active');
   document.body.style.overflow = '';
 }
 
 // Programme tabs
+function switchWarmup(tab) {
+  ['general','pecs','dos','epaules','jambes'].forEach(t => {
+    const el = document.getElementById('warmup-' + t);
+    const btn = document.getElementById('wbtn-' + t);
+    if (el) el.style.display = t === tab ? 'grid' : 'none';
+    if (btn) btn.classList.toggle('active', t === tab);
+  });
+}
+
 function switchProgram(prog) {
   document.querySelectorAll('.programme-content').forEach(c => c.classList.remove('active'));
   document.getElementById('prog-' + prog).classList.add('active');
   document.querySelectorAll('#programme .tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', b.onclick.toString().includes(prog));
+    b.classList.toggle('active', b.onclick.toString().includes("'" + prog + "'"));
   });
+  // Scroll to programs section
+  document.getElementById('programme').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Meal tabs
@@ -1956,6 +4148,10 @@ document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
 
 // Enter key for calculator
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModal();
+    return;
+  }
   if (e.key === 'Enter') {
     const calcSection = document.getElementById('calories');
     if (calcSection.contains(document.activeElement)) {
