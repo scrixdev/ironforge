@@ -455,129 +455,125 @@
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.88);
+    background: rgba(0,0,0,0.85);
     z-index: 2000;
-    align-items: center; justify-content: center;
-    padding: 24px;
-    backdrop-filter: blur(8px);
+    align-items: flex-end;
+    justify-content: center;
+    backdrop-filter: blur(6px);
   }
   .modal-overlay.active { display: flex; animation: modalFadeIn 0.3s cubic-bezier(0.16,1,0.3,1) both; }
-  @keyframes modalFadeIn { from { opacity:0; transform:scale(0.94) translateY(16px); } to { opacity:1; transform:scale(1) translateY(0); } }
+  @keyframes modalFadeIn { from { opacity:0; } to { opacity:1; } }
 
   .modal-content {
-    width: 100%; max-width: 860px;
-    background: #0f0f14;
-    border-radius: 16px;
+    width: 100%; max-width: 640px;
+    background: #111116;
+    border-radius: 20px 20px 0 0;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 60px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+    box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
     max-height: 92vh;
     display: flex; flex-direction: column;
+    animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
   }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-  /* Close button */
-  .modal-close {
-    position: absolute; top: 12px; right: 12px;
-    width: 32px; height: 32px;
-    background: rgba(255,255,255,0.08);
-    border: none;
-    border-radius: 50%;
-    color: rgba(255,255,255,0.6);
-    font-size: 0.9rem;
-    cursor: pointer;
-    z-index: 10;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s;
-  }
-  .modal-close:hover { background: var(--red); color: white; transform: rotate(90deg); }
-
-  /* Video zone */
+  /* Vidéo */
   .modal-video {
     width: 100%; aspect-ratio: 16/9;
     position: relative; background: #000; flex-shrink: 0;
   }
   .modal-video iframe { width: 100%; height: 100%; border: none; display: block; }
 
-  /* Thumbnail */
+  /* Miniature */
   .modal-video-thumb {
     position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer; overflow: hidden;
+    cursor: pointer; overflow: hidden; background: #1a1a22;
   }
   .modal-video-thumb img {
     width: 100%; height: 100%; object-fit: cover;
-    transition: transform 0.4s ease, opacity 0.3s;
-    opacity: 0.85;
+    transition: transform 0.4s ease;
   }
-  .modal-video-thumb::after {
-    content: '';
+  .modal-video-thumb:hover img { transform: scale(1.04); }
+  .modal-thumb-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.45) 100%);
   }
-  .modal-video-thumb:hover img { transform: scale(1.03); opacity: 1; }
+  /* Fallback si miniature ne charge pas */
+  .modal-thumb-fallback {
+    display: none;
+    position: absolute; inset: 0;
+    align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #1a1a22, #0f0f14);
+  }
+  .modal-thumb-icon {
+    font-size: 3rem; opacity: 0.2; color: white;
+  }
 
-  /* Play button */
+  /* Bouton play */
   .modal-play-btn {
-    position: absolute; z-index: 2;
-    width: 68px; height: 68px;
+    position: absolute; z-index: 3;
+    width: 64px; height: 64px;
     background: linear-gradient(135deg, var(--red), var(--orange));
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    transition: transform 0.25s, box-shadow 0.25s;
-    box-shadow: 0 8px 32px rgba(230,57,70,0.6);
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 8px 30px rgba(230,57,70,0.55);
   }
-  .modal-video-thumb:hover .modal-play-btn { transform: scale(1.12); box-shadow: 0 12px 40px rgba(230,57,70,0.8); }
-  .modal-play-btn::after {
-    content: '';
-    width: 0; height: 0;
-    border-style: solid;
-    border-width: 13px 0 13px 22px;
-    border-color: transparent transparent transparent white;
-    margin-left: 5px;
-  }
+  .modal-video-thumb:hover .modal-play-btn { transform: scale(1.1); }
 
-  /* Info zone */
-  .modal-info {
-    padding: 22px 28px 26px;
-    overflow-y: auto; flex-shrink: 1;
-    background: linear-gradient(180deg, #0f0f14 0%, #13131a 100%);
-    border-top: 1px solid rgba(255,255,255,0.05);
+  /* Bouton fermer */
+  .modal-close {
+    position: absolute; top: 12px; right: 12px; z-index: 10;
+    width: 30px; height: 30px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(8px);
+    border: none; border-radius: 50%;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
   }
-  .modal-header {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    margin-bottom: 14px;
+  .modal-close:hover { background: var(--red); color: white; }
+
+  /* Zone info */
+  .modal-info {
+    padding: 20px 20px 28px;
+    overflow-y: auto; flex-shrink: 1;
   }
   .modal-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.5rem; letter-spacing: 3px; line-height: 1;
-    color: var(--light);
+    font-size: 1.35rem; letter-spacing: 2px;
+    color: var(--light); line-height: 1.15;
+    margin-bottom: 14px;
   }
+  .modal-actions { margin-bottom: 16px; }
   .modal-yt-btn {
-    flex-shrink: 0;
-    display: flex; align-items: center; gap: 7px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: #ff0000;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 6px;
+    color: white; font-weight: 700;
+    padding: 9px 18px; border-radius: 8px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
-    text-decoration: none; font-weight: 700;
-    transition: all 0.2s; white-space: nowrap;
-    box-shadow: 0 4px 16px rgba(255,0,0,0.35);
+    font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(255,0,0,0.3);
   }
-  .modal-yt-btn:hover { background: #cc0000; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,0,0,0.5); }
-  .modal-yt-btn svg { width: 15px; height: 15px; fill: currentColor; }
+  .modal-yt-btn:hover { background: #cc0000; transform: translateY(-1px); }
+  .modal-divider {
+    height: 1px; background: rgba(255,255,255,0.06);
+    margin-bottom: 16px;
+  }
   .modal-desc {
-    color: rgba(136,136,153,0.9);
-    line-height: 1.8; font-size: 0.87rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    padding-top: 14px;
+    color: rgba(136,136,153,0.95);
+    line-height: 1.8; font-size: 0.88rem;
   }
-  @media (max-width: 600px) {
-    .modal-content { border-radius: 12px; }
-    .modal-info { padding: 16px 18px 20px; }
-    .modal-title { font-size: 1.2rem; }
-    .modal-play-btn { width: 54px; height: 54px; }
+
+  /* Desktop — centré */
+  @media (min-width: 640px) {
+    .modal-overlay { align-items: center; padding: 24px; }
+    .modal-content { border-radius: 16px; max-height: 88vh; }
+    @keyframes slideUp { from { opacity:0; transform:scale(0.95) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
   }
 
   /* CALORIE CALCULATOR */
@@ -905,19 +901,29 @@
     .section-title { font-size: clamp(2rem, 10vw, 3rem); }
     .section-num { font-size: 3rem; }
 
-    /* PROGRAMME TABS — scroll horizontal */
+    /* PROGRAMME TABS — wrap sur mobile */
     .tabs-wrapper { margin-bottom: 24px; }
     .programme-tabs {
-      overflow-x: auto;
-      border-radius: 6px;
+      overflow: visible;
       width: 100%;
+      border-radius: 0;
+      border: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      background: none;
     }
     .tab-btn {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       letter-spacing: 1.5px;
-      padding: 12px 14px;
-      flex: 1;
-      min-width: fit-content;
+      padding: 11px 14px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      border-radius: 6px !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      border-right: 1px solid rgba(255,255,255,0.1) !important;
+    }
+    .tab-btn.active {
+      border-color: transparent !important;
     }
     .programme-content.active { grid-template-columns: 1fr; }
 
@@ -942,11 +948,22 @@
 
     /* ÉCHAUFFEMENT TABS */
     .wbtn {
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       letter-spacing: 1.5px;
-      padding: 12px 10px;
-      flex: 1;
-      min-width: fit-content;
+      padding: 11px 14px;
+      flex: 0 0 auto;
+      white-space: nowrap;
+      border-radius: 6px !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+    }
+    /* Container échauffement wrap */
+    #echauffement .fade-in-up[style*="gap:0"] {
+      flex-wrap: wrap !important;
+      gap: 6px !important;
+      border: none !important;
+      border-radius: 0 !important;
+      overflow: visible !important;
+      width: 100% !important;
     }
 
     /* EXERCICES CARDS */
@@ -961,13 +978,41 @@
     .macro-bar { flex-direction: column; gap: 8px; }
 
     /* PLAN NUTRITION */
-    .meal-plan-tabs { width: 100% !important; }
-    .meal-plan-tabs .tab-btn { font-size: 0.72rem; letter-spacing: 1.5px; padding: 12px 10px; }
+    .meal-plan-tabs {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      border: none !important;
+      border-radius: 0 !important;
+      gap: 6px !important;
+      overflow: visible !important;
+    }
+    .meal-plan-tabs .tab-btn {
+      font-size: 0.75rem; letter-spacing: 1.5px; padding: 11px 14px;
+      flex: 0 0 auto !important;
+      border-radius: 6px !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      border-right: 1px solid rgba(255,255,255,0.1) !important;
+    }
+    .meal-plan-tabs .tab-btn.active { border-color: transparent !important; }
     .meal-day-content.active { grid-template-columns: 1fr; }
 
     /* RECETTES TABS */
-    .recipe-tabs { width: 100% !important; }
-    .recipe-tab { font-size: 0.72rem; letter-spacing: 1.5px; padding: 12px 10px; }
+    .recipe-tabs {
+      width: 100% !important;
+      flex-wrap: wrap !important;
+      border: none !important;
+      border-radius: 0 !important;
+      gap: 6px !important;
+      overflow: visible !important;
+    }
+    .recipe-tab {
+      font-size: 0.75rem; letter-spacing: 1.5px; padding: 11px 14px;
+      flex: 0 0 auto !important;
+      border-radius: 6px !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      border-right: 1px solid rgba(255,255,255,0.1) !important;
+    }
+    .recipe-tab.active { border-color: transparent !important; }
     .recipe-grid.active { grid-template-columns: 1fr; }
     .recipe-card { border-radius: 8px; }
 
@@ -3710,24 +3755,38 @@
 <!-- VIDEO MODAL -->
 <div class="modal-overlay" id="videoModal" onclick="closeModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <!-- Zone vidéo -->
     <div class="modal-video">
       <div class="modal-video-thumb" id="modalThumb" onclick="playVideo()">
-        <img id="modalThumbImg" src="" alt="">
-        <div class="modal-play-btn"></div>
+        <img id="modalThumbImg" src="" alt="" onerror="this.style.display='none'; document.getElementById('modalThumbFallback').style.display='flex'">
+        <div class="modal-thumb-fallback" id="modalThumbFallback">
+          <div class="modal-thumb-icon">▶</div>
+        </div>
+        <div class="modal-thumb-overlay"></div>
+        <div class="modal-play-btn">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>
+        </div>
       </div>
       <iframe id="modalIframe" src="" allowfullscreen allow="autoplay; encrypted-media; picture-in-picture; fullscreen" style="display:none;"></iframe>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M14 1.41L12.59 0 7 5.59 1.41 0 0 1.41 5.59 7 0 12.59 1.41 14 7 8.41 12.59 14 14 12.59 8.41 7z"/></svg>
+      </button>
     </div>
+
+    <!-- Infos -->
     <div class="modal-info">
-      <div class="modal-header">
-        <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-actions">
         <a class="modal-yt-btn" id="modalYtLink" href="#" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
-          YouTube
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 00.5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 002.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 002.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+          Voir sur YouTube
         </a>
       </div>
+      <div class="modal-divider"></div>
       <div class="modal-desc" id="modalDesc"></div>
     </div>
+
   </div>
 </div>
 
@@ -4183,24 +4242,38 @@ const videos = {
 function openModal(exerciseId) {
   const video = videos[exerciseId];
   if (!video) return;
-  
-  // Extract video ID from YouTube embed URL
+
   const match = video.url.match(/embed\/([^?]+)/);
   const ytId = match ? match[1] : '';
   const ytWatchUrl = ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#';
-  const thumbUrl = ytId ? `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg` : '';
-  
+
   document.getElementById('modalTitle').textContent = video.title;
   document.getElementById('modalDesc').textContent = video.desc;
   document.getElementById('modalIframe').src = '';
   document.getElementById('modalIframe').style.display = 'none';
   document.getElementById('modalThumb').style.display = 'flex';
-  document.getElementById('modalThumbImg').src = thumbUrl;
   document.getElementById('modalYtLink').href = ytWatchUrl;
-  
-  // Store URL for playVideo
   document.getElementById('modalIframe').dataset.src = video.url;
-  
+
+  // Essaie maxresdefault, fallback sur hqdefault
+  const img = document.getElementById('modalThumbImg');
+  const fallback = document.getElementById('modalThumbFallback');
+  img.style.display = 'block';
+  fallback.style.display = 'none';
+  if (ytId) {
+    img.src = `https://img.youtube.com/vi/${ytId}/maxresdefault.jpg`;
+    img.onerror = function() {
+      img.src = `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+      img.onerror = function() {
+        img.style.display = 'none';
+        fallback.style.display = 'flex';
+      };
+    };
+  } else {
+    img.style.display = 'none';
+    fallback.style.display = 'flex';
+  }
+
   document.getElementById('videoModal').classList.add('active');
   document.body.style.overflow = 'hidden';
 }
