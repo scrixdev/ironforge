@@ -455,119 +455,129 @@
   .modal-overlay {
     display: none;
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.92);
+    background: rgba(0,0,0,0.88);
     z-index: 2000;
     align-items: center; justify-content: center;
-    padding: 20px;
-    backdrop-filter: blur(4px);
+    padding: 24px;
+    backdrop-filter: blur(8px);
   }
-  .modal-overlay.active { display: flex; animation: modalFadeIn 0.25s ease both; }
-  @keyframes modalFadeIn { from { opacity:0; transform:scale(0.97); } to { opacity:1; transform:scale(1); } }
+  .modal-overlay.active { display: flex; animation: modalFadeIn 0.3s cubic-bezier(0.16,1,0.3,1) both; }
+  @keyframes modalFadeIn { from { opacity:0; transform:scale(0.94) translateY(16px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
   .modal-content {
-    width: 100%; max-width: 920px;
-    background: var(--dark2);
-    border: 1px solid rgba(230,57,70,0.25);
-    border-radius: 12px;
+    width: 100%; max-width: 860px;
+    background: #0f0f14;
+    border-radius: 16px;
     overflow: hidden;
     position: relative;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
-    max-height: 90vh;
+    box-shadow: 0 60px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.06);
+    max-height: 92vh;
     display: flex; flex-direction: column;
   }
+
+  /* Close button */
   .modal-close {
-    position: absolute; top: 14px; right: 14px;
-    width: 34px; height: 34px;
-    background: rgba(10,10,12,0.7);
-    border: 1px solid rgba(255,255,255,0.15);
+    position: absolute; top: 12px; right: 12px;
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.08);
+    border: none;
     border-radius: 50%;
-    color: white;
-    font-size: 1rem;
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9rem;
     cursor: pointer;
     z-index: 10;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, border-color 0.2s;
-    backdrop-filter: blur(8px);
+    transition: all 0.2s;
   }
-  .modal-close:hover { background: var(--red); border-color: var(--red); }
+  .modal-close:hover { background: var(--red); color: white; transform: rotate(90deg); }
+
+  /* Video zone */
   .modal-video {
-    width: 100%;
-    aspect-ratio: 16/9;
-    position: relative;
-    background: #000;
-    flex-shrink: 0;
+    width: 100%; aspect-ratio: 16/9;
+    position: relative; background: #000; flex-shrink: 0;
   }
   .modal-video iframe { width: 100%; height: 100%; border: none; display: block; }
+
+  /* Thumbnail */
   .modal-video-thumb {
     position: absolute; inset: 0;
-    background: #000;
     display: flex; align-items: center; justify-content: center;
-    cursor: pointer;
-    overflow: hidden;
+    cursor: pointer; overflow: hidden;
   }
   .modal-video-thumb img {
     width: 100%; height: 100%; object-fit: cover;
-    opacity: 0.7;
-    transition: opacity 0.3s;
+    transition: transform 0.4s ease, opacity 0.3s;
+    opacity: 0.85;
   }
-  .modal-video-thumb:hover img { opacity: 0.9; }
+  .modal-video-thumb::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.6) 100%);
+  }
+  .modal-video-thumb:hover img { transform: scale(1.03); opacity: 1; }
+
+  /* Play button */
   .modal-play-btn {
-    position: absolute;
-    width: 72px; height: 72px;
-    background: rgba(230,57,70,0.9);
+    position: absolute; z-index: 2;
+    width: 68px; height: 68px;
+    background: linear-gradient(135deg, var(--red), var(--orange));
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    transition: transform 0.2s, background 0.2s;
-    box-shadow: 0 4px 24px rgba(230,57,70,0.5);
+    transition: transform 0.25s, box-shadow 0.25s;
+    box-shadow: 0 8px 32px rgba(230,57,70,0.6);
   }
-  .modal-video-thumb:hover .modal-play-btn { transform: scale(1.1); background: var(--red); }
+  .modal-video-thumb:hover .modal-play-btn { transform: scale(1.12); box-shadow: 0 12px 40px rgba(230,57,70,0.8); }
   .modal-play-btn::after {
     content: '';
     width: 0; height: 0;
     border-style: solid;
-    border-width: 14px 0 14px 24px;
+    border-width: 13px 0 13px 22px;
     border-color: transparent transparent transparent white;
-    margin-left: 4px;
+    margin-left: 5px;
   }
+
+  /* Info zone */
   .modal-info {
-    padding: 20px 24px 24px;
-    overflow-y: auto;
-    flex-shrink: 1;
+    padding: 22px 28px 26px;
+    overflow-y: auto; flex-shrink: 1;
+    background: linear-gradient(180deg, #0f0f14 0%, #13131a 100%);
+    border-top: 1px solid rgba(255,255,255,0.05);
   }
   .modal-header {
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
-    margin-bottom: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 14px;
   }
   .modal-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.6rem; letter-spacing: 2px;
-    line-height: 1.1;
-    background: linear-gradient(135deg, var(--light), var(--gray));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-size: 1.5rem; letter-spacing: 3px; line-height: 1;
+    color: var(--light);
   }
   .modal-yt-btn {
     flex-shrink: 0;
-    display: flex; align-items: center; gap: 8px;
-    background: rgba(255,0,0,0.15);
-    border: 1px solid rgba(255,0,0,0.3);
-    color: #ff4444;
+    display: flex; align-items: center; gap: 7px;
+    background: #ff0000;
+    color: white;
     padding: 8px 16px;
     border-radius: 6px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
-    text-decoration: none;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    text-decoration: none; font-weight: 700;
     transition: all 0.2s; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(255,0,0,0.35);
   }
-  .modal-yt-btn:hover { background: rgba(255,0,0,0.25); border-color: rgba(255,0,0,0.5); }
-  .modal-yt-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .modal-yt-btn:hover { background: #cc0000; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(255,0,0,0.5); }
+  .modal-yt-btn svg { width: 15px; height: 15px; fill: currentColor; }
   .modal-desc {
-    color: var(--gray); line-height: 1.75; font-size: 0.88rem;
-    border-top: 1px solid rgba(255,255,255,0.06);
-    padding-top: 12px;
+    color: rgba(136,136,153,0.9);
+    line-height: 1.8; font-size: 0.87rem;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 14px;
   }
   @media (max-width: 600px) {
-    .modal-info { padding: 16px; }
-    .modal-title { font-size: 1.3rem; }
-    .modal-play-btn { width: 56px; height: 56px; }
+    .modal-content { border-radius: 12px; }
+    .modal-info { padding: 16px 18px 20px; }
+    .modal-title { font-size: 1.2rem; }
+    .modal-play-btn { width: 54px; height: 54px; }
   }
 
   /* CALORIE CALCULATOR */
