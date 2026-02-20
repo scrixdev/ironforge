@@ -839,11 +839,173 @@
   .fade-in-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .fade-in-up.visible { opacity: 1; transform: translateY(0); }
 
-  @media (max-width: 900px) {
-    nav { padding: 16px 24px; }
+  /* HAMBURGER + MENU MOBILE */
+  .nav-burger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer; padding: 4px;
+  }
+  .nav-burger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--light);
+    transition: all 0.3s;
+    border-radius: 2px;
+  }
+  .nav-burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-burger.open span:nth-child(2) { opacity: 0; }
+  .nav-burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  .mobile-menu {
+    display: none;
+    position: fixed; top: 56px; left: 0; right: 0;
+    background: rgba(10,10,12,0.98);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    border-bottom: 1px solid rgba(230,57,70,0.2);
+    flex-direction: column;
+    padding: 8px 0 16px;
+    animation: slideDown 0.25s ease both;
+  }
+  .mobile-menu.open { display: flex; }
+  @keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+  .mobile-menu a {
+    color: var(--gray);
+    text-decoration: none;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase;
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: all 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--red); padding-left: 32px; }
+
+  @media (max-width: 768px) {
+    .nav-burger { display: flex; }
+  }
+  @media (max-width: 768px) {
+
+    /* NAV */
+    nav { padding: 14px 18px; }
     .nav-links { display: none; }
-    section { padding: 60px 24px; }
-    .calc-container { grid-template-columns: 1fr; }
+    .logo { font-size: 1.6rem; }
+
+    /* SECTIONS */
+    section { padding: 60px 18px !important; }
+
+    /* HERO */
+    .hero-content { padding: 100px 18px 60px; }
+    .hero-title { font-size: clamp(3.5rem, 18vw, 6rem); }
+    .hero-sub { font-size: 1rem; margin: 16px 0 32px; }
+    .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
+    .hero-ctas a, .hero-ctas button { width: 100%; max-width: 320px; text-align: center; }
+    .hero-stats { gap: 28px; margin-top: 48px; }
+    .stat-number { font-size: 2.2rem; }
+
+    /* SECTION HEADERS */
+    .section-title { font-size: clamp(2rem, 10vw, 3rem); }
+    .section-num { font-size: 3rem; }
+
+    /* PROGRAMME TABS — scroll horizontal */
+    .tabs-wrapper { margin-bottom: 24px; }
+    .programme-tabs {
+      overflow-x: auto;
+      border-radius: 6px;
+      width: 100%;
+    }
+    .tab-btn {
+      font-size: 0.72rem;
+      letter-spacing: 1.5px;
+      padding: 12px 14px;
+      flex: 1;
+      min-width: fit-content;
+    }
+    .programme-content.active { grid-template-columns: 1fr; }
+
+    /* DAY CARDS */
+    .day-grid { grid-template-columns: 1fr !important; }
+    .day-card { border-radius: 8px; }
+    .day-header { padding: 16px 18px; }
+    .day-name { font-size: 1.4rem; }
+    .day-body { padding: 12px; }
+    .exercise-item { padding: 10px 12px; gap: 10px; }
+    .ex-num { font-size: 0.9rem; min-width: 24px; }
+    .ex-name { font-size: 0.88rem; }
+    .ex-sets { font-size: 0.75rem; }
+
+    /* GÉNÉRATEUR */
+    .gen-container { grid-template-columns: 1fr !important; }
+    .gen-form { padding: 20px; border-radius: 8px; }
+    .gen-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .gen-result { padding: 20px; min-height: 200px; }
+    .gen-days-grid { grid-template-columns: 1fr !important; }
+    .gen-result-header { flex-direction: column; gap: 12px; text-align: left !important; }
+
+    /* ÉCHAUFFEMENT TABS */
+    .wbtn {
+      font-size: 0.7rem;
+      letter-spacing: 1.5px;
+      padding: 12px 10px;
+      flex: 1;
+      min-width: fit-content;
+    }
+
+    /* EXERCICES CARDS */
+    .ex-grid { grid-template-columns: 1fr !important; }
+    .ex-card { border-radius: 8px; }
+    .ex-card-video { aspect-ratio: 16/9; }
+
+    /* CALCULATEUR */
+    .calc-container { grid-template-columns: 1fr !important; gap: 24px; }
+    .calc-form { padding: 20px; }
+    .calc-results { padding: 20px; }
+    .macro-bar { flex-direction: column; gap: 8px; }
+
+    /* PLAN NUTRITION */
+    .meal-plan-tabs { width: 100% !important; }
+    .meal-plan-tabs .tab-btn { font-size: 0.72rem; letter-spacing: 1.5px; padding: 12px 10px; }
+    .meal-day-content.active { grid-template-columns: 1fr; }
+
+    /* RECETTES TABS */
+    .recipe-tabs { width: 100% !important; }
+    .recipe-tab { font-size: 0.72rem; letter-spacing: 1.5px; padding: 12px 10px; }
+    .recipe-grid.active { grid-template-columns: 1fr; }
+    .recipe-card { border-radius: 8px; }
+
+    /* FOOD SHOWCASE */
+    .food-showcase { grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; }
+    .food-cat-card { padding: 16px; }
+    .food-cat-emoji { font-size: 2rem; margin-bottom: 8px; }
+
+    /* SUPPLEMENTS */
+    .supp-grid { grid-template-columns: 1fr; }
+
+    /* VIDEO MODAL */
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal-content {
+      border-radius: 16px 16px 0 0;
+      max-height: 95vh;
+      max-width: 100%;
+    }
+    .modal-play-btn { width: 54px; height: 54px; }
+    .modal-info { padding: 16px 18px 32px; }
+    .modal-title { font-size: 1.1rem; letter-spacing: 2px; }
+    .modal-yt-btn { padding: 7px 12px; font-size: 0.7rem; }
+
+    /* FOOTER */
+    footer { padding: 48px 18px; }
+    .footer-logo { font-size: 2rem; }
+
+    /* INLINE SECTIONS — échauffement, exercices, etc */
+    [style*="padding: 100px 48px"] { padding: 60px 18px !important; }
+    [style*="padding:100px 48px"] { padding: 60px 18px !important; }
+  }
+
+  /* Petit mobile */
+  @media (max-width: 400px) {
+    .hero-title { font-size: clamp(3rem, 20vw, 5rem); }
+    .tab-btn, .wbtn, .recipe-tab { font-size: 0.65rem; padding: 11px 8px; }
+    .food-showcase { grid-template-columns: 1fr; }
+    .gen-row { grid-template-columns: 1fr; }
   }
 
   /* INTENSITY BADGES */
@@ -1231,7 +1393,21 @@
     <li><a href="#conseils">Conseils</a></li>
     <li><a href="#supplements">Suppléments</a></li>
   </ul>
+  <button class="nav-burger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<!-- MENU MOBILE -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#programme" onclick="toggleMenu()">Programme</a>
+  <a href="#echauffement" onclick="toggleMenu()">Échauffement</a>
+  <a href="#exercices" onclick="toggleMenu()">Exercices</a>
+  <a href="#calories" onclick="toggleMenu()">Calories</a>
+  <a href="#nutrition" onclick="toggleMenu()">Nutrition</a>
+  <a href="#recettes" onclick="toggleMenu()">Recettes</a>
+  <a href="#conseils" onclick="toggleMenu()">Conseils</a>
+  <a href="#supplements" onclick="toggleMenu()">Suppléments</a>
+</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -4135,6 +4311,15 @@ function calculateCalories() {
   document.getElementById('calcResultContent').classList.remove('result-hidden');
 
   document.getElementById('calcResults').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// Hamburger menu mobile
+function toggleMenu() {
+  const menu = document.getElementById('mobileMenu');
+  const burger = document.querySelector('.nav-burger');
+  menu.classList.toggle('open');
+  burger.classList.toggle('open');
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
 }
 
 // Progress bar
