@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════
-//  IRONFORGE — Service Worker v4
-//  Cache offline + Vraies Push Notifications (VAPID)
+//  IRONFORGE — Service Worker v5
+//  Network-first pour HTML + Cache offline + Push Notifications
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME = 'ironforge-v4';
+const CACHE_NAME = 'ironforge-v5';
 const ASSETS = [
   '/ironforge/',
   '/ironforge/index.html',
@@ -27,25 +27,42 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-      return fetch(event.request).then(response => {
-        if (response && response.status === 200 && response.type === 'basic') {
+  const url = new URL(event.request.url);
+  const isHTML = event.request.destination === 'document'
+    || url.pathname.endsWith('.html')
+    || url.pathname.endsWith('/');
+
+  if (isHTML) {
+    // HTML → réseau EN PRIORITÉ, cache seulement si offline
+    event.respondWith(
+      fetch(event.request).then(response => {
+        if (response && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => {
-        if (event.request.destination === 'document') {
-          return caches.match('/ironforge/index.html');
-        }
-      });
-    })
-  );
+      }).catch(() =>
+        caches.match(event.request).then(r => r || caches.match('/ironforge/index.html'))
+      )
+    );
+  } else {
+    // Images, fonts, CSS → cache en priorité
+    event.respondWith(
+      caches.match(event.request).then(cached => {
+        if (cached) return cached;
+        return fetch(event.request).then(response => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => null);
+      })
+    );
+  }
 });
 
-// ── PUSH : reçoit les notifs depuis GitHub Actions ───────
+// ── PUSH ─────────────────────────────────────────────────
 self.addEventListener('push', event => {
   let data = {
     title: '⚡ IRONFORGE',
@@ -55,12 +72,10 @@ self.addEventListener('push', event => {
     tag: 'ironforge-push',
     data: { url: '/ironforge/' }
   };
-
   if (event.data) {
     try { Object.assign(data, event.data.json()); }
     catch(e) { data.body = event.data.text() || data.body; }
   }
-
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
