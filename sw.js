@@ -97,64 +97,27 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   if (event.action === 'dismiss') return;
-  const targetUrl = event.notification.data?.url || '/ironforge/';
+  const targetUrl = '/ironforge/?start=1';
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
       for (const client of clientList) {
-        if (client.url.includes('/ironforge') && 'focus' in client) return client.focus();
+        if (client.url.includes('/ironforge')) {
+          client.postMessage({ type: 'OPEN_SESSION' });
+          return client.focus();
+        }
       }
       if (clients.openWindow) return clients.openWindow(targetUrl);
     })
   );
 });
 
-// ── MESSAGES (SKIP_WAITING + SCHEDULE_NOTIFICATION) ─────────
-// Map pour stocker les timers programmés et éviter les doublons
-const scheduledNotifs = new Map();
-
+// ── MESSAGES (SKIP_WAITING seulement) ───────────────────────
 self.addEventListener('message', event => {
-
-  // Mise à jour forcée du SW
-  if (event.data?.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-    return;
-  }
-
-  // ── Notif programmée depuis l'app (quand app ouverte/arrière-plan) ──
-  // Fonctionne sur Android Chrome PWA installée
-  // Sur iOS Safari : préférer le push VAPID via GitHub Actions
-  if (event.data?.type === 'SCHEDULE_NOTIFICATION') {
-    const { title, body, delay, fireAt, tag } = event.data;
-
-    // Si un timer existe déjà pour ce tag, on l'annule d'abord
-    if (scheduledNotifs.has(tag)) {
-      clearTimeout(scheduledNotifs.get(tag));
-      scheduledNotifs.delete(tag);
-    }
-
-    // Recalcule le délai réel depuis fireAt pour éviter
-    // les dérives si le SW a été suspendu puis réveillé
-    const realDelay = fireAt ? Math.max(0, fireAt - Date.now()) : delay;
-
-    if (realDelay <= 0) return; // heure déjà passée, on skip
-
-    const timerId = setTimeout(() => {
-      self.registration.showNotification(title, {
-        body,
-        icon: '/ironforge/icon-192.png',
-        badge: '/ironforge/icon-192.png',
-        tag: tag || 'ironforge-' + Date.now(),
-        vibrate: [200, 100, 200, 100, 200],
-        requireInteraction: false,
-        data: { url: '/ironforge/' },
-        actions: [
-          { action: 'open', title: '🏋️ Lancer la séance' },
-          { action: 'dismiss', title: '✕ Ignorer' }
-        ]
-      });
-      scheduledNotifs.delete(tag);
-    }, realDelay);
-
-    scheduledNotifs.set(tag, timerId);
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data?.type === 'OPEN_SESSION') {
+    // Relayé aux clients ouverts
+    self.clients.matchAll({ type: 'window' }).then(clients => {
+      clients.forEach(c => c.postMessage({ type: 'OPEN_SESSION' }));
+    });
   }
 });
