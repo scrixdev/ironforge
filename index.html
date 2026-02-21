@@ -4477,35 +4477,77 @@ window.addEventListener('beforeinstallprompt', e => {
   banner.id = 'pwa-banner';
   banner.innerHTML = `
     <div style="
-      position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
-      background:linear-gradient(135deg,#1a1a22,#242430);
-      border:1px solid rgba(230,57,70,0.4);
-      border-radius:16px; padding:14px 16px;
-      display:flex; flex-direction:column; gap:12px;
-      z-index:9999; box-shadow:0 8px 40px rgba(0,0,0,0.6);
-      width:calc(100% - 32px); max-width:400px;
-      animation: fadeUp 0.5s ease both;
+      position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+      background:linear-gradient(160deg,#16161f,#1e1e2a);
+      border:1px solid rgba(230,57,70,0.35);
+      border-radius:20px; padding:20px;
+      display:flex; flex-direction:column; gap:16px;
+      z-index:9999;
+      box-shadow:0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset;
+      width:calc(100% - 32px); max-width:380px;
+      animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
     ">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <img src="/ironforge/icon-192.png" width="44" height="44" style="border-radius:10px;flex-shrink:0;">
-        <div style="flex:1;min-width:0;">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;color:white;">INSTALLER IRONFORGE</div>
-          <div style="font-size:0.78rem;color:#888899;margin-top:2px;">Accès rapide · Fonctionne hors ligne</div>
+      <!-- Header -->
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="position:relative;flex-shrink:0;">
+          <img src="/ironforge/icon-192.png" width="52" height="52" style="border-radius:14px;display:block;">
+          <div style="
+            position:absolute;bottom:-3px;right:-3px;
+            width:16px;height:16px;border-radius:50%;
+            background:linear-gradient(135deg,#E63946,#FF6B35);
+            border:2px solid #16161f;
+            display:flex;align-items:center;justify-content:center;
+            font-size:9px;
+          ">⚡</div>
         </div>
-        <button id="pwa-dismiss" style="
-          background:transparent; border:1px solid rgba(255,255,255,0.15);
-          color:#888899; padding:6px 10px; cursor:pointer;
-          border-radius:6px; font-size:0.85rem; flex-shrink:0;
-        ">✕</button>
+        <div style="flex:1;min-width:0;">
+          <div style="
+            font-family:'Bebas Neue',sans-serif;
+            font-size:1.25rem;letter-spacing:3px;
+            background:linear-gradient(90deg,#fff,#ccc);
+            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+            line-height:1.1;
+          ">IRONFORGE</div>
+          <div style="font-size:0.72rem;color:#6b6b80;margin-top:3px;letter-spacing:0.5px;">
+            ⚡ Accès rapide &nbsp;·&nbsp; 📶 Hors ligne
+          </div>
+        </div>
+        <div style="
+          background:rgba(230,57,70,0.12);
+          border:1px solid rgba(230,57,70,0.25);
+          border-radius:8px;padding:4px 10px;
+          font-family:'Barlow Condensed',sans-serif;
+          font-size:0.65rem;letter-spacing:2px;
+          color:#E63946;text-transform:uppercase;flex-shrink:0;
+        ">PWA</div>
       </div>
-      <button id="pwa-install" style="
-        background:linear-gradient(135deg,#E63946,#FF6B35);
-        border:none; color:white; padding:12px;
-        font-family:'Barlow Condensed',sans-serif;
-        font-size:1rem; letter-spacing:3px;
-        text-transform:uppercase; cursor:pointer;
-        border-radius:8px; width:100%;
-      ">⚡ INSTALLER L'APPLICATION</button>
+      <!-- Divider -->
+      <div style="height:1px;background:linear-gradient(90deg,rgba(230,57,70,0.3),rgba(255,107,53,0.1),transparent);"></div>
+      <!-- Buttons -->
+      <div style="display:flex;gap:10px;">
+        <button id="pwa-dismiss" style="
+          flex:1;
+          background:rgba(255,255,255,0.05);
+          border:1px solid rgba(255,255,255,0.1);
+          color:#888899; padding:13px;
+          font-family:'Barlow Condensed',sans-serif;
+          font-size:0.9rem; letter-spacing:2px;
+          text-transform:uppercase; cursor:pointer;
+          border-radius:10px;
+          transition:all 0.2s;
+        ">Annuler</button>
+        <button id="pwa-install" style="
+          flex:2;
+          background:linear-gradient(135deg,#E63946,#FF6B35);
+          border:none; color:white; padding:13px;
+          font-family:'Barlow Condensed',sans-serif;
+          font-size:0.9rem; letter-spacing:2px;
+          text-transform:uppercase; cursor:pointer;
+          border-radius:10px;
+          box-shadow:0 4px 20px rgba(230,57,70,0.4);
+          transition:all 0.2s;
+        ">⚡ Installer</button>
+      </div>
     </div>
   `;
   document.body.appendChild(banner);
