@@ -1019,6 +1019,25 @@
     animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
   }
 
+  /* MOBILE — plein écran */
+  @media (max-width: 768px) {
+    #session-overlay {
+      padding: 0;
+      align-items: flex-end;
+    }
+    .session-shell {
+      border-radius: 20px 20px 0 0;
+      max-width: 100%;
+      width: 100%;
+      max-height: 92dvh;
+      height: 92dvh;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+      animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+    }
+  }
+
   /* Header de l'overlay */
   .session-shell-header {
     display: flex; align-items: center; justify-content: space-between;
