@@ -6933,7 +6933,7 @@ function renderHistory() {
   container.innerHTML = history.map((s, i) => {
     const d = new Date(s.date);
     const dateStr = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    const timeStr = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    const timeStr = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12: false });
     const grouped = {};
     s.log.forEach(e => { if (!grouped[e.exName]) grouped[e.exName] = []; grouped[e.exName].push(e); });
     const prCount = s.log.filter(e => e.isPR).length;
@@ -7098,7 +7098,7 @@ function updateScheduleUI() {
     const diffH = Math.floor(diffMin / 60);
     const d = new Date(item.datetime);
     const dateStr = d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
-    const timeStr = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+    const timeStr = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12: false });
     const isSoon = diff < 30 * 60 * 1000 && diff > 0;
     let countdown = diff < 0 ? 'En cours' : diffH > 0 ? `Dans ${diffH}h${diffMin%60 > 0 ? diffMin%60 + 'min' : ''}` : `Dans ${diffMin} min`;
 
@@ -7211,7 +7211,7 @@ function addTrackerEntry() {
   const reps     = parseInt(document.getElementById('trackReps').value) || 0;
   const sets     = parseInt(document.getElementById('trackSets').value) || 1;
   if (!reps) { alert('Entre au moins le nombre de reps !'); return; }
-  workoutLog.push({ exercise, weight, reps, sets, time: new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}) });
+  workoutLog.push({ exercise, weight, reps, sets, time: new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12: false }) });
   renderTracker();
   document.getElementById('trackWeight').value = '';
   document.getElementById('trackReps').value = '';
