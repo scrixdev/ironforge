@@ -4484,67 +4484,24 @@ window.addEventListener('beforeinstallprompt', e => {
       display:flex; flex-direction:column; gap:14px;
       z-index:9999;
       box-shadow:0 12px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04) inset;
-      max-width:420px; margin:0 auto;
+      max-width:420px;
       animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
     ">
-      <!-- Header -->
       <div style="display:flex;align-items:center;gap:12px;">
         <div style="position:relative;flex-shrink:0;">
           <img src="/ironforge/icon-192.png" width="48" height="48" style="border-radius:12px;display:block;">
-          <div style="
-            position:absolute;bottom:-3px;right:-3px;
-            width:15px;height:15px;border-radius:50%;
-            background:linear-gradient(135deg,#E63946,#FF6B35);
-            border:2px solid #16161f;
-            display:flex;align-items:center;justify-content:center;
-            font-size:8px;line-height:1;
-          ">⚡</div>
+          <div style="position:absolute;bottom:-3px;right:-3px;width:15px;height:15px;border-radius:50%;background:linear-gradient(135deg,#E63946,#FF6B35);border:2px solid #16161f;display:flex;align-items:center;justify-content:center;font-size:8px;line-height:1;">⚡</div>
         </div>
         <div style="flex:1;min-width:0;">
-          <div style="
-            font-family:'Bebas Neue',sans-serif;
-            font-size:1.15rem;letter-spacing:3px;
-            color:#fff;
-            line-height:1.1;
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-          ">IRONFORGE</div>
-          <div style="font-size:0.7rem;color:#6b6b80;margin-top:3px;white-space:nowrap;">
-            ⚡ Accès rapide &nbsp;·&nbsp; 📶 Hors ligne
-          </div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:3px;color:#fff;line-height:1.1;">IRONFORGE</div>
+          <div style="font-size:0.7rem;color:#6b6b80;margin-top:3px;">⚡ Accès rapide &nbsp;·&nbsp; 📶 Hors ligne</div>
         </div>
-        <div style="
-          background:rgba(230,57,70,0.12);
-          border:1px solid rgba(230,57,70,0.25);
-          border-radius:6px;padding:3px 8px;
-          font-family:'Barlow Condensed',sans-serif;
-          font-size:0.6rem;letter-spacing:2px;
-          color:#E63946;text-transform:uppercase;flex-shrink:0;
-        ">PWA</div>
+        <div style="background:rgba(230,57,70,0.12);border:1px solid rgba(230,57,70,0.25);border-radius:6px;padding:3px 8px;font-family:'Barlow Condensed',sans-serif;font-size:0.6rem;letter-spacing:2px;color:#E63946;text-transform:uppercase;flex-shrink:0;">PWA</div>
       </div>
-      <!-- Divider -->
       <div style="height:1px;background:linear-gradient(90deg,rgba(230,57,70,0.3),rgba(255,107,53,0.1),transparent);"></div>
-      <!-- Buttons : Installer FIRST, then Annuler, same flex size -->
       <div style="display:flex;gap:10px;">
-        <button id="pwa-install" style="
-          flex:1;
-          background:linear-gradient(135deg,#E63946,#FF6B35);
-          border:none; color:white; padding:13px;
-          font-family:'Barlow Condensed',sans-serif;
-          font-size:0.9rem; letter-spacing:2px;
-          text-transform:uppercase; cursor:pointer;
-          border-radius:10px;
-          box-shadow:0 4px 20px rgba(230,57,70,0.4);
-        ">⚡ Installer</button>
-        <button id="pwa-dismiss" style="
-          flex:1;
-          background:rgba(255,255,255,0.05);
-          border:1px solid rgba(255,255,255,0.1);
-          color:#888899; padding:13px;
-          font-family:'Barlow Condensed',sans-serif;
-          font-size:0.9rem; letter-spacing:2px;
-          text-transform:uppercase; cursor:pointer;
-          border-radius:10px;
-        ">Annuler</button>
+        <button id="pwa-install" style="flex:1;background:linear-gradient(135deg,#E63946,#FF6B35);border:none;color:white;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:10px;box-shadow:0 4px 20px rgba(230,57,70,0.4);">⚡ Installer</button>
+        <button id="pwa-dismiss" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#888899;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:10px;">Annuler</button>
       </div>
     </div>
   `;
