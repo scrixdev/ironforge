@@ -1,0 +1,27 @@
+{
+  "name": "IRONFORGE — Prise de Masse",
+  "short_name": "IRONFORGE",
+  "description": "Programme complet prise de masse : entraînement, nutrition, exercices vidéo et calcul calorique.",
+  "start_url": "/IRONFORGE./",
+  "scope": "/IRONFORGE./",
+  "display": "standalone",
+  "background_color": "#0a0a0c",
+  "theme_color": "#E63946",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/IRONFORGE./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/IRONFORGE./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["health", "fitness", "sports"],
+  "lang": "fr"
+}
