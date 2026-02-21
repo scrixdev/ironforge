@@ -6222,21 +6222,6 @@ async function requestNotifPermissionFull() {
   }
 }
 
-function scheduleViaSW(title, body, delayMs, tag) {
-  if (!swRegistration?.active) {
-    if (delayMs > 0) setTimeout(() => sendNotif(title, body, tag), delayMs);
-    return;
-  }
-  // Pour les notifs courte durée (< 1h) on utilise le SW message
-  // Pour les notifs long terme → GitHub Actions s'en charge via VAPID
-  if (delayMs < 3600000) {
-    swRegistration.active.postMessage({
-      type: 'SCHEDULE_NOTIFICATION',
-      title, body, delay: delayMs, tag
-    });
-  }
-}
-
 function rescheduleAllViaSW() {
   const reminders = storageGet('dailyReminders') || [];
   reminders.forEach(scheduleDailyNotifs);
@@ -6319,7 +6304,8 @@ function scheduleViaSW(title, body, delayMs, tag) {
   }
   swRegistration.active.postMessage({
     type: 'SCHEDULE_NOTIFICATION',
-    title, body, delay: delayMs, tag
+    title, body, delay: delayMs, tag,
+    fireAt: Date.now() + delayMs  // heure absolue pour plus de fiabilité
   });
 }
 
@@ -7630,7 +7616,7 @@ function saveDailyReminders() {
 
   const progKey = document.getElementById('dailyProg').value;
   const time = document.getElementById('dailyTime').value || '18:00';
-  const reminderMin = parseInt(document.getElementById('dailyReminder').value) || 30;
+  const reminderMin = parseInt(document.getElementById('dailyReminder').value) ?? 0;
   const progName = PROGRAMS[progKey]?.name || progKey;
 
   const reminder = {
