@@ -1,4 +1,9 @@
-const CACHE_NAME = 'ironforge-v1';
+// ═══════════════════════════════════════════════════════
+//  IRONFORGE — Service Worker v3
+//  Cache offline + Vraies Push Notifications (VAPID)
+// ═══════════════════════════════════════════════════════
+
+const CACHE_NAME = 'ironforge-v3';
 const ASSETS = [
   '/ironforge/',
   '/ironforge/index.html',
@@ -8,9 +13,7 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
   self.skipWaiting();
 });
 
@@ -40,4 +43,56 @@ self.addEventListener('fetch', event => {
       });
     })
   );
+});
+
+// ── PUSH : reçoit les notifs depuis GitHub Actions ───────
+self.addEventListener('push', event => {
+  let data = {
+    title: '⚡ IRONFORGE',
+    body: "Il est l'heure de t'entraîner !",
+    icon: '/ironforge/icon-192.png',
+    badge: '/ironforge/icon-192.png',
+    tag: 'ironforge-push',
+    data: { url: '/ironforge/' }
+  };
+
+  if (event.data) {
+    try { Object.assign(data, event.data.json()); }
+    catch(e) { data.body = event.data.text() || data.body; }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: data.icon || '/ironforge/icon-192.png',
+      badge: data.badge || '/ironforge/icon-192.png',
+      tag: data.tag || 'ironforge-' + Date.now(),
+      vibrate: [200, 100, 200, 100, 200],
+      data: data.data || { url: '/ironforge/' },
+      requireInteraction: false,
+      actions: [
+        { action: 'open', title: '🏋️ Lancer la séance' },
+        { action: 'dismiss', title: '✕ Ignorer' }
+      ]
+    })
+  );
+});
+
+// ── NOTIFICATION CLICK ───────────────────────────────────
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  if (event.action === 'dismiss') return;
+  const targetUrl = event.notification.data?.url || '/ironforge/';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if (client.url.includes('/ironforge') && 'focus' in client) return client.focus();
+      }
+      if (clients.openWindow) return clients.openWindow(targetUrl);
+    })
+  );
+});
+
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
