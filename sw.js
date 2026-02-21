@@ -1,13 +1,12 @@
 const CACHE_NAME = 'ironforge-v1';
 const ASSETS = [
-  '/IRONFORGE./',
-  '/IRONFORGE./index.html',
-  '/IRONFORGE./manifest.json',
-  '/IRONFORGE./icon-192.png',
-  '/IRONFORGE./icon-512.png'
+  '/ironforge/',
+  '/ironforge/index.html',
+  '/ironforge/manifest.json',
+  '/ironforge/icon-192.png',
+  '/ironforge/icon-512.png'
 ];
 
-// Installation : mise en cache des ressources essentielles
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -15,7 +14,6 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activation : supprime les anciens caches
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys =>
@@ -25,7 +23,6 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch : sert depuis le cache en priorité, sinon le réseau
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request).then(cached => {
@@ -38,7 +35,7 @@ self.addEventListener('fetch', event => {
         return response;
       }).catch(() => {
         if (event.request.destination === 'document') {
-          return caches.match('/IRONFORGE./index.html');
+          return caches.match('/ironforge/index.html');
         }
       });
     })
