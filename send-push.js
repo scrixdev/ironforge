@@ -18,6 +18,44 @@ webpush.setVapidDetails(
 // Fichier qui contient les abonnements + rappels programmés
 const SUBS_FILE = path.join(__dirname, '../../ironforge-subscriptions.json');
 
+// ── Messages motivants (même pool que le front) ──────────────
+const MOTIV_TITLES_NOW = [
+  "🔥 C'est l'heure !",
+  "💪 Le fer t'attend",
+  "⚡ Zéro excuse aujourd'hui",
+  "🏋️ On y va forge-toi !",
+  "🔥 C'est maintenant que ça se passe",
+];
+const MOTIV_TITLES_SOON = [
+  "⏰ Plus que {min} min",
+  "🔥 Dans {min} min tu soulèves",
+  "💪 {min} min et t'es dans la place",
+  "⚡ Prépare-toi dans {min} min c'est parti",
+  "🏋️ Encore {min} min et on forge",
+];
+const MOTIV_BODIES = [
+  "{day}{loc} 🔥 Lâche tout ce que t'as",
+  "{day}{loc} 💪 Chaque rep te rapproche du résultat",
+  "{day}{loc} ⚡ Les champions s'entraînent même quand ça fait mal",
+  "{day}{loc} 🏋️ Construis le physique que tu mérites",
+  "{day}{loc} 🔥 La régularité crée les résultats",
+];
+
+function getRand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function getMotivTitle(reminderMin, diffMin) {
+  if ((reminderMin ?? 0) === 0 || (diffMin ?? 0) <= 1) {
+    return getRand(MOTIV_TITLES_NOW);
+  }
+  return getRand(MOTIV_TITLES_SOON).replace('{min}', diffMin ?? reminderMin);
+}
+
+function getMotivBody(dayName, loc) {
+  return getRand(MOTIV_BODIES)
+    .replace('{day}', dayName)
+    .replace('{loc}', loc || '');
+}
+
 function loadData() {
   try {
     if (fs.existsSync(SUBS_FILE)) {
@@ -36,7 +74,6 @@ async function sendPush(subscription, payload) {
     return true;
   } catch(err) {
     console.log('❌ Erreur push:', err.message);
-    // Abonnement expiré → on le supprime
     if (err.statusCode === 410) return 'expired';
     return false;
   }
@@ -51,7 +88,6 @@ async function main() {
 
   const now = new Date();
   const nowMs = now.getTime();
-  // Fenêtre : notifs prévues dans les 15 prochaines minutes
   const windowMs = 15 * 60 * 1000;
 
   console.log(`⏰ ${now.toISOString()} — Vérification des rappels...`);
@@ -67,28 +103,23 @@ async function main() {
       const [h, m] = reminder.time.split(':').map(Number);
       const reminderMs = (reminder.reminderMin ?? 0) * 60 * 1000;
 
-      // Vérifier si aujourd'hui est un jour actif
-      const dowJs = now.getDay(); // 0=Sun
-      const dowIron = dowJs === 0 ? 6 : dowJs - 1; // Mon=0
+      const dowJs = now.getDay();
+      const dowIron = dowJs === 0 ? 6 : dowJs - 1;
       if (!reminder.days.includes(dowIron)) continue;
 
-      // Calculer l'heure de la séance aujourd'hui
       const sessionToday = new Date(now);
       sessionToday.setHours(h, m, 0, 0);
       const notifTime = sessionToday.getTime() - reminderMs;
 
-      // Est-ce dans la fenêtre des 15min ?
       if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
-        // FIX : quand reminderMin === 0, affiche "C'est l'heure !" au lieu de "dans 0 min"
-        const title = reminder.reminderMin === 0
-          ? `⚡ C'est l'heure de la séance !`
-          : `⚡ Séance dans ${reminder.reminderMin} min !`;
+        const title = getMotivTitle(reminder.reminderMin, reminder.reminderMin);
+        const body  = getMotivBody(reminder.progName, '');
 
         const result = await sendPush(subscription, {
-          title,
-          body: `${reminder.progName} — Il est l'heure de s'échauffer ! 💪`,
+          title, body,
           icon: '/ironforge/icon-192.png',
           badge: '/ironforge/icon-192.png',
+          // Même tag que SW + front → le navigateur déduplique les 3 sources
           tag: 'daily-' + reminder.id,
           data: { url: '/ironforge/' }
         });
@@ -103,16 +134,16 @@ async function main() {
       const notifTime = schedule.datetime - reminderMs;
 
       if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
-        // FIX : même correction pour les séances ponctuelles
-        const title = schedule.reminder === 0
-          ? `⚡ C'est l'heure de la séance !`
-          : `⏰ Séance dans ${schedule.reminder} min !`;
+        const dayName = schedule.dayLabel?.split('—')[0]?.trim() || schedule.progName;
+        const loc     = schedule.location ? ` · ${schedule.location}` : '';
+        const title   = getMotivTitle(schedule.reminder, schedule.reminder);
+        const body    = getMotivBody(dayName, loc);
 
         const result = await sendPush(subscription, {
-          title,
-          body: `${schedule.progName} — ${schedule.dayLabel?.split('—')[0]?.trim() || ''}${schedule.location ? ' · ' + schedule.location : ''} 🏋️`,
+          title, body,
           icon: '/ironforge/icon-192.png',
           badge: '/ironforge/icon-192.png',
+          // Même tag que SW + front → déduplication garantie
           tag: 'schedule-' + schedule.id,
           data: { url: '/ironforge/' }
         });
@@ -122,13 +153,11 @@ async function main() {
     }
   }
 
-  // Nettoyer les abonnements expirés
   if (expiredIds.length) {
     data.subscriptions = data.subscriptions.filter(s => !expiredIds.includes(s.id));
     console.log(`🗑 ${expiredIds.length} abonnement(s) expiré(s) supprimé(s)`);
   }
 
-  // Sauvegarder les mises à jour (schedules notifiés)
   fs.writeFileSync(SUBS_FILE, JSON.stringify(data, null, 2));
   console.log('✅ Terminé.');
 }
