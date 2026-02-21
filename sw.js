@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════
-//  IRONFORGE — Service Worker v3
+//  IRONFORGE — Service Worker v4
 //  Cache offline + Vraies Push Notifications (VAPID)
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME = 'ironforge-v3';
+const CACHE_NAME = 'ironforge-v4';
 const ASSETS = [
   '/ironforge/',
   '/ironforge/index.html',
