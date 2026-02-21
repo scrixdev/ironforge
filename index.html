@@ -2553,6 +2553,7 @@
             <div class="sch-field">
               <label>Rappel</label>
               <select class="sch-select" id="schReminder">
+                <option value="0">À l'heure exacte</option>
                 <option value="5">5 minutes avant</option>
                 <option value="15">15 minutes avant</option>
                 <option value="30" selected>30 minutes avant</option>
@@ -2583,6 +2584,7 @@
             <div class="sch-field">
               <label>Rappel avant la séance</label>
               <select class="sch-select" id="dailyReminder">
+                <option value="0">À l'heure exacte</option>
                 <option value="5">5 minutes avant</option>
                 <option value="15">15 minutes avant</option>
                 <option value="30" selected>30 minutes avant</option>
@@ -7046,7 +7048,9 @@ function scheduleNotification(item) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   const msUntilReminder = item.datetime - Date.now() - (item.reminder * 60 * 1000);
   if (msUntilReminder > 0) {
-    const title = `⏰ Séance dans ${item.reminder} min !`;
+    const title = item.reminder === 0
+      ? `⚡ C'est l'heure de la séance !`
+      : `⏰ Séance dans ${item.reminder} min !`;
     const body = `${item.progName} — ${item.dayLabel?.split('—')[0]?.trim() || ''}${item.location ? ' · ' + item.location : ''}`;
     scheduleViaSW(title, body, msUntilReminder, 'schedule-' + item.id);
   }
@@ -7059,7 +7063,9 @@ function checkScheduledSessions() {
     const diff = item.datetime - now;
     if (!item.notified && diff > 0 && diff <= item.reminder * 60 * 1000) {
       sendNotif(
-        `⏰ Séance dans ${Math.round(diff/60000)} min !`,
+        item.reminder === 0
+          ? `⚡ C'est l'heure de la séance !`
+          : `⏰ Séance dans ${Math.round(diff/60000)} min !`,
         `${item.progName} — ${item.dayLabel.split('—')[0].trim()}${item.location ? ' · ' + item.location : ''}`
       );
       item.notified = true;
@@ -7392,7 +7398,9 @@ function scheduleDailyNotifs(reminder) {
 
     if (delay > 0 && reminder.days.includes(dowIron)) {
       const tag = 'daily-' + reminder.id + '-' + day;
-      const title = `⚡ Séance dans ${reminder.reminderMin} min !`;
+      const title = reminder.reminderMin === 0
+        ? `⚡ C'est l'heure de la séance !`
+        : `⚡ Séance dans ${reminder.reminderMin} min !`;
       const body = `${reminder.progName} — Il est l'heure de s'échauffer !`;
       // Via SW → fonctionne même app en arrière-plan (PWA installée)
       scheduleViaSW(title, body, delay, tag);
@@ -7413,7 +7421,7 @@ function renderDailyRemindersItems() {
       <div class="sch-item-icon">🔔</div>
       <div class="sch-item-info">
         <div class="sch-item-prog">${r.progName}</div>
-        <div class="sch-item-time">${r.days.map(d=>DAYS_FR[d]).join(', ')} · ${r.time} · −${r.reminderMin}min</div>
+        <div class="sch-item-time">${r.days.map(d=>DAYS_FR[d]).join(', ')} · ${r.time} · ${r.reminderMin === 0 ? 'À l\'heure exacte' : '−' + r.reminderMin + 'min'}</div>
       </div>
       <div class="sch-item-countdown" style="background:rgba(255,183,3,0.1);color:var(--gold);">Actif</div>
       <button class="sch-item-del" onclick="deleteDailyReminder('${r.id}')">✕</button>
