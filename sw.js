@@ -1,160 +1,165 @@
 // ═══════════════════════════════════════════════════════
-//  IRONFORGE — Service Worker v6
-//  Network-first pour HTML + Cache offline + Push Notifications
+//  IRONFORGE — GitHub Actions Push Sender
+//  Ce script tourne toutes les 15min sur GitHub
+//  et envoie les notifs push aux abonnés
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME = 'ironforge-v6';
-const ASSETS = [
-  '/ironforge/',
-  '/ironforge/index.html',
-  '/ironforge/manifest.json',
-  '/ironforge/icon-192.png',
-  '/ironforge/icon-512.png'
+const webpush = require('web-push');
+const fs = require('fs');
+const path = require('path');
+
+// Config VAPID depuis les secrets GitHub
+webpush.setVapidDetails(
+  process.env.VAPID_EMAIL,
+  process.env.VAPID_PUBLIC_KEY,
+  process.env.VAPID_PRIVATE_KEY
+);
+
+// Fichier qui contient les abonnements + rappels programmés
+const SUBS_FILE = path.join(__dirname, '../../ironforge-subscriptions.json');
+
+// ── Messages motivants (même pool que le front) ──────────────
+const MOTIV_TITLES_NOW = [
+  "🔥 C'est l'heure !",
+  "💪 Le fer t'attend",
+  "⚡ Zéro excuse aujourd'hui",
+  "🏋️ On y va forge-toi !",
+  "🔥 C'est maintenant que ça se passe",
+];
+const MOTIV_TITLES_SOON = [
+  "⏰ Plus que {min} min",
+  "🔥 Dans {min} min tu soulèves",
+  "💪 {min} min et t'es dans la place",
+  "⚡ Prépare-toi dans {min} min c'est parti",
+  "🏋️ Encore {min} min et on forge",
+];
+const MOTIV_BODIES = [
+  "{day}{loc} 🔥 Lâche tout ce que t'as",
+  "{day}{loc} 💪 Chaque rep te rapproche du résultat",
+  "{day}{loc} ⚡ Les champions s'entraînent même quand ça fait mal",
+  "{day}{loc} 🏋️ Construis le physique que tu mérites",
+  "{day}{loc} 🔥 La régularité crée les résultats",
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)));
-  self.skipWaiting();
-});
+function getRand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    )
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', event => {
-  const url = new URL(event.request.url);
-  const isHTML = event.request.destination === 'document'
-    || url.pathname.endsWith('.html')
-    || url.pathname.endsWith('/');
-
-  if (isHTML) {
-    // HTML → réseau EN PRIORITÉ, cache seulement si offline
-    event.respondWith(
-      fetch(event.request).then(response => {
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-        }
-        return response;
-      }).catch(() =>
-        caches.match(event.request).then(r => r || caches.match('/ironforge/index.html'))
-      )
-    );
-  } else {
-    // Images, fonts, CSS → cache en priorité
-    event.respondWith(
-      caches.match(event.request).then(cached => {
-        if (cached) return cached;
-        return fetch(event.request).then(response => {
-          if (response && response.status === 200 && response.type === 'basic') {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
-          }
-          return response;
-        }).catch(() => null);
-      })
-    );
+function getMotivTitle(reminderMin, diffMin) {
+  if ((reminderMin ?? 0) === 0 || (diffMin ?? 0) <= 1) {
+    return getRand(MOTIV_TITLES_NOW);
   }
-});
+  return getRand(MOTIV_TITLES_SOON).replace('{min}', diffMin ?? reminderMin);
+}
 
-// ── PUSH (vrai push serveur via GitHub Actions + VAPID) ──────
-self.addEventListener('push', event => {
-  let data = {
-    title: '⚡ IRONFORGE',
-    body: "Il est l'heure de t'entraîner !",
-    icon: '/ironforge/icon-192.png',
-    badge: '/ironforge/icon-192.png',
-    tag: 'ironforge-push',
-    data: { url: '/ironforge/' }
-  };
-  if (event.data) {
-    try { Object.assign(data, event.data.json()); }
-    catch(e) { data.body = event.data.text() || data.body; }
+function getMotivBody(dayName, loc) {
+  return getRand(MOTIV_BODIES)
+    .replace('{day}', dayName)
+    .replace('{loc}', loc || '');
+}
+
+function loadData() {
+  try {
+    if (fs.existsSync(SUBS_FILE)) {
+      return JSON.parse(fs.readFileSync(SUBS_FILE, 'utf8'));
+    }
+  } catch(e) {
+    console.log('Pas de données encore:', e.message);
   }
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body: data.body,
-      icon: data.icon || '/ironforge/icon-192.png',
-      badge: data.badge || '/ironforge/icon-192.png',
-      tag: data.tag || 'ironforge-' + Date.now(),
-      vibrate: [200, 100, 200, 100, 200],
-      data: data.data || { url: '/ironforge/' },
-      requireInteraction: false,
-      actions: [
-        { action: 'open', title: '🏋️ Lancer la séance' },
-        { action: 'dismiss', title: '✕ Ignorer' }
-      ]
-    })
-  );
-});
+  return { subscriptions: [], reminders: [] };
+}
 
-// ── NOTIFICATION CLICK ───────────────────────────────────
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  if (event.action === 'dismiss') return;
-  const targetUrl = event.notification.data?.url || '/ironforge/';
-  event.waitUntil(
-    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-      for (const client of clientList) {
-        if (client.url.includes('/ironforge') && 'focus' in client) return client.focus();
-      }
-      if (clients.openWindow) return clients.openWindow(targetUrl);
-    })
-  );
-});
+async function sendPush(subscription, payload) {
+  try {
+    await webpush.sendNotification(subscription, JSON.stringify(payload));
+    console.log('✅ Push envoyé:', payload.title);
+    return true;
+  } catch(err) {
+    console.log('❌ Erreur push:', err.message);
+    if (err.statusCode === 410) return 'expired';
+    return false;
+  }
+}
 
-// ── MESSAGES (SKIP_WAITING + SCHEDULE_NOTIFICATION) ─────────
-// Map pour stocker les timers programmés et éviter les doublons
-const scheduledNotifs = new Map();
-
-self.addEventListener('message', event => {
-
-  // Mise à jour forcée du SW
-  if (event.data?.type === 'SKIP_WAITING') {
-    self.skipWaiting();
+async function main() {
+  const data = loadData();
+  if (!data.subscriptions.length) {
+    console.log('Aucun abonné pour l\'instant.');
     return;
   }
 
-  // ── Notif programmée depuis l'app (quand app ouverte/arrière-plan) ──
-  // Fonctionne sur Android Chrome PWA installée
-  // Sur iOS Safari : préférer le push VAPID via GitHub Actions
-  if (event.data?.type === 'SCHEDULE_NOTIFICATION') {
-    const { title, body, delay, fireAt, tag } = event.data;
+  const now = new Date();
+  const nowMs = now.getTime();
+  const windowMs = 15 * 60 * 1000;
 
-    // Si un timer existe déjà pour ce tag, on l'annule d'abord
-    if (scheduledNotifs.has(tag)) {
-      clearTimeout(scheduledNotifs.get(tag));
-      scheduledNotifs.delete(tag);
+  console.log(`⏰ ${now.toISOString()} — Vérification des rappels...`);
+  console.log(`👥 ${data.subscriptions.length} abonné(s)`);
+
+  const expiredIds = [];
+
+  for (const sub of data.subscriptions) {
+    const { subscription, reminders = [], schedules = [] } = sub;
+
+    // ── Rappels quotidiens ─────────────────────────────
+    for (const reminder of reminders) {
+      const [h, m] = reminder.time.split(':').map(Number);
+      const reminderMs = (reminder.reminderMin ?? 0) * 60 * 1000;
+
+      const dowJs = now.getDay();
+      const dowIron = dowJs === 0 ? 6 : dowJs - 1;
+      if (!reminder.days.includes(dowIron)) continue;
+
+      const sessionToday = new Date(now);
+      sessionToday.setHours(h, m, 0, 0);
+      const notifTime = sessionToday.getTime() - reminderMs;
+
+      if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
+        const title = getMotivTitle(reminder.reminderMin, reminder.reminderMin);
+        const body  = getMotivBody(reminder.progName, '');
+
+        const result = await sendPush(subscription, {
+          title, body,
+          icon: '/ironforge/icon-192.png',
+          badge: '/ironforge/icon-192.png',
+          // Même tag que SW + front → le navigateur déduplique les 3 sources
+          tag: 'daily-' + reminder.id,
+          data: { url: '/ironforge/' }
+        });
+        if (result === 'expired') expiredIds.push(sub.id);
+      }
     }
 
-    // Recalcule le délai réel depuis fireAt pour éviter
-    // les dérives si le SW a été suspendu puis réveillé
-    const realDelay = fireAt ? Math.max(0, fireAt - Date.now()) : delay;
+    // ── Séances planifiées uniques ──────────────────────
+    for (const schedule of schedules) {
+      if (schedule.notified) continue;
+      const reminderMs = (schedule.reminder ?? 0) * 60 * 1000;
+      const notifTime = schedule.datetime - reminderMs;
 
-    if (realDelay <= 0) return; // heure déjà passée, on skip
+      if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
+        const dayName = schedule.dayLabel?.split('—')[0]?.trim() || schedule.progName;
+        const loc     = schedule.location ? ` · ${schedule.location}` : '';
+        const title   = getMotivTitle(schedule.reminder, schedule.reminder);
+        const body    = getMotivBody(dayName, loc);
 
-    const timerId = setTimeout(() => {
-      self.registration.showNotification(title, {
-        body,
-        icon: '/ironforge/icon-192.png',
-        badge: '/ironforge/icon-192.png',
-        tag: tag || 'ironforge-' + Date.now(),
-        vibrate: [200, 100, 200, 100, 200],
-        requireInteraction: false,
-        data: { url: '/ironforge/' },
-        actions: [
-          { action: 'open', title: '🏋️ Lancer la séance' },
-          { action: 'dismiss', title: '✕ Ignorer' }
-        ]
-      });
-      scheduledNotifs.delete(tag);
-    }, realDelay);
-
-    scheduledNotifs.set(tag, timerId);
+        const result = await sendPush(subscription, {
+          title, body,
+          icon: '/ironforge/icon-192.png',
+          badge: '/ironforge/icon-192.png',
+          // Même tag que SW + front → déduplication garantie
+          tag: 'schedule-' + schedule.id,
+          data: { url: '/ironforge/' }
+        });
+        if (result === 'expired') expiredIds.push(sub.id);
+        else schedule.notified = true;
+      }
+    }
   }
-});
+
+  if (expiredIds.length) {
+    data.subscriptions = data.subscriptions.filter(s => !expiredIds.includes(s.id));
+    console.log(`🗑 ${expiredIds.length} abonnement(s) expiré(s) supprimé(s)`);
+  }
+
+  fs.writeFileSync(SUBS_FILE, JSON.stringify(data, null, 2));
+  console.log('✅ Terminé.');
+}
+
+main().catch(console.error);
