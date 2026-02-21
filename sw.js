@@ -111,13 +111,49 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
-// ── MESSAGES (SKIP_WAITING seulement) ───────────────────────
+// ── MESSAGES ─────────────────────────────────────────────────
+const scheduledTimers = new Map();
+
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
   if (event.data?.type === 'OPEN_SESSION') {
-    // Relayé aux clients ouverts
     self.clients.matchAll({ type: 'window' }).then(clients => {
       clients.forEach(c => c.postMessage({ type: 'OPEN_SESSION' }));
     });
+    return;
+  }
+
+  // Notif programmée — un seul timer par tag, jamais de doublon
+  if (event.data?.type === 'SCHEDULE_NOTIFICATION') {
+    const { title, body, tag, fireAt } = event.data;
+    const delay = Math.max(0, fireAt - Date.now());
+
+    // Annule l'ancien timer si même tag (ex: page rechargée)
+    if (scheduledTimers.has(tag)) {
+      clearTimeout(scheduledTimers.get(tag));
+    }
+
+    const id = setTimeout(() => {
+      self.registration.showNotification(title, {
+        body,
+        icon: '/ironforge/icon-192.png',
+        badge: '/ironforge/icon-192.png',
+        tag,
+        vibrate: [200, 100, 200],
+        requireInteraction: false,
+        data: { url: '/ironforge/?start=1' },
+        actions: [
+          { action: 'open', title: '🏋️ Lancer la séance' },
+          { action: 'dismiss', title: '✕ Ignorer' }
+        ]
+      });
+      scheduledTimers.delete(tag);
+    }, delay);
+
+    scheduledTimers.set(tag, id);
   }
 });
