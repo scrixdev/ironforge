@@ -1,0 +1,29 @@
+name: IRONFORGE Push Notifications
+
+on:
+  schedule:
+    # Se réveille toutes les 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Pour tester manuellement
+
+jobs:
+  send-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install web-push
+        run: npm install web-push
+
+      - name: Send scheduled push notifications
+        env:
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_EMAIL: ${{ secrets.VAPID_EMAIL }}
+        run: node .github/scripts/send-push.js
