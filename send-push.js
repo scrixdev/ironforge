@@ -65,7 +65,7 @@ async function main() {
     // ── Rappels quotidiens ─────────────────────────────
     for (const reminder of reminders) {
       const [h, m] = reminder.time.split(':').map(Number);
-      const reminderMs = reminder.reminderMin * 60 * 1000;
+      const reminderMs = (reminder.reminderMin ?? 0) * 60 * 1000;
 
       // Vérifier si aujourd'hui est un jour actif
       const dowJs = now.getDay(); // 0=Sun
@@ -79,8 +79,13 @@ async function main() {
 
       // Est-ce dans la fenêtre des 15min ?
       if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
+        // FIX : quand reminderMin === 0, affiche "C'est l'heure !" au lieu de "dans 0 min"
+        const title = reminder.reminderMin === 0
+          ? `⚡ C'est l'heure de la séance !`
+          : `⚡ Séance dans ${reminder.reminderMin} min !`;
+
         const result = await sendPush(subscription, {
-          title: `⚡ Séance dans ${reminder.reminderMin} min !`,
+          title,
           body: `${reminder.progName} — Il est l'heure de s'échauffer ! 💪`,
           icon: '/ironforge/icon-192.png',
           badge: '/ironforge/icon-192.png',
@@ -94,12 +99,17 @@ async function main() {
     // ── Séances planifiées uniques ──────────────────────
     for (const schedule of schedules) {
       if (schedule.notified) continue;
-      const reminderMs = schedule.reminder * 60 * 1000;
+      const reminderMs = (schedule.reminder ?? 0) * 60 * 1000;
       const notifTime = schedule.datetime - reminderMs;
 
       if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
+        // FIX : même correction pour les séances ponctuelles
+        const title = schedule.reminder === 0
+          ? `⚡ C'est l'heure de la séance !`
+          : `⏰ Séance dans ${schedule.reminder} min !`;
+
         const result = await sendPush(subscription, {
-          title: `⏰ Séance dans ${schedule.reminder} min !`,
+          title,
           body: `${schedule.progName} — ${schedule.dayLabel?.split('—')[0]?.trim() || ''}${schedule.location ? ' · ' + schedule.location : ''} 🏋️`,
           icon: '/ironforge/icon-192.png',
           badge: '/ironforge/icon-192.png',
