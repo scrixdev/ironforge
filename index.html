@@ -1083,7 +1083,39 @@
   .prog-select-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
   }
-  @media(max-width:480px){ .prog-select-grid { grid-template-columns: 1fr; } }
+  @media(max-width:768px){ .prog-select-grid { grid-template-columns: 1fr; gap: 10px; } }
+
+  /* ── SESSION SHELL : TOUT ADAPTÉ MOBILE ── */
+  @media(max-width:768px){
+    /* Body padding réduit */
+    .session-body { padding: 16px; }
+
+    /* Tabs plus compacts */
+    .session-tabs { padding: 12px 16px 0; gap: 0; }
+    .session-tab { font-size: 0.72rem; letter-spacing: 2px; padding: 8px 12px; }
+
+    /* Nom exercice moins grand */
+    .live-ex-name { font-size: 1.5rem; }
+
+    /* Input charge/reps/tempo : 3 colonnes → 2 */
+    .live-input-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+
+    /* Résumé stats : plus compactes */
+    .summary-stats { gap: 8px; }
+    .summary-stat { padding: 12px 8px; }
+    .summary-stat-val { font-size: 1.4rem; }
+    .summary-stat-lbl { font-size: 0.6rem; }
+
+    /* Planifier : 2 colonnes → 1 */
+    .sch-grid { grid-template-columns: 1fr; gap: 10px; }
+
+    /* Live exercise card moins paddée */
+    .live-exercise-card { padding: 16px; }
+
+    /* Header du shell */
+    .session-shell-header { padding: 14px 16px 0; }
+    .session-shell-logo { font-size: 1.1rem; letter-spacing: 3px; }
+  }
   .prog-card {
     background: var(--dark3); border: 1px solid rgba(255,255,255,0.08);
     border-radius: 12px; padding: 16px 18px; cursor: pointer; transition: all 0.25s;
