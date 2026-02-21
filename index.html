@@ -42,7 +42,18 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; overflow-x: hidden; max-width: 100vw; }
+
+  /* Wrapper interne des sections full-width */
+  .section-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 100px 48px;
+    box-sizing: border-box;
+  }
+  @media (max-width: 768px) {
+    .section-inner { padding: 60px 18px !important; }
+  }
 
   body {
     background: var(--dark);
@@ -213,7 +224,7 @@
   .stat-label { font-size: 0.75rem; letter-spacing: 3px; color: var(--gray); text-transform: uppercase; }
 
   /* SECTION STYLES */
-  section { padding: 100px 48px; max-width: 1400px; margin: 0 auto; }
+  section { padding: 100px 48px; max-width: 1400px; width: 100%; margin: 0 auto; box-sizing: border-box; overflow-x: hidden; }
 
   .section-header {
     display: flex; align-items: baseline; gap: 16px;
@@ -1019,25 +1030,22 @@
     animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
   }
 
-  /* MOBILE — plein écran ancré en bas */
+  /* MOBILE — modal centré flottant */
   @media (max-width: 768px) {
     #session-overlay {
-      padding: 0;
-      align-items: flex-end;
-      justify-content: flex-end;
+      padding: 16px;
+      align-items: center;
+      justify-content: center;
     }
     .session-shell {
-      border-radius: 20px 20px 0 0;
+      border-radius: 20px;
       max-width: 100% !important;
       width: 100% !important;
-      height: 92vh !important;
-      height: 92dvh !important;
+      height: 90vh !important;
+      height: 90dvh !important;
       max-height: none !important;
       flex-shrink: 0;
-      border-left: none;
-      border-right: none;
-      border-bottom: none;
-      animation: slideUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
+      animation: fadeUp 0.35s cubic-bezier(0.16,1,0.3,1) both;
     }
   }
 
@@ -1876,10 +1884,6 @@
     /* FOOTER */
     footer { padding: 48px 18px; }
     .footer-logo { font-size: 2rem; }
-
-    /* INLINE SECTIONS — échauffement, exercices, etc */
-    [style*="padding: 100px 48px"] { padding: 60px 18px !important; }
-    [style*="padding:100px 48px"] { padding: 60px 18px !important; }
   }
 
   /* Petit mobile */
@@ -3592,8 +3596,8 @@
 </section>
 
 <!-- ÉCHAUFFEMENT -->
-<section id="echauffement" style="background: var(--dark); max-width: 100%; padding: 100px 48px; border-top: 1px solid rgba(255,255,255,0.05);">
-<div style="max-width: 1400px; margin: 0 auto;">
+<section id="echauffement" style="background: var(--dark); max-width: 100%; border-top: 1px solid rgba(255,255,255,0.05);">
+<div class="section-inner">
   <div class="section-header fade-in-up">
     <span class="section-num">02</span>
     <h2 class="section-title">ÉCHAUFFEMENT</h2>
@@ -3762,8 +3766,8 @@
 </div>
 </section>
 
-<section id="exercices" style="background: var(--dark2); max-width: 100%; padding: 100px 48px;">
-<div style="max-width: 1400px; margin: 0 auto;">
+<section id="exercices" style="background: var(--dark2); max-width: 100%;">
+<div class="section-inner">
   <div class="section-header fade-in-up">
     <span class="section-num">02</span>
     <h2 class="section-title">EXERCICES — TUTORIELS VIDÉO</h2>
@@ -4121,8 +4125,8 @@
 </section>
 
 <!-- NUTRITION -->
-<section id="nutrition" style="background: linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); max-width: 100%; padding: 100px 48px;">
-<div style="max-width: 1400px; margin: 0 auto;">
+<section id="nutrition" style="background: linear-gradient(180deg, var(--dark) 0%, var(--dark2) 100%); max-width: 100%;">
+<div class="section-inner">
   <div class="section-header fade-in-up">
     <span class="section-num">04</span>
     <h2 class="section-title">PLAN NUTRITIONNEL</h2>
@@ -4393,8 +4397,8 @@
 </section>
 
 <!-- RECETTES PROTÉINÉES -->
-<section id="recettes" style="background: var(--dark2); max-width: 100%; padding: 100px 48px;">
-<div style="max-width: 1400px; margin: 0 auto;">
+<section id="recettes" style="background: var(--dark2); max-width: 100%;">
+<div class="section-inner">
   <div class="section-header fade-in-up">
     <span class="section-num">07</span>
     <h2 class="section-title">RECETTES PROTÉINÉES</h2>
@@ -4937,8 +4941,8 @@
 </section>
 
 <!-- SUPPLEMENTS -->
-<section id="supplements" style="background: var(--dark2); max-width: 100%; padding: 100px 48px;">
-<div style="max-width: 1400px; margin: 0 auto;">
+<section id="supplements" style="background: var(--dark2); max-width: 100%;">
+<div class="section-inner">
   <div class="section-header fade-in-up">
     <span class="section-num">06</span>
     <h2 class="section-title">SUPPLÉMENTS</h2>
