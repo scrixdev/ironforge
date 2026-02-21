@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════
-//  IRONFORGE — Service Worker v5
+//  IRONFORGE — Service Worker v6
 //  Network-first pour HTML + Cache offline + Push Notifications
 // ═══════════════════════════════════════════════════════
 
-const CACHE_NAME = 'ironforge-v5';
+const CACHE_NAME = 'ironforge-v6';
 const ASSETS = [
   '/ironforge/',
   '/ironforge/index.html',
@@ -62,7 +62,7 @@ self.addEventListener('fetch', event => {
   }
 });
 
-// ── PUSH ─────────────────────────────────────────────────
+// ── PUSH (vrai push serveur via GitHub Actions + VAPID) ──────
 self.addEventListener('push', event => {
   let data = {
     title: '⚡ IRONFORGE',
@@ -108,6 +108,53 @@ self.addEventListener('notificationclick', event => {
   );
 });
 
+// ── MESSAGES (SKIP_WAITING + SCHEDULE_NOTIFICATION) ─────────
+// Map pour stocker les timers programmés et éviter les doublons
+const scheduledNotifs = new Map();
+
 self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
+
+  // Mise à jour forcée du SW
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+    return;
+  }
+
+  // ── Notif programmée depuis l'app (quand app ouverte/arrière-plan) ──
+  // Fonctionne sur Android Chrome PWA installée
+  // Sur iOS Safari : préférer le push VAPID via GitHub Actions
+  if (event.data?.type === 'SCHEDULE_NOTIFICATION') {
+    const { title, body, delay, fireAt, tag } = event.data;
+
+    // Si un timer existe déjà pour ce tag, on l'annule d'abord
+    if (scheduledNotifs.has(tag)) {
+      clearTimeout(scheduledNotifs.get(tag));
+      scheduledNotifs.delete(tag);
+    }
+
+    // Recalcule le délai réel depuis fireAt pour éviter
+    // les dérives si le SW a été suspendu puis réveillé
+    const realDelay = fireAt ? Math.max(0, fireAt - Date.now()) : delay;
+
+    if (realDelay <= 0) return; // heure déjà passée, on skip
+
+    const timerId = setTimeout(() => {
+      self.registration.showNotification(title, {
+        body,
+        icon: '/ironforge/icon-192.png',
+        badge: '/ironforge/icon-192.png',
+        tag: tag || 'ironforge-' + Date.now(),
+        vibrate: [200, 100, 200, 100, 200],
+        requireInteraction: false,
+        data: { url: '/ironforge/' },
+        actions: [
+          { action: 'open', title: '🏋️ Lancer la séance' },
+          { action: 'dismiss', title: '✕ Ignorer' }
+        ]
+      });
+      scheduledNotifs.delete(tag);
+    }, realDelay);
+
+    scheduledNotifs.set(tag, timerId);
+  }
 });
