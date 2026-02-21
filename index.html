@@ -1019,18 +1019,21 @@
     animation: fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both;
   }
 
-  /* MOBILE — plein écran */
+  /* MOBILE — plein écran ancré en bas */
   @media (max-width: 768px) {
     #session-overlay {
       padding: 0;
       align-items: flex-end;
+      justify-content: flex-end;
     }
     .session-shell {
       border-radius: 20px 20px 0 0;
-      max-width: 100%;
-      width: 100%;
-      max-height: 92dvh;
-      height: 92dvh;
+      max-width: 100% !important;
+      width: 100% !important;
+      height: 92vh !important;
+      height: 92dvh !important;
+      max-height: none !important;
+      flex-shrink: 0;
       border-left: none;
       border-right: none;
       border-bottom: none;
@@ -1102,7 +1105,7 @@
 
     /* Tabs plus compacts */
     .session-tabs { padding: 12px 16px 0; gap: 0; }
-    .session-tab { font-size: 0.72rem; letter-spacing: 2px; padding: 8px 12px; }
+    .session-tab { font-size: 0.72rem; letter-spacing: 1px; padding: 8px 10px; }
 
     /* Nom exercice moins grand */
     .live-ex-name { font-size: 1.5rem; }
