@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>IRONFORGE — Prise de Masse</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojRTYzOTQ2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6I0ZGNkIzNSIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPCEtLSBEYXJrIGJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiByeD0iOCIgZmlsbD0iIzBhMGEwYyIvPgogIDwhLS0gSSAtLT4KICA8cmVjdCB4PSIxMCIgeT0iMTQiIHdpZHRoPSI4IiBoZWlnaHQ9IjM2IiByeD0iMSIgZmlsbD0idXJsKCNnKSIvPgogIDwhLS0gRiAtLT4KICA8cmVjdCB4PSIyNCIgeT0iMTQiIHdpZHRoPSI4IiBoZWlnaHQ9IjM2IiByeD0iMSIgZmlsbD0idXJsKCNnKSIvPgogIDxyZWN0IHg9IjMyIiB5PSIxNCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjgiIHJ4PSIxIiBmaWxsPSJ1cmwoI2cpIi8+CiAgPHJlY3QgeD0iMzIiIHk9IjI4IiB3aWR0aD0iMTQiIGhlaWdodD0iNyIgcng9IjEiIGZpbGw9InVybCgjZykiLz4KPC9zdmc+Cg==">
 <!-- PWA -->
@@ -42,11 +42,7 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html {
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-    scrollbar-gutter: stable;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     background: var(--dark);
@@ -54,14 +50,6 @@
     font-family: 'Barlow', sans-serif;
     overflow-x: hidden;
     cursor: default;
-    width: 100%;
-  }
-
-  /* Empêche le décalage quand overflow:hidden est appliqué au body */
-  body.modal-open {
-    overflow: hidden;
-    width: 100%;
-    position: relative;
   }
 
   /* SCROLLBAR */
@@ -71,7 +59,7 @@
 
   /* NAV */
   nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
     display: flex; align-items: center; justify-content: space-between;
     padding: 18px 48px;
     background: rgba(10,10,12,0.85);
@@ -858,7 +846,7 @@
   .footer-text { color: var(--gray); font-size: 0.85rem; }
 
   /* PROGRESS BAR */
-  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--red), var(--orange)); z-index: 600; width: 0%; transition: width 0.1s; }
+  .progress-bar { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--red), var(--orange)); z-index: 2000; width: 0%; transition: width 0.1s; }
 
   /* ── REST TIMER ── */
   .rest-timer-btn {
@@ -993,7 +981,7 @@
 
   /* ── MODE SÉANCE PROFESSIONNEL ── */
   #session-mode-btn {
-    position: fixed; bottom: 24px; left: 24px; z-index: 900;
+    position: fixed; bottom: 24px; left: 24px; z-index: 10000;
     background: linear-gradient(135deg, var(--red), var(--orange));
     color: white; border: none;
     padding: 13px 22px; border-radius: 50px;
@@ -1002,7 +990,6 @@
     cursor: pointer; box-shadow: 0 8px 30px rgba(230,57,70,0.45);
     transition: all 0.3s; display: flex; align-items: center; gap: 8px;
   }
-  #session-mode-btn.hidden { opacity: 0; pointer-events: none; transform: scale(0.9); }
   #session-mode-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(230,57,70,0.6); }
   #session-mode-btn .btn-notif-dot {
     width: 7px; height: 7px; border-radius: 50%; background: #fff;
@@ -1581,21 +1568,6 @@
     border-radius: 8px; padding: 7px 8px;
     border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.2s;
   }
-  /* CPB responsive mobile */
-  @media (max-width: 480px) {
-    .cpb-ex {
-      grid-template-columns: 1fr 44px 44px 60px 24px;
-      gap: 4px;
-      padding: 6px;
-    }
-    .cpb-ex-labels {
-      display: none !important; /* Masqué car les inputs ont des placeholders */
-    }
-    .cpb-ex-input {
-      font-size: 0.75rem !important;
-      padding: 5px 6px !important;
-    }
-  }
   .cpb-ex:hover { border-color: rgba(255,183,3,0.15); }
   .cpb-ex-input {
     background: var(--dark2); border: 1px solid rgba(255,255,255,0.08);
@@ -1696,11 +1668,18 @@
   /* HAMBURGER + MENU MOBILE */
   .nav-burger {
     display: none;
-    flex-direction: column; gap: 5px;
-    background: none; border: none; cursor: pointer; padding: 4px;
+    flex-direction: column; gap: 6px;
+    background: none; border: none; cursor: pointer;
+    padding: 10px 12px;
+    min-width: 48px; min-height: 48px;
+    align-items: center; justify-content: center;
+    border-radius: 8px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
+  .nav-burger:active { background: rgba(230,57,70,0.1); }
   .nav-burger span {
-    display: block; width: 24px; height: 2px;
+    display: block; width: 26px; height: 2.5px;
     background: var(--light);
     transition: all 0.3s;
     border-radius: 2px;
@@ -1714,7 +1693,7 @@
     position: fixed; top: 56px; left: 0; right: 0;
     background: rgba(10,10,12,0.98);
     backdrop-filter: blur(20px);
-    z-index: 499;
+    z-index: 999;
     border-bottom: 1px solid rgba(230,57,70,0.2);
     flex-direction: column;
     padding: 8px 0 16px;
@@ -1788,13 +1767,13 @@
     /* DAY CARDS */
     .day-grid { grid-template-columns: 1fr !important; }
     .day-card { border-radius: 8px; }
-    .day-header { padding: 16px 18px; }
-    .day-name { font-size: 1.4rem; }
-    .day-body { padding: 12px; }
-    .exercise-item { padding: 10px 12px; gap: 10px; }
-    .ex-num { font-size: 0.9rem; min-width: 24px; }
-    .ex-name { font-size: 0.88rem; }
-    .ex-sets { font-size: 0.75rem; }
+    .day-header { padding: 18px 18px; }
+    .day-name { font-size: 1.5rem; }
+    .day-body { padding: 14px; }
+    .exercise-item { padding: 12px 14px; gap: 12px; }
+    .ex-num { font-size: 0.95rem; min-width: 28px; }
+    .ex-name { font-size: 0.95rem; }
+    .ex-sets { font-size: 0.82rem; }
 
     /* GÉNÉRATEUR */
     .gen-container { grid-template-columns: 1fr !important; }
@@ -5687,7 +5666,7 @@ function openModal(exerciseId) {
   }
 
   document.getElementById('videoModal').classList.add('active');
-  document.body.classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
 }
 
 function playVideo() {
@@ -5705,8 +5684,7 @@ function closeModal(e) {
   iframe.style.display = 'none';
   document.getElementById('modalThumb').style.display = 'flex';
   document.getElementById('videoModal').classList.remove('active');
-  document.body.classList.remove('modal-open');
-  document.body.style.paddingRight = '';
+  document.body.style.overflow = '';
 }
 
 // Programme tabs
@@ -5805,13 +5783,7 @@ function toggleMenu() {
   const burger = document.querySelector('.nav-burger');
   menu.classList.toggle('open');
   burger.classList.toggle('open');
-  // Utilise la classe pour éviter le saut de scrollbar
-  if (menu.classList.contains('open')) {
-    document.body.classList.add('modal-open');
-  } else {
-    document.body.classList.remove('modal-open');
-    document.body.style.paddingRight = '';
-  }
+  document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
 }
 
 // Progress bar
@@ -6266,17 +6238,8 @@ let elapsedSec       = 0;
 
 // ── OVERLAY OPEN / CLOSE ─────────────────────────────────────
 function openSessionMode() {
-  // Calcule la largeur de la scrollbar AVANT de bloquer le scroll
-  const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
   document.getElementById('session-overlay').classList.add('active');
-  document.body.classList.add('modal-open');
-  if (scrollBarWidth > 0) {
-    document.body.style.paddingRight = scrollBarWidth + 'px';
-    const nav = document.querySelector('nav');
-    if (nav) nav.style.paddingRight = (parseInt(getComputedStyle(nav).paddingRight) + scrollBarWidth) + 'px';
-  }
-  // Cache le bouton Mode Séance pour qu'il ne passe pas par-dessus l'overlay
-  document.getElementById('session-mode-btn').classList.add('hidden');
+  document.body.style.overflow = 'hidden';
 
   // Restaurer le programme actif
   const savedKey = getActiveProgramKey();
@@ -6298,12 +6261,7 @@ function openSessionMode() {
 
 function closeSessionMode() {
   document.getElementById('session-overlay').classList.remove('active');
-  document.body.classList.remove('modal-open');
-  document.body.style.paddingRight = '';
-  const nav = document.querySelector('nav');
-  if (nav) nav.style.paddingRight = '';
-  // Réaffiche le bouton Mode Séance
-  document.getElementById('session-mode-btn').classList.remove('hidden');
+  document.body.style.overflow = '';
 }
 
 // ── TABS ─────────────────────────────────────────────────────
@@ -7508,13 +7466,12 @@ function openCustomProgramBuilder() {
   // Add 1 day by default
   cpbAddDay();
   document.getElementById('custom-prog-overlay').classList.add('active');
-  document.body.classList.add('modal-open');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeCustomProgramBuilder() {
   document.getElementById('custom-prog-overlay').classList.remove('active');
-  // Garde modal-open car la session overlay est encore ouverte
-  document.body.classList.add('modal-open');
+  document.body.style.overflow = 'hidden'; // session overlay still open
 }
 
 function cpbAddDay(name) {
