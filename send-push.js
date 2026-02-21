@@ -18,43 +18,8 @@ webpush.setVapidDetails(
 // Fichier qui contient les abonnements + rappels programmés
 const SUBS_FILE = path.join(__dirname, '../../ironforge-subscriptions.json');
 
-// ── Messages motivants (même pool que le front) ──────────────
-const MOTIV_TITLES_NOW = [
-  "🔥 C'est l'heure !",
-  "💪 Le fer t'attend",
-  "⚡ Zéro excuse aujourd'hui",
-  "🏋️ On y va forge-toi !",
-  "🔥 C'est maintenant que ça se passe",
-];
-const MOTIV_TITLES_SOON = [
-  "⏰ Plus que {min} min",
-  "🔥 Dans {min} min tu soulèves",
-  "💪 {min} min et t'es dans la place",
-  "⚡ Prépare-toi dans {min} min c'est parti",
-  "🏋️ Encore {min} min et on forge",
-];
-const MOTIV_BODIES = [
-  "{day}{loc} 🔥 Lâche tout ce que t'as",
-  "{day}{loc} 💪 Chaque rep te rapproche du résultat",
-  "{day}{loc} ⚡ Les champions s'entraînent même quand ça fait mal",
-  "{day}{loc} 🏋️ Construis le physique que tu mérites",
-  "{day}{loc} 🔥 La régularité crée les résultats",
-];
-
-function getRand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function getMotivTitle(reminderMin, diffMin) {
-  if ((reminderMin ?? 0) === 0 || (diffMin ?? 0) <= 1) {
-    return getRand(MOTIV_TITLES_NOW);
-  }
-  return getRand(MOTIV_TITLES_SOON).replace('{min}', diffMin ?? reminderMin);
-}
-
-function getMotivBody(dayName, loc) {
-  return getRand(MOTIV_BODIES)
-    .replace('{day}', dayName)
-    .replace('{loc}', loc || '');
-}
+function getNotifTitle() { return "⚡ C'est l'heure de ta séance !"; }
+function getNotifBody(dayName, loc) { return dayName + (loc ? ' ' + loc : ''); }
 
 function loadData() {
   try {
@@ -101,25 +66,24 @@ async function main() {
     // ── Rappels quotidiens ─────────────────────────────
     for (const reminder of reminders) {
       const [h, m] = reminder.time.split(':').map(Number);
-      const reminderMs = (reminder.reminderMin ?? 0) * 60 * 1000;
 
       const dowJs = now.getDay();
       const dowIron = dowJs === 0 ? 6 : dowJs - 1;
       if (!reminder.days.includes(dowIron)) continue;
 
+      // Heure exacte de la séance
       const sessionToday = new Date(now);
       sessionToday.setHours(h, m, 0, 0);
-      const notifTime = sessionToday.getTime() - reminderMs;
+      const notifTime = sessionToday.getTime();
 
       if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
-        const title = getMotivTitle(reminder.reminderMin, reminder.reminderMin);
-        const body  = getMotivBody(reminder.progName, '');
+        const title = getNotifTitle();
+        const body  = getNotifBody(reminder.progName, '');
 
         const result = await sendPush(subscription, {
           title, body,
           icon: '/ironforge/icon-192.png',
           badge: '/ironforge/icon-192.png',
-          // Même tag que SW + front → le navigateur déduplique les 3 sources
           tag: 'daily-' + reminder.id,
           data: { url: '/ironforge/' }
         });
@@ -130,20 +94,19 @@ async function main() {
     // ── Séances planifiées uniques ──────────────────────
     for (const schedule of schedules) {
       if (schedule.notified) continue;
-      const reminderMs = (schedule.reminder ?? 0) * 60 * 1000;
-      const notifTime = schedule.datetime - reminderMs;
+      // Heure exacte de la séance, sans décalage
+      const notifTime = schedule.datetime;
 
       if (notifTime >= nowMs && notifTime < nowMs + windowMs) {
         const dayName = schedule.dayLabel?.split('—')[0]?.trim() || schedule.progName;
-        const loc     = schedule.location ? ` · ${schedule.location}` : '';
-        const title   = getMotivTitle(schedule.reminder, schedule.reminder);
-        const body    = getMotivBody(dayName, loc);
+        const loc     = schedule.location ? ` ${schedule.location}` : '';
+        const title   = getNotifTitle();
+        const body    = getNotifBody(dayName, loc);
 
         const result = await sendPush(subscription, {
           title, body,
           icon: '/ironforge/icon-192.png',
           badge: '/ironforge/icon-192.png',
-          // Même tag que SW + front → déduplication garantie
           tag: 'schedule-' + schedule.id,
           data: { url: '/ironforge/' }
         });
