@@ -832,8 +832,8 @@
   @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-  .fade-in-up { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .fade-in-up.visible { opacity: 1; transform: translateY(0); }
+  .fade-in-up { opacity: 0; transform: translateY(30px); }
+  .fade-in-up.visible { animation: fadeUp 0.7s ease forwards; }
 
   /* HAMBURGER + MENU MOBILE */
   .nav-burger {
@@ -4408,6 +4408,8 @@ const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
+    } else {
+      entry.target.classList.remove('visible');
     }
   });
 }, { threshold: 0.1 });
