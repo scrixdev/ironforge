@@ -7290,75 +7290,52 @@ function addSchedule() {
   const date     = document.getElementById('schDate').value;
   const time     = document.getElementById('schTime').value;
   const location = document.getElementById('schLocation').value.trim();
-  const reminder = parseInt(document.getElementById('schReminder').value);
 
   if (!date || !time) { alert('Remplis la date et l\'heure !'); return; }
 
   const schedules = storageGet('schedules') || [];
   const id = Date.now();
-  schedules.push({
+  const item = {
     id, progKey, dayKey,
     progName: PROGRAMS[progKey].name,
     dayLabel: PROGRAMS[progKey].days[dayKey].label,
     datetime: new Date(date + 'T' + time).getTime(),
-    location, reminder,
+    location,
     notified: false
-  });
+  };
+  schedules.push(item);
   storageSet('schedules', schedules);
   updateScheduleUI();
   document.getElementById('session-mode-btn').classList.add('has-scheduled');
 
-  // Try to schedule browser notification
-  scheduleNotification(schedules[schedules.length-1]);
+  // Notif 1 : confirmation immédiate
+  const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
+  const loc = location ? ` à ${location}` : '';
+  const d = new Date(item.datetime);
+  const timeStr = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false });
+  const dateStr = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  sendNotif(
+    '✅ Séance programmée !',
+    `${dayName}${loc} le ${dateStr} à ${timeStr}`,
+    'confirm-' + id
+  );
+
+  // Notif 2 : à l'heure exacte de la séance
+  scheduleNotification(item);
 }
 
-// ── MESSAGES DE NOTIFICATION MOTIVANTS ───────────────────────
-const MOTIV_TITLES_NOW = [
-  "🔥 C'est l'heure !",
-  "💪 Le fer t'attend",
-  "⚡ Zéro excuse aujourd'hui",
-  "🏋️ On y va forge-toi !",
-  "🔥 C'est maintenant que ça se passe",
-];
-const MOTIV_TITLES_SOON = [
-  "⏰ Plus que {min} min",
-  "🔥 Dans {min} min tu soulèves",
-  "💪 {min} min et t'es dans la place",
-  "⚡ Prépare-toi dans {min} min c'est parti",
-  "🏋️ Encore {min} min et on forge",
-];
-const MOTIV_BODIES = [
-  "{day}{loc} 🔥 Lâche tout ce que t'as",
-  "{day}{loc} 💪 Chaque rep te rapproche du résultat",
-  "{day}{loc} ⚡ Les champions s'entraînent même quand ça fait mal",
-  "{day}{loc} 🏋️ Construis le physique que tu mérites",
-  "{day}{loc} 🔥 La régularité crée les résultats",
-];
-
-function getRand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-function getMotivTitle(reminderMin, diffMin) {
-  if ((reminderMin ?? 0) === 0 || (diffMin ?? 0) <= 1) {
-    return getRand(MOTIV_TITLES_NOW);
-  }
-  return getRand(MOTIV_TITLES_SOON).replace('{min}', diffMin ?? reminderMin);
-}
-
-function getMotivBody(dayName, loc, reminderMin) {
-  return getRand(MOTIV_BODIES)
-    .replace('{day}', dayName)
-    .replace('{loc}', loc || '');
-}
-
+// ── MESSAGES DE NOTIFICATION ─────────────────────────────────
+function getNotifTitle() { return "⚡ C'est l'heure de ta séance !"; }
+function getNotifBody(dayName, loc) { return dayName + (loc ? ' ' + loc : ''); }
 function scheduleNotification(item) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const msUntilReminder = item.datetime - Date.now() - ((item.reminder ?? 0) * 60 * 1000);
-  if (msUntilReminder > 0) {
+  const msUntilSession = item.datetime - Date.now();
+  if (msUntilSession > 0) {
     const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
-    const loc = item.location ? ` · ${item.location}` : '';
-    const title = getMotivTitle(item.reminder, item.reminder);
-    const body = getMotivBody(dayName, loc, item.reminder);
-    scheduleViaSW(title, body, msUntilReminder, 'schedule-' + item.id);
+    const loc = item.location ? ` ${item.location}` : '';
+    const title = getNotifTitle();
+    const body = getNotifBody(dayName, loc);
+    scheduleViaSW(title, body, msUntilSession, 'schedule-' + item.id);
   }
 }
 
@@ -7367,15 +7344,13 @@ function checkScheduledSessions() {
   const now = Date.now();
   schedules.forEach(item => {
     const diff = item.datetime - now;
-    if (!item.notified && diff > 0 && diff <= (item.reminder ?? 0) * 60 * 1000) {
-      const diffMin = Math.round(diff / 60000);
+    // Tire uniquement quand on est à l'heure exacte (fenêtre de 30s)
+    if (!item.notified && diff <= 0 && diff > -30000) {
       const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
-      const loc = item.location ? ` · ${item.location}` : '';
-      // Tag identique à celui du SW et de GitHub Actions → le navigateur déduplique
-      // Une seule notif s'affiche même si les 3 systèmes tirent en même temps
+      const loc = item.location ? ` ${item.location}` : '';
       sendNotif(
-        getMotivTitle(item.reminder, diffMin),
-        getMotivBody(dayName, loc, item.reminder),
+        getNotifTitle(),
+        getNotifBody(dayName, loc),
         'schedule-' + item.id
       );
       item.notified = true;
@@ -7678,15 +7653,14 @@ function saveDailyReminders() {
       if (perm === 'granted') {
         scheduleDailyNotifs(reminder);
         renderDailyRemindersItems();
-        sendNotif('🔔 Rappels activés !', `Plus d'excuse — tes séances ${progName} sont programmées. On forge. 💪`);
+        sendNotif('✅ Rappels activés !', `${progName} programmé chaque ${days.map(d=>DAYS_FR[d]).join(', ')} à ${time}`, 'confirm-daily-' + reminder.id);
       }
     });
   } else if (Notification.permission === 'granted') {
     scheduleDailyNotifs(reminder);
     renderDailyRemindersItems();
-    // Re-sync l'abonnement push avec les nouveaux rappels
     if (pushSubscription) saveSubscriptionToGitHub(pushSubscription);
-    sendNotif('🔔 Rappels activés !', `Plus d'excuse — tes séances ${progName} sont programmées. On forge. 💪`);
+    sendNotif('✅ Rappels activés !', `${progName} programmé chaque ${days.map(d=>DAYS_FR[d]).join(', ')} à ${time}`, 'confirm-daily-' + reminder.id);
   } else {
     alert('Les notifications sont bloquées. Autorise-les dans les paramètres de ton navigateur.');
   }
@@ -7694,22 +7668,20 @@ function saveDailyReminders() {
 
 function scheduleDailyNotifs(reminder) {
   const [h, m] = reminder.time.split(':').map(Number);
-  const reminderMs = reminder.reminderMin * 60 * 1000;
   const now = new Date();
 
   for (let day = 0; day <= 30; day++) {
     const target = new Date(now);
     target.setDate(now.getDate() + day);
     target.setHours(h, m, 0, 0);
-    const notifTime = target.getTime() - reminderMs;
-    const delay = notifTime - Date.now();
+    const delay = target.getTime() - Date.now();
     const dowJs = target.getDay();
     const dowIron = dowJs === 0 ? 6 : dowJs - 1;
 
     if (delay > 0 && reminder.days.includes(dowIron)) {
       const tag = 'daily-' + reminder.id + '-' + day;
-      const title = getMotivTitle(reminder.reminderMin, reminder.reminderMin);
-      const body = getMotivBody(reminder.progName, '', reminder.reminderMin);
+      const title = getNotifTitle();
+      const body = getNotifBody(reminder.progName, '');
       scheduleViaSW(title, body, delay, tag);
     }
   }
