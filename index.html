@@ -7272,9 +7272,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   updateSchProgDays();
 
-  // Start schedule checker
+  // Start schedule checker (UI only, pas de notifs)
   scheduleCheckInt = setInterval(checkScheduledSessions, 30000);
   checkScheduledSessions();
+
+  // Ouvre la séance si on arrive depuis un clic sur une notif (?start=1)
+  if (new URLSearchParams(window.location.search).get('start') === '1') {
+    setTimeout(() => openSessionMode(), 300);
+    // Nettoie l'URL sans recharger
+    history.replaceState({}, '', window.location.pathname);
+  }
+});
+
+// Écoute le message du SW quand l'app est déjà ouverte au moment du clic notif
+navigator.serviceWorker?.addEventListener('message', e => {
+  if (e.data?.type === 'OPEN_SESSION') openSessionMode();
 });
 
 // Sync hidden time input from custom selects
@@ -7328,35 +7340,12 @@ function addSchedule() {
 function getNotifTitle() { return "⚡ C'est l'heure de ta séance !"; }
 function getNotifBody(dayName, loc) { return dayName + (loc ? ' ' + loc : ''); }
 function scheduleNotification(item) {
-  if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const msUntilSession = item.datetime - Date.now();
-  if (msUntilSession > 0) {
-    const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
-    const loc = item.location ? ` ${item.location}` : '';
-    const title = getNotifTitle();
-    const body = getNotifBody(dayName, loc);
-    scheduleViaSW(title, body, msUntilSession, 'schedule-' + item.id);
-  }
+  // GitHub Actions envoie la notif à l'heure exacte via VAPID
+  // On ne programme rien ici, la confirmation est envoyée dans addSchedule
 }
 
 function checkScheduledSessions() {
-  const schedules = storageGet('schedules') || [];
-  const now = Date.now();
-  schedules.forEach(item => {
-    const diff = item.datetime - now;
-    // Tire uniquement quand on est à l'heure exacte (fenêtre de 30s)
-    if (!item.notified && diff <= 0 && diff > -30000) {
-      const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
-      const loc = item.location ? ` ${item.location}` : '';
-      sendNotif(
-        getNotifTitle(),
-        getNotifBody(dayName, loc),
-        'schedule-' + item.id
-      );
-      item.notified = true;
-    }
-  });
-  storageSet('schedules', schedules);
+  // Ne fait que mettre à jour l'UI — c'est le SW qui envoie la vraie notif à l'heure exacte
   updateScheduleUI();
 }
 
@@ -7667,24 +7656,8 @@ function saveDailyReminders() {
 }
 
 function scheduleDailyNotifs(reminder) {
-  const [h, m] = reminder.time.split(':').map(Number);
-  const now = new Date();
-
-  for (let day = 0; day <= 30; day++) {
-    const target = new Date(now);
-    target.setDate(now.getDate() + day);
-    target.setHours(h, m, 0, 0);
-    const delay = target.getTime() - Date.now();
-    const dowJs = target.getDay();
-    const dowIron = dowJs === 0 ? 6 : dowJs - 1;
-
-    if (delay > 0 && reminder.days.includes(dowIron)) {
-      const tag = 'daily-' + reminder.id + '-' + day;
-      const title = getNotifTitle();
-      const body = getNotifBody(reminder.progName, '');
-      scheduleViaSW(title, body, delay, tag);
-    }
-  }
+  // GitHub Actions envoie les notifs quotidiennes via VAPID
+  // Rien à programmer côté client
 }
 
 function renderDailyRemindersItems() {
