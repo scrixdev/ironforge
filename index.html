@@ -6296,16 +6296,16 @@ window.addEventListener('appinstalled', () => {
 
 // Envoie une notif programmée via le Service Worker
 // → fonctionne même quand l'app est en arrière-plan (PWA installée)
-function scheduleViaSW(title, body, delayMs, tag) {
+// tag + fireAt (timestamp absolu) — le SW recalcule le délai exact à chaque réveil
+function scheduleViaSW(title, body, tag, fireAt) {
   if (!swRegistration?.active) {
-    // Fallback setTimeout si SW pas dispo
-    if (delayMs > 0) setTimeout(() => sendNotif(title, body, tag), delayMs);
+    const delay = Math.max(0, fireAt - Date.now());
+    if (delay > 0) setTimeout(() => sendNotif(title, body, tag), delay);
     return;
   }
   swRegistration.active.postMessage({
     type: 'SCHEDULE_NOTIFICATION',
-    title, body, delay: delayMs, tag,
-    fireAt: Date.now() + delayMs  // heure absolue pour plus de fiabilité
+    title, body, tag, fireAt
   });
 }
 
@@ -7340,8 +7340,17 @@ function addSchedule() {
 function getNotifTitle() { return "⚡ C'est l'heure de ta séance !"; }
 function getNotifBody(dayName, loc) { return dayName + (loc ? ' ' + loc : ''); }
 function scheduleNotification(item) {
-  // GitHub Actions envoie la notif à l'heure exacte via VAPID
-  // On ne programme rien ici, la confirmation est envoyée dans addSchedule
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const msUntilSession = item.datetime - Date.now();
+  if (msUntilSession <= 0) return;
+  const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
+  const loc = item.location ? ` ${item.location}` : '';
+  scheduleViaSW(
+    getNotifTitle(),
+    getNotifBody(dayName, loc),
+    'schedule-' + item.id,
+    item.datetime
+  );
 }
 
 function checkScheduledSessions() {
@@ -7656,8 +7665,28 @@ function saveDailyReminders() {
 }
 
 function scheduleDailyNotifs(reminder) {
-  // GitHub Actions envoie les notifs quotidiennes via VAPID
-  // Rien à programmer côté client
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const [h, m] = reminder.time.split(':').map(Number);
+  const now = new Date();
+
+  for (let day = 0; day <= 30; day++) {
+    const target = new Date(now);
+    target.setDate(now.getDate() + day);
+    target.setHours(h, m, 0, 0);
+    const fireAt = target.getTime();
+    const delay = fireAt - Date.now();
+    const dowJs = target.getDay();
+    const dowIron = dowJs === 0 ? 6 : dowJs - 1;
+
+    if (delay > 0 && reminder.days.includes(dowIron)) {
+      scheduleViaSW(
+        getNotifTitle(),
+        getNotifBody(reminder.progName, ''),
+        'daily-' + reminder.id + '-day' + day,
+        fireAt
+      );
+    }
+  }
 }
 
 function renderDailyRemindersItems() {
@@ -7688,11 +7717,19 @@ function deleteDailyReminder(id) {
   renderDailyRemindersItems();
 }
 
-// Boot: reschedule all daily reminders on page load
-(function bootDailyReminders() {
+// Boot: reprogramme les rappels une fois le SW actif (évite les doublons sur rechargement)
+(function bootReminders() {
   if (Notification.permission !== 'granted') return;
-  const reminders = storageGet('dailyReminders') || [];
-  reminders.forEach(scheduleDailyNotifs);
+  if (!('serviceWorker' in navigator)) return;
+
+  navigator.serviceWorker.ready.then(() => {
+    // Rappels quotidiens
+    const reminders = storageGet('dailyReminders') || [];
+    reminders.forEach(scheduleDailyNotifs);
+    // Séances planifiées
+    const schedules = storageGet('schedules') || [];
+    schedules.forEach(s => { if (!s.notified) scheduleNotification(s); });
+  });
 })();
 
 // Inject custom programs into schedule prog select when session opens
