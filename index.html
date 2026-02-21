@@ -6213,7 +6213,7 @@ async function requestNotifPermissionFull() {
   checkNotifBanner();
   if (perm === 'granted') {
     await subscribeToPush();
-    sendNotif('🔔 Notifications activées !', 'Tu recevras des rappels même app fermée — comme WhatsApp ! 💪');
+    sendNotif('🔥 IRONFORGE prêt !', "Tes rappels sont actifs — l'excuse de l'oubli n'existe plus. 💪");
     // Reschedule tout
     const schedules = storageGet('schedules') || [];
     schedules.forEach(scheduleNotification);
@@ -7312,14 +7312,52 @@ function addSchedule() {
   scheduleNotification(schedules[schedules.length-1]);
 }
 
+// ── MESSAGES DE NOTIFICATION MOTIVANTS ───────────────────────
+const MOTIV_TITLES_NOW = [
+  "🔥 C'est l'heure !",
+  "💪 Le fer t'attend",
+  "⚡ Zéro excuse aujourd'hui",
+  "🏋️ On y va forge-toi !",
+  "🔥 C'est maintenant que ça se passe",
+];
+const MOTIV_TITLES_SOON = [
+  "⏰ Plus que {min} min",
+  "🔥 Dans {min} min tu soulèves",
+  "💪 {min} min et t'es dans la place",
+  "⚡ Prépare-toi dans {min} min c'est parti",
+  "🏋️ Encore {min} min et on forge",
+];
+const MOTIV_BODIES = [
+  "{day}{loc} 🔥 Lâche tout ce que t'as",
+  "{day}{loc} 💪 Chaque rep te rapproche du résultat",
+  "{day}{loc} ⚡ Les champions s'entraînent même quand ça fait mal",
+  "{day}{loc} 🏋️ Construis le physique que tu mérites",
+  "{day}{loc} 🔥 La régularité crée les résultats",
+];
+
+function getRand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function getMotivTitle(reminderMin, diffMin) {
+  if ((reminderMin ?? 0) === 0 || (diffMin ?? 0) <= 1) {
+    return getRand(MOTIV_TITLES_NOW);
+  }
+  return getRand(MOTIV_TITLES_SOON).replace('{min}', diffMin ?? reminderMin);
+}
+
+function getMotivBody(dayName, loc, reminderMin) {
+  return getRand(MOTIV_BODIES)
+    .replace('{day}', dayName)
+    .replace('{loc}', loc || '');
+}
+
 function scheduleNotification(item) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
-  const msUntilReminder = item.datetime - Date.now() - (item.reminder * 60 * 1000);
+  const msUntilReminder = item.datetime - Date.now() - ((item.reminder ?? 0) * 60 * 1000);
   if (msUntilReminder > 0) {
-    const title = item.reminder === 0
-      ? `⚡ C'est l'heure de la séance !`
-      : `⏰ Séance dans ${item.reminder} min !`;
-    const body = `${item.progName} — ${item.dayLabel?.split('—')[0]?.trim() || ''}${item.location ? ' · ' + item.location : ''}`;
+    const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
+    const loc = item.location ? ` · ${item.location}` : '';
+    const title = getMotivTitle(item.reminder, item.reminder);
+    const body = getMotivBody(dayName, loc, item.reminder);
     scheduleViaSW(title, body, msUntilReminder, 'schedule-' + item.id);
   }
 }
@@ -7329,12 +7367,16 @@ function checkScheduledSessions() {
   const now = Date.now();
   schedules.forEach(item => {
     const diff = item.datetime - now;
-    if (!item.notified && diff > 0 && diff <= item.reminder * 60 * 1000) {
+    if (!item.notified && diff > 0 && diff <= (item.reminder ?? 0) * 60 * 1000) {
+      const diffMin = Math.round(diff / 60000);
+      const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
+      const loc = item.location ? ` · ${item.location}` : '';
+      // Tag identique à celui du SW et de GitHub Actions → le navigateur déduplique
+      // Une seule notif s'affiche même si les 3 systèmes tirent en même temps
       sendNotif(
-        item.reminder === 0
-          ? `⚡ C'est l'heure de la séance !`
-          : `⏰ Séance dans ${Math.round(diff/60000)} min !`,
-        `${item.progName} — ${item.dayLabel.split('—')[0].trim()}${item.location ? ' · ' + item.location : ''}`
+        getMotivTitle(item.reminder, diffMin),
+        getMotivBody(dayName, loc, item.reminder),
+        'schedule-' + item.id
       );
       item.notified = true;
     }
@@ -7636,7 +7678,7 @@ function saveDailyReminders() {
       if (perm === 'granted') {
         scheduleDailyNotifs(reminder);
         renderDailyRemindersItems();
-        sendNotif('🔔 Rappels activés !', `Chaque ${days.map(d=>DAYS_FR[d]).join(', ')} à ${time} — ${progName}`);
+        sendNotif('🔔 Rappels activés !', `Plus d'excuse — tes séances ${progName} sont programmées. On forge. 💪`);
       }
     });
   } else if (Notification.permission === 'granted') {
@@ -7644,7 +7686,7 @@ function saveDailyReminders() {
     renderDailyRemindersItems();
     // Re-sync l'abonnement push avec les nouveaux rappels
     if (pushSubscription) saveSubscriptionToGitHub(pushSubscription);
-    sendNotif('🔔 Rappels activés !', `Chaque ${days.map(d=>DAYS_FR[d]).join(', ')} à ${time} — ${progName}`);
+    sendNotif('🔔 Rappels activés !', `Plus d'excuse — tes séances ${progName} sont programmées. On forge. 💪`);
   } else {
     alert('Les notifications sont bloquées. Autorise-les dans les paramètres de ton navigateur.');
   }
@@ -7666,11 +7708,8 @@ function scheduleDailyNotifs(reminder) {
 
     if (delay > 0 && reminder.days.includes(dowIron)) {
       const tag = 'daily-' + reminder.id + '-' + day;
-      const title = reminder.reminderMin === 0
-        ? `⚡ C'est l'heure de la séance !`
-        : `⚡ Séance dans ${reminder.reminderMin} min !`;
-      const body = `${reminder.progName} — Il est l'heure de s'échauffer !`;
-      // Via SW → fonctionne même app en arrière-plan (PWA installée)
+      const title = getMotivTitle(reminder.reminderMin, reminder.reminderMin);
+      const body = getMotivBody(reminder.progName, '', reminder.reminderMin);
       scheduleViaSW(title, body, delay, tag);
     }
   }
