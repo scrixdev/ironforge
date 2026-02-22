@@ -89,13 +89,23 @@ function fireNotification(title, body, tag, notifData = {}) {
 // Programme (ou reprogramme) un timer en mémoire + persiste dans IDB
 function scheduleTimer(item) {
   const { tag, title, body, fireAt, notifData } = item;
-  const delay = Math.max(0, fireAt - Date.now());
+  const delay = fireAt - Date.now();
 
-  // Si la date est déjà passée de plus d'une minute → on ignore + nettoie IDB
-  if (Date.now() - fireAt > 60000) {
+  // Passée de plus de 2 min → nettoyage IDB, on ne déclenche pas
+  if (delay < -2 * 60 * 1000) {
     dbDelete(tag);
     return;
   }
+
+  // Moins de 10 min dans le futur au moment de la CRÉATION → on ignore
+  // (évite les déclenchements immédiats lors d'une nouvelle programmation)
+  // MAIS si c'est une restauration IDB (SW redémarré), on accepte tout ce qui n'est pas passé
+  const isRestore = item._isRestore === true;
+  if (!isRestore && delay < 10 * 60 * 1000 && delay > 0) {
+    return; // trop proche, ignoré
+  }
+
+  const clampedDelay = Math.max(0, delay);
 
   // Annule l'ancien timer si même tag
   if (scheduledTimers.has(tag)) clearTimeout(scheduledTimers.get(tag));
@@ -104,7 +114,7 @@ function scheduleTimer(item) {
     fireNotification(title, body, tag, notifData || {});
     scheduledTimers.delete(tag);
     dbDelete(tag);
-  }, delay);
+  }, clampedDelay);
 
   scheduledTimers.set(tag, id);
 }
@@ -114,7 +124,7 @@ async function restoreScheduledTimers() {
   try {
     const items = await dbGetAll();
     for (const item of items) {
-      scheduleTimer(item);
+      scheduleTimer({ ...item, _isRestore: true }); // marque comme restauration IDB
     }
     if (items.length > 0) {
       console.log(`[IRONFORGE SW] ${items.length} timer(s) restauré(s) depuis IDB`);
@@ -244,11 +254,11 @@ self.addEventListener('message', event => {
 
     const item = { tag, title, body, fireAt, notifData: notifData || {} };
 
-    // Persiste dans IDB AVANT de programmer le timer
-    // → survivra aux redémarrages du SW
+    // Persiste dans IDB AVANT de programmer le timer (survit aux redémarrages SW)
+    // _isRestore: false → le guard 10 min s'applique (notif créée maintenant)
     dbSave(item)
-      .then(() => scheduleTimer(item))
-      .catch(() => scheduleTimer(item)); // on programme quand même si IDB échoue
+      .then(() => scheduleTimer({ ...item, _isRestore: false }))
+      .catch(() => scheduleTimer({ ...item, _isRestore: false }));
   }
 
   // Annulation explicite d'une notif programmée (ex: séance supprimée)
