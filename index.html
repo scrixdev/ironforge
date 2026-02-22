@@ -1489,96 +1489,165 @@
   }
   #custom-prog-overlay.active { display: flex; }
 
+  /* ══ CUSTOM PROGRAM BUILDER ══════════════════════════════ */
   .cpb-shell {
-    background: linear-gradient(145deg, #13131a, #1a1a24);
-    border: 1px solid rgba(255,183,3,0.25);
+    background: linear-gradient(160deg, #111118, #18181f);
+    border: 1px solid rgba(255,183,3,0.2);
     border-radius: 20px;
-    width: 100%; max-width: 720px;
+    width: 100%; max-width: 740px;
     margin: auto;
+    display: flex; flex-direction: column;
+    max-height: 92vh;
+    box-shadow: 0 32px 90px rgba(0,0,0,0.85), 0 0 0 1px rgba(255,255,255,0.04);
     overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.8);
   }
   .cpb-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 20px 28px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    background: rgba(255,183,3,0.05);
+    padding: 22px 28px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: linear-gradient(90deg, rgba(255,183,3,0.06), transparent);
+    flex-shrink: 0;
+  }
+  .cpb-header-left { display: flex; align-items: center; gap: 12px; }
+  .cpb-header-icon {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, rgba(255,183,3,0.25), rgba(255,107,53,0.15));
+    border: 1px solid rgba(255,183,3,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
   }
   .cpb-title {
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem;
     letter-spacing: 3px;
     background: linear-gradient(90deg, var(--gold), var(--orange));
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .cpb-close {
-    background: none; border: none; color: var(--gray);
-    font-size: 1.3rem; cursor: pointer; line-height: 1; transition: color 0.2s;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; color: var(--gray); width: 32px; height: 32px;
+    font-size: 1rem; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
   }
-  .cpb-close:hover { color: var(--red); }
-  .cpb-body { padding: 24px 28px; }
-  .cpb-prog-name-input {
-    width: 100%; background: var(--dark3);
-    border: 1px solid rgba(255,183,3,0.3);
-    border-radius: 8px; color: var(--light);
-    padding: 12px 16px; font-family: 'Barlow Condensed', sans-serif;
-    font-size: 1.1rem; letter-spacing: 2px;
-    outline: none; margin-bottom: 20px; transition: border-color 0.3s;
-  }
-  .cpb-prog-name-input:focus { border-color: var(--gold); }
-  .cpb-prog-name-input::placeholder { color: rgba(136,136,153,0.5); }
+  .cpb-close:hover { background: rgba(230,57,70,0.15); border-color: var(--red); color: var(--red); }
+  .cpb-body { padding: 22px 28px; overflow-y: auto; flex: 1; }
 
+  .cpb-prog-name-wrap { position: relative; margin-bottom: 20px; }
+  .cpb-prog-name-wrap label {
+    display: block; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gray); margin-bottom: 6px;
+  }
+  .cpb-prog-name-input {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,183,3,0.25);
+    border-radius: 10px; color: var(--light);
+    padding: 12px 16px; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.05rem; letter-spacing: 2px;
+    outline: none; transition: border-color 0.3s, background 0.2s;
+  }
+  .cpb-prog-name-input:focus { border-color: var(--gold); background: rgba(255,183,3,0.04); }
+  .cpb-prog-name-input::placeholder { color: rgba(136,136,153,0.4); }
+
+  /* ── Day cards ── */
   .cpb-days-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   .cpb-day {
-    background: var(--dark3); border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 12px; overflow: hidden; transition: border-color 0.2s;
+    background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; overflow: hidden; transition: border-color 0.2s;
   }
-  .cpb-day:hover { border-color: rgba(255,183,3,0.2); }
+  .cpb-day:hover { border-color: rgba(255,183,3,0.22); }
   .cpb-day-header {
     display: flex; align-items: center; gap: 10px;
     padding: 13px 16px;
     background: rgba(255,255,255,0.02);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
-  .cpb-day-toggle {
-    font-size: 0.8rem; color: var(--gray);
-    cursor: pointer; transition: transform 0.3s;
-    margin-left: auto; flex-shrink: 0; background: none; border: none;
+  .cpb-day-num {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+    color: var(--gold); letter-spacing: 2px; flex-shrink: 0;
+    width: 20px; text-align: center;
   }
-  .cpb-day.open .cpb-day-toggle { transform: rotate(180deg); }
   .cpb-day-name-input {
     flex: 1; background: transparent; border: none;
     color: var(--light); font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.95rem; letter-spacing: 2px; text-transform: uppercase;
+    font-size: 0.92rem; letter-spacing: 2px; text-transform: uppercase;
     outline: none;
   }
-  .cpb-day-name-input::placeholder { color: rgba(136,136,153,0.4); }
+  .cpb-day-name-input::placeholder { color: rgba(136,136,153,0.35); }
+  .cpb-day-actions { display: flex; gap: 4px; flex-shrink: 0; }
   .cpb-day-remove {
-    background: none; border: none; color: rgba(255,0,0,0.3);
-    cursor: pointer; font-size: 0.85rem; transition: color 0.2s; flex-shrink: 0;
+    background: none; border: none; color: rgba(255,255,255,0.2);
+    cursor: pointer; font-size: 0.8rem; transition: color 0.2s;
+    width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
   }
-  .cpb-day-remove:hover { color: var(--red); }
-  .cpb-day-body { display: none; padding: 12px 16px 16px; }
+  .cpb-day-remove:hover { color: var(--red); background: rgba(230,57,70,0.1); }
+  .cpb-day-toggle {
+    font-size: 0.75rem; color: var(--gray);
+    cursor: pointer; transition: transform 0.3s;
+    background: none; border: none;
+    width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  }
+  .cpb-day.open .cpb-day-toggle { transform: rotate(180deg); }
+  .cpb-day-body { display: none; padding: 14px 16px 16px; border-top: 1px solid rgba(255,255,255,0.05); }
   .cpb-day.open .cpb-day-body { display: block; }
 
+  /* ── Day schedule row ── */
+  .cpb-day-schedule {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,183,3,0.04);
+    border: 1px solid rgba(255,183,3,0.12);
+    border-radius: 10px; padding: 10px 14px;
+    margin-bottom: 14px;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .cpb-day-schedule-label {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--gold); opacity: 0.8;
+    flex-shrink: 0; display: flex; align-items: center; gap: 5px;
+  }
+  .cpb-weekday-picker {
+    display: flex; gap: 4px; flex-wrap: wrap;
+  }
+  .cpb-wd-btn {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; letter-spacing: 1px;
+    padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: all 0.18s;
+    border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04);
+    color: var(--gray); user-select: none;
+  }
+  .cpb-wd-btn.active {
+    background: rgba(255,183,3,0.2); border-color: rgba(255,183,3,0.55);
+    color: var(--gold);
+  }
+  .cpb-notif-time-btn {
+    display: flex; align-items: center; gap: 6px; margin-left: auto;
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 5px 12px; cursor: pointer; transition: all 0.2s;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.82rem;
+    letter-spacing: 1px; color: var(--light);
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .cpb-notif-time-btn:hover { border-color: rgba(255,183,3,0.4); color: var(--gold); }
+  .cpb-notif-time-btn .bell-icon { font-size: 0.85rem; }
+  .cpb-notif-time-btn .time-val { color: var(--gold); font-size: 0.95rem; font-weight: 600; }
+
+  /* ── Exercise table ── */
   .cpb-ex-labels {
     display: grid; grid-template-columns: 1fr 58px 58px 72px 28px;
     gap: 6px; margin-bottom: 4px; padding: 0 4px;
   }
   .cpb-ex-label {
-    font-family: 'Barlow Condensed', sans-serif; font-size: 0.58rem;
-    letter-spacing: 2px; text-transform: uppercase; color: var(--gray); opacity: 0.6;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.56rem;
+    letter-spacing: 2px; text-transform: uppercase; color: var(--gray); opacity: 0.5;
   }
   .cpb-exercises-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
   .cpb-ex {
     display: grid; grid-template-columns: 1fr 58px 58px 72px 28px;
     gap: 6px; align-items: center;
-    background: rgba(255,255,255,0.025);
+    background: rgba(255,255,255,0.02);
     border-radius: 8px; padding: 7px 8px;
     border: 1px solid rgba(255,255,255,0.05); transition: border-color 0.2s;
   }
   .cpb-ex:hover { border-color: rgba(255,183,3,0.15); }
   .cpb-ex-input {
-    background: var(--dark2); border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08);
     border-radius: 6px; color: var(--light);
     padding: 6px 8px; font-family: 'Barlow', sans-serif; font-size: 0.82rem;
     outline: none; width: 100%; transition: border-color 0.2s;
@@ -1586,82 +1655,86 @@
   .cpb-ex-input:focus { border-color: var(--gold); }
   .cpb-ex-input::placeholder { color: rgba(136,136,153,0.4); font-size: 0.7rem; }
   .cpb-ex-del {
-    background: none; border: none; color: rgba(255,0,0,0.3);
+    background: none; border: none; color: rgba(255,255,255,0.2);
     cursor: pointer; font-size: 0.85rem; text-align: center; transition: color 0.2s;
+    border-radius: 4px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
   }
   .cpb-ex-del:hover { color: var(--red); }
 
   .cpb-add-ex-btn {
     display: flex; align-items: center; gap: 6px; justify-content: center;
-    width: 100%; background: rgba(255,183,3,0.06);
-    border: 1px dashed rgba(255,183,3,0.25);
-    color: var(--gold); font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.78rem; letter-spacing: 2px; text-transform: uppercase;
+    width: 100%; background: rgba(255,183,3,0.04);
+    border: 1px dashed rgba(255,183,3,0.2);
+    color: rgba(255,183,3,0.7); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
     padding: 8px; border-radius: 8px; cursor: pointer; transition: all 0.2s;
   }
-  .cpb-add-ex-btn:hover { background: rgba(255,183,3,0.12); border-color: rgba(255,183,3,0.4); }
+  .cpb-add-ex-btn:hover { background: rgba(255,183,3,0.1); border-color: rgba(255,183,3,0.4); color: var(--gold); }
 
   .cpb-add-day-btn {
     display: flex; align-items: center; gap: 8px; justify-content: center;
     width: 100%; background: rgba(255,255,255,0.02);
-    border: 1px dashed rgba(255,255,255,0.12);
+    border: 1px dashed rgba(255,255,255,0.1);
     color: var(--gray); font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.8rem; letter-spacing: 3px; text-transform: uppercase;
+    font-size: 0.78rem; letter-spacing: 3px; text-transform: uppercase;
     padding: 13px; border-radius: 12px; cursor: pointer; transition: all 0.2s;
   }
   .cpb-add-day-btn:hover { border-color: rgba(255,183,3,0.3); color: var(--gold); background: rgba(255,183,3,0.03); }
 
   .cpb-footer {
-    display: flex; gap: 10px; padding: 18px 28px;
-    border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex; gap: 10px; padding: 16px 28px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.2);
+    flex-shrink: 0;
   }
   .cpb-save-btn {
     flex: 1; background: linear-gradient(135deg, var(--gold), var(--orange));
-    color: #0a0a0c; border: none; padding: 13px;
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 4px;
-    cursor: pointer; border-radius: 10px; transition: all 0.2s; font-weight: 700;
+    color: #0a0a0c; border: none; padding: 14px;
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; letter-spacing: 4px;
+    cursor: pointer; border-radius: 10px; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .cpb-save-btn:hover { box-shadow: 0 8px 28px rgba(255,183,3,0.35); transform: translateY(-1px); }
+  .cpb-save-btn:hover { box-shadow: 0 8px 30px rgba(255,183,3,0.35); transform: translateY(-1px); }
   .cpb-cancel-btn {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
     color: var(--gray); font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.88rem; letter-spacing: 2px; text-transform: uppercase;
-    padding: 13px 20px; border-radius: 10px; cursor: pointer; transition: all 0.2s;
+    padding: 14px 22px; border-radius: 10px; cursor: pointer; transition: all 0.2s;
   }
   .cpb-cancel-btn:hover { border-color: var(--red); color: var(--red); }
 
   .cpb-saved-section { margin-bottom: 20px; }
   .cpb-saved-title {
-    font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem;
+    font-family: 'Barlow Condensed', sans-serif; font-size: 0.6rem;
     letter-spacing: 3px; text-transform: uppercase; color: var(--gray);
-    opacity: 0.6; margin-bottom: 8px;
+    opacity: 0.55; margin-bottom: 8px;
   }
   .cpb-saved-item {
     display: flex; align-items: center; gap: 10px;
-    background: rgba(255,183,3,0.05); border: 1px solid rgba(255,183,3,0.18);
-    border-radius: 8px; padding: 10px 14px; margin-bottom: 6px;
+    background: rgba(255,183,3,0.04); border: 1px solid rgba(255,183,3,0.15);
+    border-radius: 10px; padding: 10px 14px; margin-bottom: 6px;
     transition: all 0.2s;
   }
-  .cpb-saved-item:hover { border-color: rgba(255,183,3,0.35); background: rgba(255,183,3,0.09); }
+  .cpb-saved-item:hover { border-color: rgba(255,183,3,0.35); background: rgba(255,183,3,0.08); }
   .cpb-saved-item-name { flex: 1; font-family: 'Barlow Condensed', sans-serif; font-size: 0.9rem; letter-spacing: 1px; }
-  .cpb-saved-item-meta { font-size: 0.7rem; color: var(--gray); }
+  .cpb-saved-item-meta { font-size: 0.68rem; color: var(--gray); }
   .cpb-saved-item-edit {
-    background: rgba(255,183,3,0.1); border: 1px solid rgba(255,183,3,0.2);
+    background: rgba(255,183,3,0.08); border: 1px solid rgba(255,183,3,0.2);
     color: var(--gold); font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+    padding: 4px 10px; border-radius: 5px; cursor: pointer; transition: all 0.2s;
   }
   .cpb-saved-item-edit:hover { background: rgba(255,183,3,0.2); }
   .cpb-saved-item-use {
     background: linear-gradient(135deg, rgba(255,183,3,0.2), rgba(255,107,53,0.15));
-    border: 1px solid rgba(255,183,3,0.3);
-    color: var(--gold); font-family: 'Barlow Condensed', sans-serif;
+    border: 1px solid rgba(255,183,3,0.3); color: var(--gold);
+    font-family: 'Barlow Condensed', sans-serif;
     font-size: 0.65rem; letter-spacing: 1px; text-transform: uppercase;
-    padding: 3px 10px; border-radius: 4px; cursor: pointer; transition: all 0.2s;
+    padding: 4px 10px; border-radius: 5px; cursor: pointer; transition: all 0.2s;
   }
   .cpb-saved-item-use:hover { background: linear-gradient(135deg, rgba(255,183,3,0.35), rgba(255,107,53,0.25)); }
   .cpb-saved-item-del {
-    background: none; border: none; color: rgba(255,0,0,0.3);
+    background: none; border: none; color: rgba(255,255,255,0.2);
     cursor: pointer; font-size: 0.9rem; transition: color 0.2s;
   }
   .cpb-saved-item-del:hover { color: var(--red); }
@@ -7554,7 +7627,10 @@ function toggleFaq(questionEl) {
 <div id="custom-prog-overlay">
   <div class="cpb-shell">
     <div class="cpb-header">
-      <div class="cpb-title">✏️ Créer mon programme</div>
+      <div class="cpb-header-left">
+        <div class="cpb-header-icon">✏️</div>
+        <div class="cpb-title">Créer mon programme</div>
+      </div>
       <button class="cpb-close" onclick="closeCustomProgramBuilder()">✕</button>
     </div>
     <div class="cpb-body">
@@ -7565,8 +7641,11 @@ function toggleFaq(questionEl) {
         <div style="height:1px;background:rgba(255,255,255,0.06);margin:16px 0;"></div>
       </div>
 
-      <!-- New program form -->
-      <input type="text" class="cpb-prog-name-input" id="cpbProgName" placeholder="Nom du programme (ex: Mon PPL Perso)">
+      <!-- Program name -->
+      <div class="cpb-prog-name-wrap">
+        <label>Nom du programme</label>
+        <input type="text" class="cpb-prog-name-input" id="cpbProgName" placeholder="Ex : Mon PPL Perso">
+      </div>
 
       <div class="cpb-days-list" id="cpbDaysList"></div>
 
@@ -7763,7 +7842,6 @@ let cpbDayCount = 0;
 let editingCustomProgId = null;
 
 function openCustomProgramBuilder() {
-  // Deselect other prog cards
   document.querySelectorAll('.prog-card').forEach(c => c.classList.remove('selected'));
   document.querySelector('.prog-card-custom')?.classList.add('selected');
   cpbDayCount = 0;
@@ -7771,10 +7849,17 @@ function openCustomProgramBuilder() {
   document.getElementById('cpbProgName').value = '';
   document.getElementById('cpbDaysList').innerHTML = '';
   cpbRenderSavedPrograms();
-  // Add 1 day by default
   cpbAddDay();
   document.getElementById('custom-prog-overlay').classList.add('active');
   document.body.style.overflow = 'hidden';
+
+  // Demande la permission de notification si pas encore accordée
+  // (nécessaire pour que les rappels fonctionnent)
+  if ('Notification' in window && Notification.permission === 'default') {
+    setTimeout(() => Notification.requestPermission().then(p => {
+      if (p === 'granted') subscribeToPush?.();
+    }), 500);
+  }
 }
 
 function closeCustomProgramBuilder() {
@@ -7782,36 +7867,154 @@ function closeCustomProgramBuilder() {
   document.body.style.overflow = 'hidden'; // session overlay still open
 }
 
-function cpbAddDay(name) {
+function cpbAddDay(dayData) {
   cpbDayCount++;
-  const dayId = 'cpb-day-' + cpbDayCount;
+  const dayId   = 'cpb-day-' + cpbDayCount;
+  const defWd   = dayData?.weekday ?? -1;          // -1 = aucun jour sélectionné
+  const defTime = dayData?.notifTime ?? '18:00';
+  const [defH, defM] = defTime.split(':');
+
+  const wdLabels = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+
   const el = document.createElement('div');
   el.className = 'cpb-day open';
   el.id = dayId;
   el.dataset.dayId = cpbDayCount;
+
   el.innerHTML = `
     <div class="cpb-day-header">
-      <span style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:2px;flex-shrink:0;">${cpbDayCount}</span>
-      <input class="cpb-day-name-input" type="text" value="${name||''}" placeholder="Nom du jour (ex: PUSH · Pecs / Épaules)">
-      <button class="cpb-day-remove" onclick="document.getElementById('${dayId}').remove()" title="Supprimer">✕</button>
-      <button class="cpb-day-toggle" onclick="this.closest('.cpb-day').classList.toggle('open')">▼</button>
+      <span class="cpb-day-num">${cpbDayCount}</span>
+      <input class="cpb-day-name-input" type="text" value="${dayData?.label||''}" placeholder="Nom (ex: PUSH · Pecs / Épaules)">
+      <div class="cpb-day-actions">
+        <button class="cpb-day-remove" onclick="document.getElementById('${dayId}').remove()" title="Supprimer">✕</button>
+        <button class="cpb-day-toggle" onclick="this.closest('.cpb-day').classList.toggle('open')">▼</button>
+      </div>
     </div>
     <div class="cpb-day-body">
+
+      <!-- ── Planification notification ── -->
+      <div class="cpb-day-schedule">
+        <span class="cpb-day-schedule-label">🔔 Rappel</span>
+        <div class="cpb-weekday-picker" id="${dayId}-wdpicker">
+          ${wdLabels.map((d,i) => `
+            <button type="button" class="cpb-wd-btn${defWd===i?' active':''}"
+              data-wd="${i}"
+              onclick="cpbToggleWeekday(this,'${dayId}-wdpicker')">
+              ${d}
+            </button>
+          `).join('')}
+        </div>
+        <button type="button" class="cpb-notif-time-btn" onclick="cpbOpenTimePicker('${dayId}')">
+          <span class="bell-icon">⏰</span>
+          <span class="time-val" id="${dayId}-timeDisp">${defH}:${defM}</span>
+        </button>
+        <input type="hidden" id="${dayId}-time" value="${defTime}">
+      </div>
+
+      <!-- ── Exercices ── -->
       <div class="cpb-ex-labels">
         <span class="cpb-ex-label">Exercice</span>
         <span class="cpb-ex-label">Séries</span>
         <span class="cpb-ex-label">Reps</span>
-        <span class="cpb-ex-label">Repos (sec)</span>
+        <span class="cpb-ex-label">Repos (s)</span>
         <span class="cpb-ex-label"></span>
       </div>
       <div class="cpb-exercises-list" id="${dayId}-exlist"></div>
       <button class="cpb-add-ex-btn" onclick="cpbAddExercise('${dayId}-exlist')">+ Exercice</button>
     </div>
   `;
+
   document.getElementById('cpbDaysList').appendChild(el);
-  // Add 1 default exercise
-  cpbAddExercise(dayId + '-exlist');
+
+  // Default exercise
+  if (dayData?.exercises?.length) {
+    dayData.exercises.forEach(ex => cpbAddExercise(dayId + '-exlist', ex));
+  } else {
+    cpbAddExercise(dayId + '-exlist');
+  }
 }
+
+// ── Sélecteur jour de la semaine (single-select) ─────────────
+function cpbToggleWeekday(btn, pickerId) {
+  const picker = document.getElementById(pickerId);
+  picker.querySelectorAll('.cpb-wd-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── Time picker pour chaque jour du programme ─────────────────
+let _cpbActiveDay = null;
+function cpbOpenTimePicker(dayId) {
+  _cpbActiveDay = dayId;
+  const val = document.getElementById(dayId + '-time')?.value || '18:00';
+  // Réutilise le time picker global mais avec un callback custom
+  const [h, m] = val.split(':').map(Number);
+  // On patch temporairement PREFIX pour que tpOK() écrive dans le bon champ
+  openTimePicker('_cpbDay');
+  // On injecte les bonnes valeurs après l'ouverture
+  requestAnimationFrame(() => {
+    const hi = document.getElementById('_cpbDayTime');
+    if (!hi) {
+      // Crée l'input caché temporaire si absent
+      const tmp = document.createElement('input');
+      tmp.type = 'hidden'; tmp.id = '_cpbDayTime'; tmp.value = val;
+      document.body.appendChild(tmp);
+    } else {
+      hi.value = val;
+    }
+  });
+}
+
+// Override tpOK pour intercepter les confirmations du time picker CPB
+const _origTpOK = window.tpOK;
+window.tpOK = function() {
+  if (_cpbActiveDay) {
+    // Reconstruit la valeur heure depuis les drums
+    const h = String(window._tpH ?? 18).padStart(2,'0');
+    const m = String(window._tpM ?? 0).padStart(2,'0');
+    const val = h + ':' + m;
+    const inp = document.getElementById(_cpbActiveDay + '-time');
+    const disp = document.getElementById(_cpbActiveDay + '-timeDisp');
+    if (inp) inp.value = val;
+    if (disp) disp.textContent = val;
+    _cpbActiveDay = null;
+    tpClose();
+  } else {
+    _origTpOK();
+  }
+};
+
+// Expose H/M pour l'override tpOK (le time picker IIFE ne les expose pas)
+// On patche le module IIFE pour stocker H et M dans window._tpH / _tpM
+(function patchTpVars() {
+  // Le time picker stocke H et M dans sa closure — on les lit via les drums visuels
+  const origOpen = window.openTimePicker;
+  window.openTimePicker = function(prefix) {
+    origOpen(prefix);
+    // Lit H/M depuis les drums après ouverture
+    const readVals = () => {
+      const trackH = document.getElementById('tpTrackH');
+      const trackM = document.getElementById('tpTrackM');
+      if (trackH && trackM) {
+        const cellH = trackH.querySelector('.tp-cell.c0');
+        const cellM = trackM.querySelector('.tp-cell.c0');
+        window._tpH = cellH ? parseInt(cellH.dataset.v) : 18;
+        window._tpM = cellM ? parseInt(cellM.dataset.v) : 0;
+      }
+    };
+    // Sync en continu pendant que le picker est ouvert
+    window._tpSyncInterval = setInterval(() => {
+      if (!document.getElementById('tpSheet').classList.contains('show')) {
+        clearInterval(window._tpSyncInterval);
+        return;
+      }
+      const cH = document.getElementById('tpTrackH')?.querySelector('.tp-cell.c0');
+      const cM = document.getElementById('tpTrackM')?.querySelector('.tp-cell.c0');
+      if (cH) window._tpH = parseInt(cH.dataset.v);
+      if (cM) window._tpM = parseInt(cM.dataset.v);
+    }, 100);
+    setTimeout(readVals, 50);
+  };
+})();
 
 function cpbAddExercise(listId, exData) {
   const exId = 'cpbex-' + Date.now() + '-' + Math.random().toString(36).substr(2,5);
@@ -7840,29 +8043,43 @@ function cpbSaveProgram() {
   const days = {};
   let dayIndex = 0;
   const dayEls = document.getElementById('cpbDaysList').querySelectorAll('.cpb-day');
-  let valid = true;
 
   dayEls.forEach(dayEl => {
+    const dayId   = dayEl.id;
     const dayName = dayEl.querySelector('.cpb-day-name-input')?.value.trim() || ('JOUR ' + (dayIndex+1));
-    const exEls = dayEl.querySelectorAll('.cpb-ex');
+    const exEls   = dayEl.querySelectorAll('.cpb-ex');
     const exercises = [];
 
     exEls.forEach(exEl => {
       const inputs = exEl.querySelectorAll('.cpb-ex-input');
       const exName = inputs[0]?.value.trim();
       if (!exName) return;
-      const sets = parseInt(inputs[1]?.value) || 3;
-      const reps = inputs[2]?.value.trim() || '10';
-      const restSec = parseInt(inputs[3]?.value) || 90;
-      exercises.push({ name: exName, sets, reps, restSec, muscle: 'Exercice', id: 'custom-' + Date.now() });
+      exercises.push({
+        name: exName,
+        sets: parseInt(inputs[1]?.value) || 3,
+        reps: inputs[2]?.value.trim() || '10',
+        restSec: parseInt(inputs[3]?.value) || 90,
+        muscle: 'Exercice',
+        id: 'custom-' + Date.now() + '-' + dayIndex
+      });
     });
 
     if (exercises.length === 0) return;
+
+    // Récupère jour de la semaine sélectionné (bouton actif dans le picker)
+    const activeWd = dayEl.querySelector('.cpb-wd-btn.active');
+    const weekday  = activeWd ? parseInt(activeWd.dataset.wd) : -1; // -1 = pas de rappel
+
+    // Heure de notification
+    const notifTime = dayEl.querySelector(`#${dayId}-time`)?.value || '18:00';
+
     const dayKey = 'day' + (dayIndex + 1);
     days[dayKey] = {
       label: dayName,
       muscle: dayName.split('·')[0].trim() || dayName,
-      exercises
+      exercises,
+      weekday,
+      notifTime
     };
     dayIndex++;
   });
@@ -7872,11 +8089,13 @@ function cpbSaveProgram() {
     return;
   }
 
-  // Save to localStorage
+  // ── Sauvegarde localStorage ──────────────────────────────
   const customProgs = storageGet('customPrograms') || [];
   const id = editingCustomProgId || ('custom_' + Date.now());
 
   if (editingCustomProgId) {
+    // Annule les anciens rappels liés à ce programme
+    cpbCancelProgramReminders(editingCustomProgId);
     const idx = customProgs.findIndex(p => p.id === editingCustomProgId);
     if (idx !== -1) customProgs[idx] = { id, name, days };
     else customProgs.push({ id, name, days });
@@ -7885,17 +8104,20 @@ function cpbSaveProgram() {
   }
   storageSet('customPrograms', customProgs);
 
-  // Add to PROGRAMS dynamically and select it
+  // ── Ajoute dans PROGRAMS ─────────────────────────────────
   PROGRAMS[id] = { name, days };
   injectCustomProgsInSchedule();
+
+  // ── Programme les notifs par jour ────────────────────────
+  cpbScheduleProgramReminders(id, name, days);
+
   closeCustomProgramBuilder();
 
-  // Auto-select this custom program
+  // Auto-select + affiche le sélecteur de jour
   currentProgKey = id;
-  currentDayKey = null;
+  currentDayKey  = null;
   document.querySelectorAll('.prog-card').forEach(c => c.classList.remove('selected'));
 
-  // Show day picker
   const prog = PROGRAMS[id];
   const wrap = document.getElementById('dayPickerWrap');
   const opts = document.getElementById('dayPickerOptions');
@@ -7906,23 +8128,83 @@ function cpbSaveProgram() {
   document.getElementById('sessionLaunchBtn').disabled = true;
 }
 
+// ── Planifie un rappel hebdomadaire par jour du programme ─────
+function cpbScheduleProgramReminders(progId, progName, days) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+  Object.entries(days).forEach(([dayKey, day]) => {
+    if (day.weekday < 0 || day.weekday > 6) return; // pas de jour sélectionné
+    const reminderLabel = day.label?.split('·')[0]?.trim() || day.label || progName;
+
+    const reminder = {
+      id: `cpb_${progId}_${dayKey}`,
+      progKey: progId,
+      progName: reminderLabel,
+      dayKey,
+      time: day.notifTime || '18:00',
+      reminderMin: 0,
+      days: [day.weekday], // tableau avec un seul jour
+      createdAt: Date.now(),
+      // Données pour lancer la séance directement depuis la notif
+      sessionProgKey: progId,
+      sessionDayKey: dayKey
+    };
+
+    const reminders = storageGet('dailyReminders') || [];
+    // Supprime l'ancien rappel pour ce même dayKey si existant
+    const filtered = reminders.filter(r => r.id !== reminder.id);
+    filtered.push(reminder);
+    storageSet('dailyReminders', filtered);
+
+    scheduleDailyNotifs(reminder);
+  });
+
+  renderDailyRemindersItems();
+}
+
+// ── Annule les rappels d'un programme (lors de la modif/suppression) ─
+function cpbCancelProgramReminders(progId) {
+  let reminders = storageGet('dailyReminders') || [];
+  reminders.filter(r => r.id?.startsWith('cpb_' + progId)).forEach(r => {
+    // Annule les 30 timers SW potentiels
+    for (let d = 0; d <= 30; d++) {
+      if (swRegistration?.active) {
+        swRegistration.active.postMessage({
+          type: 'CANCEL_NOTIFICATION',
+          tag: 'daily-' + r.id + '-day' + d
+        });
+      }
+    }
+  });
+  reminders = reminders.filter(r => !r.id?.startsWith('cpb_' + progId));
+  storageSet('dailyReminders', reminders);
+}
+
 function cpbRenderSavedPrograms() {
   const customProgs = storageGet('customPrograms') || [];
   const section = document.getElementById('cpbSavedSection');
   const list = document.getElementById('cpbSavedList');
 
-  // Also make sure all saved programs are loaded into PROGRAMS
   customProgs.forEach(p => { PROGRAMS[p.id] = { name: p.name, days: p.days }; });
 
   if (!customProgs.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
+
+  const WD_SHORT = ['L','M','Me','J','V','S','D'];
+
   list.innerHTML = customProgs.map(p => {
     const dayCount = Object.keys(p.days).length;
-    const exCount = Object.values(p.days).reduce((a,d) => a + d.exercises.length, 0);
+    const exCount  = Object.values(p.days).reduce((a,d) => a + d.exercises.length, 0);
+    // Résumé des rappels configurés
+    const notifDays = Object.values(p.days)
+      .filter(d => d.weekday >= 0)
+      .map(d => `${WD_SHORT[d.weekday]} ${d.notifTime||''}`)
+      .join(' · ');
+
     return `<div class="cpb-saved-item">
-      <div style="flex:1;">
+      <div style="flex:1;min-width:0;">
         <div class="cpb-saved-item-name">${p.name}</div>
-        <div class="cpb-saved-item-meta">${dayCount} jour${dayCount>1?'s':''} · ${exCount} exercice${exCount>1?'s':''}</div>
+        <div class="cpb-saved-item-meta">${dayCount} jour${dayCount>1?'s':''} · ${exCount} exercice${exCount>1?'s':''}${notifDays ? ' · 🔔 ' + notifDays : ''}</div>
       </div>
       <button class="cpb-saved-item-edit" onclick="cpbEditProgram('${p.id}')">Modifier</button>
       <button class="cpb-saved-item-use" onclick="cpbUseProgram('${p.id}')">▶ Utiliser</button>
@@ -7955,38 +8237,18 @@ function cpbEditProgram(id) {
   document.getElementById('cpbDaysList').innerHTML = '';
 
   Object.values(prog.days).forEach(day => {
-    cpbDayCount++;
-    const dayId = 'cpb-day-' + cpbDayCount;
-    const el = document.createElement('div');
-    el.className = 'cpb-day open';
-    el.id = dayId;
-    el.dataset.dayId = cpbDayCount;
-    el.innerHTML = `
-      <div class="cpb-day-header">
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold);letter-spacing:2px;flex-shrink:0;">${cpbDayCount}</span>
-        <input class="cpb-day-name-input" type="text" value="${day.label||''}" placeholder="Nom du jour">
-        <button class="cpb-day-remove" onclick="document.getElementById('${dayId}').remove()" title="Supprimer">✕</button>
-        <button class="cpb-day-toggle" onclick="this.closest('.cpb-day').classList.toggle('open')">▼</button>
-      </div>
-      <div class="cpb-day-body">
-        <div class="cpb-ex-labels">
-          <span class="cpb-ex-label">Exercice</span>
-          <span class="cpb-ex-label">Séries</span>
-          <span class="cpb-ex-label">Reps</span>
-          <span class="cpb-ex-label">Repos (sec)</span>
-          <span class="cpb-ex-label"></span>
-        </div>
-        <div class="cpb-exercises-list" id="${dayId}-exlist"></div>
-        <button class="cpb-add-ex-btn" onclick="cpbAddExercise('${dayId}-exlist')">+ Exercice</button>
-      </div>
-    `;
-    document.getElementById('cpbDaysList').appendChild(el);
-    day.exercises.forEach(ex => cpbAddExercise(dayId + '-exlist', ex));
+    cpbAddDay({
+      label:     day.label || '',
+      weekday:   day.weekday ?? -1,
+      notifTime: day.notifTime || '18:00',
+      exercises: day.exercises || []
+    });
   });
 }
 
 function cpbDeleteProgram(id) {
   if (!confirm('Supprimer ce programme ?')) return;
+  cpbCancelProgramReminders(id);
   let customProgs = storageGet('customPrograms') || [];
   customProgs = customProgs.filter(p => p.id !== id);
   storageSet('customPrograms', customProgs);
