@@ -6376,8 +6376,8 @@ const _pageTimers = new Map();
 function scheduleViaSW(title, body, tag, fireAt, notifData) {
   const delay = fireAt - Date.now();
 
-  // Minimum 5 min dans le futur — évite les déclenchements à la création
-  if (delay < 5 * 60 * 1000) return;
+  // Minimum 10 min dans le futur — évite les déclenchements à la création
+  if (delay < 10 * 60 * 1000) return;
 
   // Envoi au SW (persistance IDB, survit à la fermeture de la page)
   if (swRegistration?.active) {
@@ -7781,20 +7781,24 @@ function saveDailyReminders() {
   reminders.push(reminder);
   storageSet('dailyReminders', reminders);
 
-  // Request permission & schedule
-  if (Notification.permission === 'default') {
-    Notification.requestPermission().then(perm => {
-      if (perm === 'granted') {
-        scheduleDailyNotifs(reminder);
-        renderDailyRemindersItems();
-        sendNotif('✅ Rappels activés !', `${progName} programmé chaque ${days.map(d=>DAYS_FR[d]).join(', ')} à ${time}`, 'confirm-daily-' + reminder.id);
-      }
-    });
-  } else if (Notification.permission === 'granted') {
+  function _doSchedule() {
     scheduleDailyNotifs(reminder);
     renderDailyRemindersItems();
     if (pushSubscription) saveSubscriptionToGitHub(pushSubscription);
-    sendNotif('✅ Rappels activés !', `${progName} programmé chaque ${days.map(d=>DAYS_FR[d]).join(', ')} à ${time}`, 'confirm-daily-' + reminder.id);
+    // Confirmation avec délai de 2s — évite confusion avec un vrai rappel
+    setTimeout(() => sendNotif(
+      '✅ Rappels activés !',
+      progName + ' · ' + days.map(d=>DAYS_FR[d]).join(', ') + ' à ' + time,
+      'confirm-daily-' + reminder.id
+    ), 2000);
+  }
+
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then(perm => {
+      if (perm === 'granted') { subscribeToPush?.(); _doSchedule(); }
+    });
+  } else if (Notification.permission === 'granted') {
+    _doSchedule();
   } else {
     alert('Les notifications sont bloquées. Autorise-les dans les paramètres de ton navigateur.');
   }
@@ -7814,7 +7818,7 @@ function scheduleDailyNotifs(reminder) {
     const dowJs = target.getDay();
     const dowIron = dowJs === 0 ? 6 : dowJs - 1;
 
-    if (delay > 0 && reminder.days.includes(dowIron)) {
+    if (delay > 10 * 60 * 1000 && reminder.days.includes(dowIron)) {
       scheduleViaSW(
         getNotifTitle(),
         getNotifBody(reminder.progName, ''),
@@ -7854,21 +7858,18 @@ function deleteDailyReminder(id) {
   renderDailyRemindersItems();
 }
 
-// Boot: reprogramme les rappels une fois le SW actif (évite les doublons sur rechargement)
+// Boot: reprogramme uniquement les séances UNIQUES (les rappels quotidiens
+// sont déjà persistés dans l'IDB du SW — les reprogrammer ici créerait des doublons)
 (function bootReminders() {
   if (Notification.permission !== 'granted') return;
   if (!('serviceWorker' in navigator)) return;
 
   navigator.serviceWorker.ready.then(() => {
-    // Rappels quotidiens — reprogramme 30j à chaque chargement (le SW peut être tué)
-    const reminders = storageGet('dailyReminders') || [];
-    reminders.forEach(scheduleDailyNotifs);
-
-    // Séances planifiées — saute celles récemment créées via addSchedule (race condition)
+    // Séances planifiées uniques seulement — pas les rappels quotidiens (gérés par IDB)
     const schedules = storageGet('schedules') || [];
     schedules.forEach(s => {
       if (s.notified || _recentlyScheduled.has(s.id)) return;
-      scheduleNotification(s); // reprogramme via SW + setTimeout fallback
+      scheduleNotification(s);
     });
   });
 })();
