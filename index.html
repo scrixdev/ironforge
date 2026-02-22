@@ -6368,18 +6368,33 @@ window.addEventListener('appinstalled', () => {
 });
 
 // Envoie une notif programmée via le Service Worker
-// → fonctionne même quand l'app est en arrière-plan (PWA installée)
-// tag + fireAt (timestamp absolu) — le SW recalcule le délai exact à chaque réveil
-function scheduleViaSW(title, body, tag, fireAt) {
-  if (!swRegistration?.active) {
-    const delay = Math.max(0, fireAt - Date.now());
-    if (delay > 0) setTimeout(() => sendNotif(title, body, tag), delay);
-    return;
+// notifData (optionnel) : { progKey, dayKey } pour lancer la bonne séance au clic
+
+// Déduplication côté page — un seul timer en mémoire par tag
+const _pageTimers = new Map();
+
+function scheduleViaSW(title, body, tag, fireAt, notifData) {
+  const delay = fireAt - Date.now();
+
+  // Minimum 5 min dans le futur — évite les déclenchements à la création
+  if (delay < 5 * 60 * 1000) return;
+
+  // Envoi au SW (persistance IDB, survit à la fermeture de la page)
+  if (swRegistration?.active) {
+    swRegistration.active.postMessage({
+      type: 'SCHEDULE_NOTIFICATION',
+      title, body, tag, fireAt,
+      data: notifData || {}
+    });
   }
-  swRegistration.active.postMessage({
-    type: 'SCHEDULE_NOTIFICATION',
-    title, body, tag, fireAt
-  });
+
+  // Fallback page-side avec déduplication stricte
+  if (_pageTimers.has(tag)) clearTimeout(_pageTimers.get(tag));
+  const tid = setTimeout(() => {
+    sendNotif(title, body, tag);
+    _pageTimers.delete(tag);
+  }, delay);
+  _pageTimers.set(tag, tid);
 }
 
 // (rescheduleAllViaSW défini plus haut — doublon supprimé)
@@ -7342,16 +7357,50 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Ouvre la séance si on arrive depuis un clic sur une notif (?start=1)
   if (new URLSearchParams(window.location.search).get('start') === '1') {
-    setTimeout(() => openSessionMode(), 300);
-    // Nettoie l'URL sans recharger
+    const sp      = new URLSearchParams(window.location.search);
+    const progKey = sp.get('prog') || null;
+    const dayKey  = sp.get('day')  || null;
+    setTimeout(() => openSessionFromNotif(progKey, dayKey), 300);
     history.replaceState({}, '', window.location.pathname);
   }
 });
 
 // Écoute le message du SW quand l'app est déjà ouverte au moment du clic notif
 navigator.serviceWorker?.addEventListener('message', e => {
-  if (e.data?.type === 'OPEN_SESSION') openSessionMode();
+  if (e.data?.type === 'OPEN_SESSION') {
+    openSessionFromNotif(e.data.progKey || null, e.data.dayKey || null);
+  }
 });
+
+// Ouvre le mode séance et sélectionne automatiquement le bon programme + jour
+function openSessionFromNotif(progKey, dayKey) {
+  openSessionMode();
+  if (!progKey) return;
+  // Sélectionne le programme
+  if (PROGRAMS[progKey]) {
+    currentProgKey = progKey;
+    storageSet('activeProgram', progKey);
+    document.querySelectorAll('.prog-card').forEach(c => c.classList.remove('selected'));
+    renderTodayCard();
+  }
+  if (!dayKey || !PROGRAMS[progKey]?.days[dayKey]) return;
+  // Sélectionne le jour et lance la séance
+  currentDayKey = dayKey;
+  const dayData = PROGRAMS[progKey].days[dayKey];
+  // Active visuellement le bon chip
+  setTimeout(() => {
+    const chips = document.querySelectorAll('#dayPickerOptions .day-chip');
+    const dayKeys = Object.keys(PROGRAMS[progKey]?.days || {});
+    const idx = dayKeys.indexOf(dayKey);
+    if (idx >= 0 && chips[idx]) {
+      chips.forEach(c => c.classList.remove('selected'));
+      chips[idx].classList.add('selected');
+    }
+    // Active le bouton "Lancer la séance" et démarre
+    const btn = document.getElementById('sessionLaunchBtn');
+    if (btn) { btn.disabled = false; btn.click(); }
+  }, 200);
+}
 
 // Sync hidden time input from custom selects
 function syncTime(prefix) {
@@ -7419,7 +7468,8 @@ function scheduleNotification(item) {
   const tag = 'schedule-' + item.id;
 
   // Chemin 1 : Service Worker (résiste à la fermeture de la page si PWA installée)
-  scheduleViaSW(getNotifTitle(), getNotifBody(dayName, loc), tag, item.datetime);
+  scheduleViaSW(getNotifTitle(), getNotifBody(dayName, loc), tag, item.datetime,
+    { progKey: item.progKey, dayKey: item.dayKey });
 
   // Chemin 2 : setTimeout dans la page (fallback si la page reste ouverte)
   // Le même `tag` déduplique la notif si les deux chemins s'exécutent
@@ -7726,8 +7776,8 @@ function saveDailyReminders() {
     createdAt: Date.now()
   };
 
-  // Save
-  const reminders = storageGet('dailyReminders') || [];
+  // Supprime les rappels existants pour le MÊME programme (évite les doublons si on re-clique)
+  let reminders = (storageGet('dailyReminders') || []).filter(r => r.progKey !== progKey || r.id?.startsWith('cpb_'));
   reminders.push(reminder);
   storageSet('dailyReminders', reminders);
 
@@ -7769,7 +7819,8 @@ function scheduleDailyNotifs(reminder) {
         getNotifTitle(),
         getNotifBody(reminder.progName, ''),
         'daily-' + reminder.id + '-day' + day,
-        fireAt
+        fireAt,
+        { progKey: reminder.sessionProgKey || reminder.progKey, dayKey: reminder.sessionDayKey || null }
       );
     }
   }
