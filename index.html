@@ -7904,11 +7904,12 @@ function cpbAddDay(dayData) {
             </button>
           `).join('')}
         </div>
+        <!-- ids natifs : PREFIX='cpbD${cpbDayCount}' → tpOK() écrit directement dedans -->
         <button type="button" class="cpb-notif-time-btn" onclick="cpbOpenTimePicker('${dayId}')">
           <span class="bell-icon">⏰</span>
-          <span class="time-val" id="${dayId}-timeDisp">${defH}:${defM}</span>
+          <span id="cpbD${cpbDayCount}TimeDisplay">${defH}</span>:<span id="cpbD${cpbDayCount}TimeDisplayM">${defM}</span>
         </button>
-        <input type="hidden" id="${dayId}-time" value="${defTime}">
+        <input type="hidden" id="cpbD${cpbDayCount}Time" value="${defTime}">
       </div>
 
       <!-- ── Exercices ── -->
@@ -7942,79 +7943,19 @@ function cpbToggleWeekday(btn, pickerId) {
 }
 
 // ── Time picker pour chaque jour du programme ─────────────────
-let _cpbActiveDay = null;
+// On utilise directement le mécanisme natif : tpOK() écrit dans
+// PREFIX+'Time', PREFIX+'TimeDisplay', PREFIX+'TimeDisplayM'
+// Il suffit que le dayEl ait ces éléments avec les bons ids.
+// Ici PREFIX = 'cpbD' + dayEl.dataset.dayId  (ex: 'cpbD1', 'cpbD2'…)
 function cpbOpenTimePicker(dayId) {
-  _cpbActiveDay = dayId;
-  const val = document.getElementById(dayId + '-time')?.value || '18:00';
-  // Réutilise le time picker global mais avec un callback custom
-  const [h, m] = val.split(':').map(Number);
-  // On patch temporairement PREFIX pour que tpOK() écrive dans le bon champ
-  openTimePicker('_cpbDay');
-  // On injecte les bonnes valeurs après l'ouverture
-  requestAnimationFrame(() => {
-    const hi = document.getElementById('_cpbDayTime');
-    if (!hi) {
-      // Crée l'input caché temporaire si absent
-      const tmp = document.createElement('input');
-      tmp.type = 'hidden'; tmp.id = '_cpbDayTime'; tmp.value = val;
-      document.body.appendChild(tmp);
-    } else {
-      hi.value = val;
-    }
-  });
+  // dayId = 'cpb-day-1', dataset.dayId = '1' → prefix = 'cpbD1'
+  const dayEl  = document.getElementById(dayId);
+  const n      = dayEl?.dataset?.dayId || dayId.replace('cpb-day-','');
+  const prefix = 'cpbD' + n;
+  // S'assure que l'input hidden a la bonne valeur courante
+  const hiddenVal = document.getElementById(prefix + 'Time')?.value || '18:00';
+  openTimePicker(prefix);
 }
-
-// Override tpOK pour intercepter les confirmations du time picker CPB
-const _origTpOK = window.tpOK;
-window.tpOK = function() {
-  if (_cpbActiveDay) {
-    // Reconstruit la valeur heure depuis les drums
-    const h = String(window._tpH ?? 18).padStart(2,'0');
-    const m = String(window._tpM ?? 0).padStart(2,'0');
-    const val = h + ':' + m;
-    const inp = document.getElementById(_cpbActiveDay + '-time');
-    const disp = document.getElementById(_cpbActiveDay + '-timeDisp');
-    if (inp) inp.value = val;
-    if (disp) disp.textContent = val;
-    _cpbActiveDay = null;
-    tpClose();
-  } else {
-    _origTpOK();
-  }
-};
-
-// Expose H/M pour l'override tpOK (le time picker IIFE ne les expose pas)
-// On patche le module IIFE pour stocker H et M dans window._tpH / _tpM
-(function patchTpVars() {
-  // Le time picker stocke H et M dans sa closure — on les lit via les drums visuels
-  const origOpen = window.openTimePicker;
-  window.openTimePicker = function(prefix) {
-    origOpen(prefix);
-    // Lit H/M depuis les drums après ouverture
-    const readVals = () => {
-      const trackH = document.getElementById('tpTrackH');
-      const trackM = document.getElementById('tpTrackM');
-      if (trackH && trackM) {
-        const cellH = trackH.querySelector('.tp-cell.c0');
-        const cellM = trackM.querySelector('.tp-cell.c0');
-        window._tpH = cellH ? parseInt(cellH.dataset.v) : 18;
-        window._tpM = cellM ? parseInt(cellM.dataset.v) : 0;
-      }
-    };
-    // Sync en continu pendant que le picker est ouvert
-    window._tpSyncInterval = setInterval(() => {
-      if (!document.getElementById('tpSheet').classList.contains('show')) {
-        clearInterval(window._tpSyncInterval);
-        return;
-      }
-      const cH = document.getElementById('tpTrackH')?.querySelector('.tp-cell.c0');
-      const cM = document.getElementById('tpTrackM')?.querySelector('.tp-cell.c0');
-      if (cH) window._tpH = parseInt(cH.dataset.v);
-      if (cM) window._tpM = parseInt(cM.dataset.v);
-    }, 100);
-    setTimeout(readVals, 50);
-  };
-})();
 
 function cpbAddExercise(listId, exData) {
   const exId = 'cpbex-' + Date.now() + '-' + Math.random().toString(36).substr(2,5);
@@ -8070,8 +8011,9 @@ function cpbSaveProgram() {
     const activeWd = dayEl.querySelector('.cpb-wd-btn.active');
     const weekday  = activeWd ? parseInt(activeWd.dataset.wd) : -1; // -1 = pas de rappel
 
-    // Heure de notification
-    const notifTime = dayEl.querySelector(`#${dayId}-time`)?.value || '18:00';
+    // Heure de notification — lue depuis l'input natif cpbD{n}Time
+    const n = dayEl.dataset.dayId;
+    const notifTime = document.getElementById('cpbD' + n + 'Time')?.value || '18:00';
 
     const dayKey = 'day' + (dayIndex + 1);
     days[dayKey] = {
