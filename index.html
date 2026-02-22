@@ -6309,18 +6309,9 @@ function scheduleViaSW(title, body, tag, fireAt) {
   });
 }
 
-// Reprogramme tous les rappels quotidiens via SW au chargement
-function rescheduleAllViaSW() {
-  const reminders = storageGet('dailyReminders') || [];
-  reminders.forEach(r => scheduleDailyNotifs(r));
-  const schedules = storageGet('schedules') || [];
-  schedules.forEach(item => scheduleNotification(item));
-}
+// (rescheduleAllViaSW défini plus haut — doublon supprimé)
 
-window.addEventListener('appinstalled', () => {
-  document.getElementById('pwa-banner')?.remove();
-  setTimeout(() => subscribeToPush(), 2000);
-});
+
 </script>
 
 <script>
@@ -7296,6 +7287,9 @@ function syncTime(prefix) {
   document.getElementById(prefix + 'Time').value = h + ':' + m;
 }
 
+// Évite la double-programmation immédiate (race condition SW + addSchedule)
+const _recentlyScheduled = new Set();
+
 function addSchedule() {
   const progKey  = document.getElementById('schProg').value;
   const dayKey   = document.getElementById('schDay').value;
@@ -7333,6 +7327,10 @@ function addSchedule() {
   );
 
   // Notif 2 : à l'heure exacte de la séance
+  // On marque l'item comme récemment programmé pour éviter que bootReminders
+  // ne le reprogramme en double via la race condition serviceWorker.ready
+  _recentlyScheduled.add(item.id);
+  setTimeout(() => _recentlyScheduled.delete(item.id), 10000);
   scheduleNotification(item);
 }
 
@@ -7345,12 +7343,17 @@ function scheduleNotification(item) {
   if (msUntilSession <= 0) return;
   const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
   const loc = item.location ? ` ${item.location}` : '';
-  scheduleViaSW(
-    getNotifTitle(),
-    getNotifBody(dayName, loc),
-    'schedule-' + item.id,
-    item.datetime
-  );
+  const tag = 'schedule-' + item.id;
+
+  // Chemin 1 : Service Worker (résiste à la fermeture de la page si PWA installée)
+  scheduleViaSW(getNotifTitle(), getNotifBody(dayName, loc), tag, item.datetime);
+
+  // Chemin 2 : setTimeout dans la page (fallback si la page reste ouverte)
+  // Le même `tag` déduplique la notif si les deux chemins s'exécutent
+  if (msUntilSession < 24 * 60 * 60 * 1000) {
+    // Seulement si dans les 24h — évite les fuites mémoire sur les séances lointaines
+    setTimeout(() => sendNotif(getNotifTitle(), getNotifBody(dayName, loc), tag), msUntilSession);
+  }
 }
 
 function checkScheduledSessions() {
@@ -7396,6 +7399,10 @@ function updateScheduleUI() {
 function deleteSchedule(id) {
   const schedules = (storageGet('schedules') || []).filter(s => s.id !== id);
   storageSet('schedules', schedules);
+  // Annule le timer SW + IDB pour éviter une notif fantôme
+  if (swRegistration?.active) {
+    swRegistration.active.postMessage({ type: 'CANCEL_NOTIFICATION', tag: 'schedule-' + id });
+  }
   updateScheduleUI();
 }
 
@@ -7723,12 +7730,16 @@ function deleteDailyReminder(id) {
   if (!('serviceWorker' in navigator)) return;
 
   navigator.serviceWorker.ready.then(() => {
-    // Rappels quotidiens
+    // Rappels quotidiens — reprogramme 30j à chaque chargement (le SW peut être tué)
     const reminders = storageGet('dailyReminders') || [];
     reminders.forEach(scheduleDailyNotifs);
-    // Séances planifiées
+
+    // Séances planifiées — saute celles récemment créées via addSchedule (race condition)
     const schedules = storageGet('schedules') || [];
-    schedules.forEach(s => { if (!s.notified) scheduleNotification(s); });
+    schedules.forEach(s => {
+      if (s.notified || _recentlyScheduled.has(s.id)) return;
+      scheduleNotification(s); // reprogramme via SW + setTimeout fallback
+    });
   });
 })();
 
