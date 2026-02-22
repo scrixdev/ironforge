@@ -69,7 +69,8 @@ function dbGetAll() {
 // ── TIMERS EN MÉMOIRE ─────────────────────────────────────────
 const scheduledTimers = new Map();
 
-function fireNotification(title, body, tag, options = {}) {
+function fireNotification(title, body, tag, notifData = {}) {
+  const data = Object.assign({ url: '/ironforge/?start=1' }, notifData);
   return self.registration.showNotification(title, {
     body,
     icon:               '/ironforge/icon-192.png',
@@ -77,18 +78,17 @@ function fireNotification(title, body, tag, options = {}) {
     tag,
     vibrate:            [200, 100, 200],
     requireInteraction: false,
-    data:               { url: '/ironforge/?start=1' },
+    data,
     actions: [
       { action: 'open',    title: '🏋️ Lancer la séance' },
       { action: 'dismiss', title: '✕ Ignorer' }
-    ],
-    ...options
+    ]
   });
 }
 
 // Programme (ou reprogramme) un timer en mémoire + persiste dans IDB
 function scheduleTimer(item) {
-  const { tag, title, body, fireAt } = item;
+  const { tag, title, body, fireAt, notifData } = item;
   const delay = Math.max(0, fireAt - Date.now());
 
   // Si la date est déjà passée de plus d'une minute → on ignore + nettoie IDB
@@ -101,9 +101,9 @@ function scheduleTimer(item) {
   if (scheduledTimers.has(tag)) clearTimeout(scheduledTimers.get(tag));
 
   const id = setTimeout(() => {
-    fireNotification(title, body, tag);
+    fireNotification(title, body, tag, notifData || {});
     scheduledTimers.delete(tag);
-    dbDelete(tag); // nettoyage IDB après envoi
+    dbDelete(tag);
   }, delay);
 
   scheduledTimers.set(tag, id);
@@ -200,15 +200,25 @@ self.addEventListener('push', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   if (event.action === 'dismiss') return;
-  const targetUrl = '/ironforge/?start=1';
+
+  const notifData  = event.notification.data || {};
+  const progKey    = notifData.progKey || '';
+  const dayKey     = notifData.dayKey  || '';
+  const params     = new URLSearchParams({ start: '1' });
+  if (progKey) params.set('prog', progKey);
+  if (dayKey)  params.set('day',  dayKey);
+  const targetUrl  = '/ironforge/?' + params.toString();
+
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
       for (const client of clientList) {
         if (client.url.includes('/ironforge')) {
-          client.postMessage({ type: 'OPEN_SESSION' });
+          // Page déjà ouverte — envoie les infos de séance
+          client.postMessage({ type: 'OPEN_SESSION', progKey, dayKey });
           return client.focus();
         }
       }
+      // Page fermée — ouvre avec les paramètres URL
       if (clients.openWindow) return clients.openWindow(targetUrl);
     })
   );
@@ -230,9 +240,9 @@ self.addEventListener('message', event => {
 
   // Notif programmée — persistée dans IDB + timer en mémoire
   if (event.data?.type === 'SCHEDULE_NOTIFICATION') {
-    const { title, body, tag, fireAt } = event.data;
+    const { title, body, tag, fireAt, data: notifData } = event.data;
 
-    const item = { tag, title, body, fireAt };
+    const item = { tag, title, body, fireAt, notifData: notifData || {} };
 
     // Persiste dans IDB AVANT de programmer le timer
     // → survivra aux redémarrages du SW
