@@ -319,6 +319,11 @@
   .tab-btn[onclick*="'dos'"].active         { background: linear-gradient(135deg, #8e44ad, #da70d6); }
   .tab-btn[onclick*="'jambes'"].active      { background: linear-gradient(135deg, #c0392b, #ff6b35); }
 
+  /* ── Dégradés Perte de Poids ── */
+  .tab-btn[onclick*="'circuit'"].active     { background: linear-gradient(135deg,#11998e,#38ef7d); color: #0a0a0c; }
+  .tab-btn[onclick*="'cutting'"].active     { background: linear-gradient(135deg,#0f9960,#23d160); color: #0a0a0c; }
+  .tab-btn[onclick*="'cardio3j'"].active    { background: linear-gradient(135deg,#1a9850,#91cf60); color: #0a0a0c; }
+
   /* ── Boutons Échauffement ── */
   .wbtn {
     font-family: 'Barlow Condensed', sans-serif;
@@ -3299,7 +3304,7 @@
     <div class="tabs-group poids-only" id="poidsTabs" style="display:none;">
       <div class="tabs-group-label" data-i18n="tabs_poids">Programmes perte de poids</div>
       <div class="programme-tabs">
-        <button class="tab-btn active" onclick="switchProgram('circuit')" style="background:linear-gradient(135deg,#11998e,#38ef7d);color:#0a0a0c;">Circuit HIIT 4j</button>
+        <button class="tab-btn active" onclick="switchProgram('circuit')">Circuit HIIT 4j</button>
         <button class="tab-btn" onclick="switchProgram('cutting')">Cutting PPL</button>
         <button class="tab-btn" onclick="switchProgram('cardio3j')">Cardio + Muscu 3j</button>
       </div>
@@ -5940,21 +5945,22 @@ function generateProgram() {
 
   const resultEl = document.getElementById('genResult');
   resultEl.classList.add('has-content');
+  const isEN = currentLang === 'en';
   resultEl.innerHTML = `
     <div class="gen-result-content" style="width:100%;">
       <div class="gen-result-header">
         <div>
           <div class="gen-result-name">${prog.name}</div>
           <div class="gen-result-meta">
-            <span class="gen-meta-badge">${days} jours / semaine</span>
+            <span class="gen-meta-badge">${days} ${isEN ? 'days / week' : 'jours / semaine'}</span>
             <span class="gen-meta-badge">${levelLabel(level)}</span>
             <span class="gen-meta-badge">${goalLabel(goal)}</span>
-            <span class="gen-meta-badge">IMC : ${bmi}</span>
+            <span class="gen-meta-badge">${isEN ? 'BMI' : 'IMC'} : ${bmi}</span>
           </div>
         </div>
         <div style="text-align:right;">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);">${cals} kcal</div>
-          <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Objectif calorique · ${protNeeds}g protéines</div>
+          <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">${isEN ? 'Calorie target' : 'Objectif calorique'} · ${protNeeds}g ${isEN ? 'protein' : 'protéines'}</div>
         </div>
       </div>
       <div class="gen-days-grid">
@@ -5962,30 +5968,35 @@ function generateProgram() {
       </div>
     </div>
   `;
-  setTimeout(() => resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  setTimeout(() => {
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Re-run translation for dynamically generated content
+    if (currentLang === 'en') translateDOM(FR_EN);
+  }, 100);
 }
 
 function renderGenDay(day) {
+  const isEN = currentLang === 'en';
   if (day.rest) {
     return `<div class="gen-day">
       <div class="gen-day-header" style="background:linear-gradient(135deg,rgba(255,183,3,0.1),rgba(255,183,3,0.05));">
-        <div class="gen-day-name" style="color:var(--gold);">${day.name}</div>
-        <div class="gen-day-focus" style="color:var(--gold);">REPOS</div>
+        <div class="gen-day-name" style="color:var(--gold);">${isEN ? (FR_EN[day.name] || day.name) : day.name}</div>
+        <div class="gen-day-focus" style="color:var(--gold);">${isEN ? 'REST' : 'REPOS'}</div>
       </div>
-      <div class="gen-rest-day">🛌 Récupération · Marche légère · Stretching</div>
+      <div class="gen-rest-day">🛌 ${isEN ? 'Recovery · Light walk · Stretching' : 'Récupération · Marche légère · Stretching'}</div>
     </div>`;
   }
   return `<div class="gen-day">
     <div class="gen-day-header">
-      <div class="gen-day-name">${day.name}</div>
-      <div class="gen-day-focus">${day.focus}</div>
+      <div class="gen-day-name">${isEN ? (FR_EN[day.name] || day.name) : day.name}</div>
+      <div class="gen-day-focus">${isEN ? (FR_EN[day.focus] || day.focus) : day.focus}</div>
     </div>
     ${day.exercises.map((ex, i) => `
       <div class="gen-ex" onclick="openModal('${ex.id}')">
         <div class="gen-ex-num">0${i+1}</div>
         <div style="flex:1">
-          <div class="gen-ex-name">${ex.name}</div>
-          <div class="gen-ex-sets">${ex.sets}</div>
+          <div class="gen-ex-name">${isEN ? (FR_EN[ex.name] || ex.name) : ex.name}</div>
+          <div class="gen-ex-sets">${isEN ? (FR_EN[ex.sets] || ex.sets) : ex.sets}</div>
         </div>
         <div class="gen-ex-play">▶</div>
       </div>
@@ -5993,120 +6004,131 @@ function renderGenDay(day) {
   </div>`;
 }
 
-function levelLabel(l) { return {debutant:'Débutant',intermediaire:'Intermédiaire',avance:'Avancé'}[l]; }
-function goalLabel(g) { return {masse:'Prise de masse',force:'Force',seche:'Sèche',athletique:'Physique athlétique'}[g]; }
+function levelLabel(l) {
+  if (currentLang === 'en') return {debutant:'Beginner',intermediaire:'Intermediate',avance:'Advanced'}[l] || l;
+  return {debutant:'Débutant',intermediaire:'Intermédiaire',avance:'Avancé'}[l] || l;
+}
+function goalLabel(g) {
+  if (currentLang === 'en') return {masse:'Muscle gain',force:'Strength',seche:'Cutting',athletique:'Athletic physique'}[g] || g;
+  return {masse:'Prise de masse',force:'Force',seche:'Sèche',athletique:'Physique athlétique'}[g] || g;
+}
 
 function buildProgram3Days(level, goal, muscles, equip) {
+  const isEN = currentLang === 'en';
   const isForce = goal === 'force';
   const setsHeavy = isForce ? '5 × 3-5 reps · Repos 4 min' : '4 × 8-10 reps · Repos 2 min';
   const setsLight = isForce ? '3 × 5-6 reps · Repos 3 min' : '3 × 12-15 reps · Repos 90 sec';
   return {
-    name: isForce ? 'FULL BODY FORCE — 3 JOURS' : 'FULL BODY MASSE — 3 JOURS',
+    name: isEN
+      ? (isForce ? 'FULL BODY STRENGTH — 3 DAYS' : 'FULL BODY MASS — 3 DAYS')
+      : (isForce ? 'FULL BODY FORCE — 3 JOURS' : 'FULL BODY MASSE — 3 JOURS'),
     days: [
-      { name:'LUNDI', focus:'FULL BODY A', exercises:[
-        {id:'squat',name:'Squat Barre',sets:setsHeavy},
-        {id:'bench-press',name:'Développé Couché',sets:setsHeavy},
-        {id:'row-barre',name:'Rowing Barre',sets:setsHeavy},
-        {id:'ohp',name:'Développé Militaire',sets:setsLight},
+      { name: isEN ? 'MONDAY' : 'LUNDI', focus: isEN ? 'FULL BODY A' : 'FULL BODY A', exercises:[
+        {id:'squat',name: isEN ? 'Barbell Squat' : 'Squat Barre',sets:setsHeavy},
+        {id:'bench-press',name: isEN ? 'Bench Press' : 'Développé Couché',sets:setsHeavy},
+        {id:'row-barre',name: isEN ? 'Barbell Row' : 'Rowing Barre',sets:setsHeavy},
+        {id:'ohp',name: isEN ? 'Military Press' : 'Développé Militaire',sets:setsLight},
         ...(muscles.includes('abdos')?[{id:'ab-wheel',name:'Ab Wheel',sets:'3 × 10 reps'}]:[]),
       ]},
-      { name:'MERCREDI', focus:'FULL BODY B', exercises:[
-        {id:'deadlift',name:'Soulevé de Terre',sets:isForce?'4 × 3 reps · Repos 5 min':'3 × 5 reps · Repos 4 min'},
-        {id:'incline-db',name:'Développé Incliné Haltères',sets:setsLight},
-        {id:'pullups',name:'Tractions',sets:setsHeavy},
-        {id:'lateral-raise',name:'Élévations Latérales',sets:'4 × 15 reps'},
-        ...(muscles.includes('bras')?[{id:'bicep-curl',name:'Curl Biceps',sets:'3 × 12 reps'}]:[]),
+      { name: isEN ? 'WEDNESDAY' : 'MERCREDI', focus: isEN ? 'FULL BODY B' : 'FULL BODY B', exercises:[
+        {id:'deadlift',name: isEN ? 'Deadlift' : 'Soulevé de Terre',sets:isForce?'4 × 3 reps · Repos 5 min':'3 × 5 reps · Repos 4 min'},
+        {id:'incline-db',name: isEN ? 'Incline Dumbbell Press' : 'Développé Incliné Haltères',sets:setsLight},
+        {id:'pullups',name: isEN ? 'Pull-ups' : 'Tractions',sets:setsHeavy},
+        {id:'lateral-raise',name: isEN ? 'Lateral Raises' : 'Élévations Latérales',sets:'4 × 15 reps'},
+        ...(muscles.includes('bras')?[{id:'bicep-curl',name: isEN ? 'Bicep Curl' : 'Curl Biceps',sets:'3 × 12 reps'}]:[]),
       ]},
-      { name:'VENDREDI', focus:'FULL BODY C', exercises:[
-        {id:'squat',name:'Squat Gobelet',sets:setsLight},
-        {id:'bench-press',name:'Développé Couché Haltères',sets:setsLight},
-        {id:'seated-cable-row',name:'Tirage Horizontal Poulie',sets:setsLight},
+      { name: isEN ? 'FRIDAY' : 'VENDREDI', focus: isEN ? 'FULL BODY C' : 'FULL BODY C', exercises:[
+        {id:'squat',name: isEN ? 'Goblet Squat' : 'Squat Gobelet',sets:setsLight},
+        {id:'bench-press',name: isEN ? 'Dumbbell Bench Press' : 'Développé Couché Haltères',sets:setsLight},
+        {id:'seated-cable-row',name: isEN ? 'Cable Row' : 'Tirage Horizontal Poulie',sets:setsLight},
         {id:'rdl',name:'Romanian Deadlift',sets:setsLight},
-        ...(muscles.includes('abdos')||muscles.includes('jambes')?[{id:'leg-curl',name:'Leg Curl',sets:'3 × 12 reps'}]:[]),
+        ...(muscles.includes('abdos')||muscles.includes('jambes')?[{id:'leg-curl',name: isEN ? 'Leg Curl' : 'Leg Curl',sets:'3 × 12 reps'}]:[]),
       ]},
     ]
   };
 }
 
 function buildProgram4Days(level, goal, muscles, equip) {
+  const isEN = currentLang === 'en';
   const hasPecs = muscles.includes('pecs');
   const hasJambes = muscles.includes('jambes') || muscles.includes('fessiers');
   return {
-    name: 'UPPER / LOWER — 4 JOURS',
+    name: isEN ? 'UPPER / LOWER — 4 DAYS' : 'UPPER / LOWER — 4 JOURS',
     days: [
-      { name:'LUNDI', focus:'UPPER — Force', exercises:[
-        {id:'bench-press',name:'Développé Couché Barre',sets:'5 × 5 reps · Repos 3 min'},
-        {id:'row-barre',name:'Rowing Barre',sets:'5 × 5 reps · Repos 3 min'},
-        {id:'ohp',name:'Développé Militaire',sets:'3 × 8 reps'},
-        {id:'pulldown',name:'Tirage Vertical Poulie',sets:'3 × 10 reps'},
+      { name: isEN ? 'MONDAY' : 'LUNDI', focus: isEN ? 'UPPER — Strength' : 'UPPER — Force', exercises:[
+        {id:'bench-press',name: isEN ? 'Barbell Bench Press' : 'Développé Couché Barre',sets:'5 × 5 reps · Repos 3 min'},
+        {id:'row-barre',name: isEN ? 'Barbell Row' : 'Rowing Barre',sets:'5 × 5 reps · Repos 3 min'},
+        {id:'ohp',name: isEN ? 'Military Press' : 'Développé Militaire',sets:'3 × 8 reps'},
+        {id:'pulldown',name: isEN ? 'Lat Pulldown' : 'Tirage Vertical Poulie',sets:'3 × 10 reps'},
         ...(hasPecs?[{id:'pec-deck',name:'Pec Deck',sets:'3 × 15 reps'}]:[]),
       ]},
-      { name:'MARDI', focus:'LOWER — Force', exercises:[
-        {id:'squat',name:'Squat Barre',sets:'5 × 5 reps · Repos 3 min'},
+      { name: isEN ? 'TUESDAY' : 'MARDI', focus: isEN ? 'LOWER — Strength' : 'LOWER — Force', exercises:[
+        {id:'squat',name: isEN ? 'Barbell Squat' : 'Squat Barre',sets:'5 × 5 reps · Repos 3 min'},
         {id:'rdl',name:'Romanian Deadlift',sets:'4 × 6 reps'},
         {id:'leg-press',name:'Leg Press',sets:'3 × 10 reps'},
         {id:'leg-curl',name:'Leg Curl',sets:'3 × 12 reps'},
-        {id:'calf-raises',name:'Mollets',sets:'4 × 20 reps'},
+        {id:'calf-raises',name: isEN ? 'Calf Raises' : 'Mollets',sets:'4 × 20 reps'},
       ]},
-      { name:'JEUDI', focus:'UPPER — Volume', exercises:[
-        {id:'incline-db',name:'Développé Incliné Haltères',sets:'4 × 10 reps'},
+      { name: isEN ? 'THURSDAY' : 'JEUDI', focus: isEN ? 'UPPER — Volume' : 'UPPER — Volume', exercises:[
+        {id:'incline-db',name: isEN ? 'Incline Dumbbell Press' : 'Développé Incliné Haltères',sets:'4 × 10 reps'},
         {id:'tbar-row',name:'T-Bar Row',sets:'4 × 10 reps'},
-        {id:'arnold-press',name:'Développé Arnold',sets:'3 × 12 reps'},
-        {id:'bicep-curl',name:'Curl Biceps',sets:'3 × 12 reps'},
-        {id:'tricep-pushdown',name:'Extension Triceps Poulie',sets:'3 × 12 reps'},
+        {id:'arnold-press',name: isEN ? 'Arnold Press' : 'Développé Arnold',sets:'3 × 12 reps'},
+        {id:'bicep-curl',name: isEN ? 'Bicep Curl' : 'Curl Biceps',sets:'3 × 12 reps'},
+        {id:'tricep-pushdown',name: isEN ? 'Tricep Pushdown' : 'Extension Triceps Poulie',sets:'3 × 12 reps'},
       ]},
-      { name:'VENDREDI', focus:'LOWER — Volume', exercises:[
-        {id:'hack-squat',name:'Hack Squat Machine',sets:'4 × 10 reps'},
-        {id:'bulgarian-squat',name:'Fentes Bulgares',sets:'3 × 10 par jambe'},
+      { name: isEN ? 'FRIDAY' : 'VENDREDI', focus: isEN ? 'LOWER — Volume' : 'LOWER — Volume', exercises:[
+        {id:'hack-squat',name: isEN ? 'Hack Squat Machine' : 'Hack Squat Machine',sets:'4 × 10 reps'},
+        {id:'bulgarian-squat',name: isEN ? 'Bulgarian Split Squat' : 'Fentes Bulgares',sets:'3 × 10 reps'},
         {id:'rdl',name:'Romanian Deadlift',sets:'3 × 12 reps'},
         {id:'leg-curl',name:'Leg Curl',sets:'4 × 15 reps'},
-        ...(hasJambes?[{id:'hyperextension',name:'Hyperextension',sets:'3 × 15 reps'}]:[]),
+        ...(hasJambes?[{id:'hyperextension',name: isEN ? 'Hyperextension' : 'Hyperextension',sets:'3 × 15 reps'}]:[]),
       ]},
     ]
   };
 }
 
 function buildProgram5Days(level, goal, muscles, equip) {
+  const isEN = currentLang === 'en';
   const hasPecs = muscles.includes('pecs');
   const hasBras = muscles.includes('bras');
   const hasEpaules = muscles.includes('epaules');
   const hasDos = muscles.includes('dos');
   return {
-    name: 'PPL PERSONNALISÉ — 5 JOURS',
+    name: isEN ? 'CUSTOM PPL — 5 DAYS' : 'PPL PERSONNALISÉ — 5 JOURS',
     days: [
-      { name:'LUNDI', focus:'PUSH — Pecs · Épaules · Triceps', exercises:[
-        {id:'bench-press',name:'Développé Couché Barre',sets:'4 × 6-8 reps'},
-        {id:hasPecs?'incline-barbell':'incline-db',name:hasPecs?'Développé Incliné Barre':'Développé Incliné Haltères',sets:'3 × 8-10 reps'},
-        {id:'ohp',name:'Développé Militaire',sets:'3 × 8 reps'},
-        {id:'lateral-raise',name:'Élévations Latérales',sets:hasEpaules?'5 × 15 reps':'3 × 12 reps'},
-        {id:'tricep-pushdown',name:'Extension Triceps Poulie',sets:'3 × 12-15 reps'},
+      { name: isEN ? 'MONDAY' : 'LUNDI', focus: isEN ? 'PUSH — Chest · Shoulders · Triceps' : 'PUSH — Pecs · Épaules · Triceps', exercises:[
+        {id:'bench-press',name: isEN ? 'Barbell Bench Press' : 'Développé Couché Barre',sets:'4 × 6-8 reps'},
+        {id:hasPecs?'incline-barbell':'incline-db',name:hasPecs ? (isEN ? 'Incline Barbell Press' : 'Développé Incliné Barre') : (isEN ? 'Incline Dumbbell Press' : 'Développé Incliné Haltères'),sets:'3 × 8-10 reps'},
+        {id:'ohp',name: isEN ? 'Military Press' : 'Développé Militaire',sets:'3 × 8 reps'},
+        {id:'lateral-raise',name: isEN ? 'Lateral Raises' : 'Élévations Latérales',sets:hasEpaules?'5 × 15 reps':'3 × 12 reps'},
+        {id:'tricep-pushdown',name: isEN ? 'Tricep Pushdown' : 'Extension Triceps Poulie',sets:'3 × 12-15 reps'},
       ]},
-      { name:'MARDI', focus:'PULL — Dos · Biceps', exercises:[
-        {id:'deadlift',name:'Soulevé de Terre',sets:'4 × 4-5 reps'},
-        {id:'pullups',name:'Tractions Pronation',sets:'4 × max reps'},
-        {id:hasDos?'tbar-row':'row-barre',name:hasDos?'T-Bar Row':'Rowing Barre',sets:'4 × 6-8 reps'},
+      { name: isEN ? 'TUESDAY' : 'MARDI', focus: isEN ? 'PULL — Back · Biceps' : 'PULL — Dos · Biceps', exercises:[
+        {id:'deadlift',name: isEN ? 'Deadlift' : 'Soulevé de Terre',sets:'4 × 4-5 reps'},
+        {id:'pullups',name: isEN ? 'Pull-ups (Overhand)' : 'Tractions Pronation',sets:'4 × max reps'},
+        {id:hasDos?'tbar-row':'row-barre',name:hasDos?'T-Bar Row':(isEN ? 'Barbell Row' : 'Rowing Barre'),sets:'4 × 6-8 reps'},
         {id:'facepull',name:'Face Pull',sets:'3 × 15 reps'},
-        {id:'bicep-curl',name:'Curl Biceps Barre',sets:hasBras?'4 × 10 reps':'3 × 10 reps'},
+        {id:'bicep-curl',name: isEN ? 'Barbell Bicep Curl' : 'Curl Biceps Barre',sets:hasBras?'4 × 10 reps':'3 × 10 reps'},
       ]},
-      { name:'MERCREDI', focus:'LEGS — Jambes complètes', exercises:[
-        {id:'squat',name:'Squat Barre',sets:'5 × 5 reps'},
-        {id:'hack-squat',name:'Hack Squat Machine',sets:'3 × 10 reps'},
+      { name: isEN ? 'WEDNESDAY' : 'MERCREDI', focus: isEN ? 'LEGS — Full Legs' : 'LEGS — Jambes complètes', exercises:[
+        {id:'squat',name: isEN ? 'Barbell Squat' : 'Squat Barre',sets:'5 × 5 reps'},
+        {id:'hack-squat',name: isEN ? 'Hack Squat Machine' : 'Hack Squat Machine',sets:'3 × 10 reps'},
         {id:'rdl',name:'Romanian Deadlift',sets:'3 × 10 reps'},
-        {id:'leg-curl',name:'Leg Curl Couché',sets:'3 × 12 reps'},
-        {id:'calf-raises',name:'Mollets Debout',sets:'4 × 20 reps'},
+        {id:'leg-curl',name: isEN ? 'Lying Leg Curl' : 'Leg Curl Couché',sets:'3 × 12 reps'},
+        {id:'calf-raises',name: isEN ? 'Standing Calf Raises' : 'Mollets Debout',sets:'4 × 20 reps'},
       ]},
-      { name:'VENDREDI', focus:'PUSH — Volume', exercises:[
-        {id:hasPecs?'pec-deck':'cable-fly',name:hasPecs?'Pec Deck Butterfly':'Écarté Poulie',sets:'4 × 12-15 reps'},
-        {id:'incline-db',name:'Développé Incliné Haltères',sets:'3 × 10 reps'},
-        {id:'arnold-press',name:'Développé Arnold',sets:'3 × 12 reps'},
-        {id:'lateral-raise',name:'Élévations Latérales Dropset',sets:'3 × 15+10+5'},
-        {id:'tricep-dips',name:'Dips Triceps',sets:'3 × 12 reps'},
+      { name: isEN ? 'FRIDAY' : 'VENDREDI', focus: isEN ? 'PUSH — Volume' : 'PUSH — Volume', exercises:[
+        {id:hasPecs?'pec-deck':'cable-fly',name:hasPecs?(isEN?'Pec Deck Butterfly':'Pec Deck Butterfly'):(isEN?'Cable Fly':'Écarté Poulie'),sets:'4 × 12-15 reps'},
+        {id:'incline-db',name: isEN ? 'Incline Dumbbell Press' : 'Développé Incliné Haltères',sets:'3 × 10 reps'},
+        {id:'arnold-press',name: isEN ? 'Arnold Press' : 'Développé Arnold',sets:'3 × 12 reps'},
+        {id:'lateral-raise',name: isEN ? 'Lateral Raises Dropset' : 'Élévations Latérales Dropset',sets:'3 × 15+10+5'},
+        {id:'tricep-dips',name: isEN ? 'Tricep Dips' : 'Dips Triceps',sets:'3 × 12 reps'},
       ]},
-      { name:'SAMEDI', focus:'PULL — Volume', exercises:[
-        {id:'pulldown',name:'Tirage Vertical Poulie',sets:'4 × 10-12 reps'},
-        {id:'seated-cable-row',name:'Tirage Horizontal Poulie',sets:'4 × 12 reps'},
+      { name: isEN ? 'SATURDAY' : 'SAMEDI', focus: isEN ? 'PULL — Volume' : 'PULL — Volume', exercises:[
+        {id:'pulldown',name: isEN ? 'Lat Pulldown' : 'Tirage Vertical Poulie',sets:'4 × 10-12 reps'},
+        {id:'seated-cable-row',name: isEN ? 'Seated Cable Row' : 'Tirage Horizontal Poulie',sets:'4 × 12 reps'},
         {id:'facepull',name:'Face Pull',sets:'3 × 20 reps'},
-        {id:hasBras?'hammer-curl':'cable-curl',name:hasBras?'Curl Marteau':'Curl Poulie',sets:'3 × 12 reps'},
+        {id:hasBras?'hammer-curl':'cable-curl',name:hasBras?(isEN?'Hammer Curl':'Curl Marteau'):(isEN?'Cable Curl':'Curl Poulie'),sets:'3 × 12 reps'},
         ...(muscles.includes('abdos')?[{id:'ab-wheel',name:'Ab Wheel',sets:'3 × 10 reps'}]:[]),
       ]},
     ]
@@ -6114,15 +6136,16 @@ function buildProgram5Days(level, goal, muscles, equip) {
 }
 
 function buildProgram6Days(level, goal, muscles, equip) {
+  const isEN = currentLang === 'en';
   return {
-    name: 'PPL DOUBLE — 6 JOURS',
+    name: isEN ? 'PPL DOUBLE — 6 DAYS' : 'PPL DOUBLE — 6 JOURS',
     days: [
       ...buildProgram5Days(level, goal, muscles, equip).days,
-      { name:'DIMANCHE', focus:'LEGS — Volume', exercises:[
-        {id:'bulgarian-squat',name:'Fentes Bulgares',sets:'4 × 10 par jambe'},
+      { name: isEN ? 'SUNDAY' : 'DIMANCHE', focus: isEN ? 'LEGS — Volume' : 'LEGS — Volume', exercises:[
+        {id:'bulgarian-squat',name: isEN ? 'Bulgarian Split Squat' : 'Fentes Bulgares',sets:'4 × 10 reps'},
         {id:'leg-press',name:'Leg Press',sets:'4 × 12 reps'},
         {id:'rdl',name:'Romanian Deadlift',sets:'4 × 12 reps'},
-        {id:'hyperextension',name:'Hyperextension',sets:'3 × 15 reps'},
+        {id:'hyperextension',name: isEN ? 'Hyperextension' : 'Hyperextension',sets:'3 × 15 reps'},
         {id:'ab-wheel',name:'Ab Wheel',sets:'3 × 10 reps'},
       ]},
     ]
@@ -6135,203 +6158,283 @@ function buildProgram6Days(level, goal, muscles, equip) {
 const videos = {
   'squat': {
     title: 'SQUAT BARRE HAUTE — Technique Complète',
+    titleEN: 'HIGH BAR SQUAT — Complete Technique',
     url: 'https://www.youtube-nocookie.com/embed/SW_C1A-rejs?autoplay=1&mute=1&rel=0',
-    desc: 'Le squat est l\'exercice roi de la prise de masse des jambes et du corps entier. Points clés : pieds à largeur d\'épaules, orteils légèrement tournés vers l\'extérieur, descente contrôlée jusqu\'à parallèle, dos neutre, regard droit devant. Remonte en poussant depuis les talons.'
+    desc: 'Le squat est l\'exercice roi de la prise de masse des jambes et du corps entier. Points clés : pieds à largeur d\'épaules, orteils légèrement tournés vers l\'extérieur, descente contrôlée jusqu\'à parallèle, dos neutre, regard droit devant. Remonte en poussant depuis les talons.',
+    descEN: 'The squat is the king exercise for leg and full-body muscle gain. Key points: feet shoulder-width apart, toes slightly turned out, controlled descent to parallel, neutral back, eyes forward. Drive up through the heels.'
   },
   'bench-press': {
     title: 'DÉVELOPPÉ COUCHÉ — Technique & Erreurs Fréquentes',
+    titleEN: 'BENCH PRESS — Technique & Common Mistakes',
     url: 'https://www.youtube-nocookie.com/embed/vcBig73ojpE?autoplay=1&mute=1&rel=0',
-    desc: 'Omoplates rétractées et plaquées au banc. Légère cambrure naturelle. Barre descend vers le bas de la poitrine. Poignet dans l\'axe de l\'avant-bras. Remonte en ligne légèrement diagonale vers les yeux. Respire : inspire avant la descente, expire à la montée.'
+    desc: 'Omoplates rétractées et plaquées au banc. Légère cambrure naturelle. Barre descend vers le bas de la poitrine. Poignet dans l\'axe de l\'avant-bras. Remonte en ligne légèrement diagonale vers les yeux. Respire : inspire avant la descente, expire à la montée.',
+    descEN: 'Retract and depress shoulder blades against the bench. Slight natural arch. Bar descends toward lower chest. Wrists aligned with forearms. Press in a slight diagonal toward the eyes. Breathe: inhale before descent, exhale on the way up.'
   },
   'deadlift': {
     title: 'SOULEVÉ DE TERRE — Apprentissage Étape par Étape',
+    titleEN: 'DEADLIFT — Step-by-Step Learning',
     url: 'https://www.youtube-nocookie.com/embed/op9kVnSso6Q?autoplay=1&mute=1&rel=0',
-    desc: 'Position de départ : pieds à largeur de hanches, barre au-dessus du milieu du pied. Hanche au-dessus des genoux, épaules au-dessus de la barre. Dos droit, poitrine haute. Pousse le sol, ne tire pas la barre. Barre reste collée aux jambes tout le long.'
+    desc: 'Position de départ : pieds à largeur de hanches, barre au-dessus du milieu du pied. Hanche au-dessus des genoux, épaules au-dessus de la barre. Dos droit, poitrine haute. Pousse le sol, ne tire pas la barre. Barre reste collée aux jambes tout le long.',
+    descEN: 'Starting position: feet hip-width apart, bar over mid-foot. Hips above knees, shoulders above bar. Straight back, chest up. Push the floor away, don\'t pull the bar. Bar stays close to the legs throughout.'
   },
   'ohp': {
     title: 'DÉVELOPPÉ MILITAIRE — Épaules Larges et Fortes',
+    titleEN: 'OVERHEAD PRESS — Wide and Strong Shoulders',
     url: 'https://www.youtube-nocookie.com/embed/2yjwXTZQDDI?autoplay=1&mute=1&rel=0',
-    desc: 'Debout ou assis, prise légèrement plus large que les épaules. La barre part du haut de la poitrine. Pousse directement vers le haut en contractant les fessiers et en gainant le core. Bras complètement étendus en haut. Pas d\'hyperextension du bas du dos.'
+    desc: 'Debout ou assis, prise légèrement plus large que les épaules. La barre part du haut de la poitrine. Pousse directement vers le haut en contractant les fessiers et en gainant le core. Bras complètement étendus en haut. Pas d\'hyperextension du bas du dos.',
+    descEN: 'Standing or seated, grip slightly wider than shoulders. Bar starts at upper chest. Press straight up while squeezing glutes and bracing core. Arms fully extended at top. No lower back hyperextension.'
   },
   'pullups': {
     title: 'TRACTIONS — Progression du Débutant au Avancé',
+    titleEN: 'PULL-UPS — Beginner to Advanced Progression',
     url: 'https://www.youtube-nocookie.com/embed/eGo4IYlbE5g?autoplay=1&mute=1&rel=0',
-    desc: 'Prise pronation légèrement plus large que les épaules. Initie le mouvement en descendant les omoplates, pas en tirant avec les bras. Ramène la poitrine vers la barre. Descente lente et contrôlée = plus de masse. Si pas assez de force : bandes élastiques ou machine assistée.'
+    desc: 'Prise pronation légèrement plus large que les épaules. Initie le mouvement en descendant les omoplates, pas en tirant avec les bras. Ramène la poitrine vers la barre. Descente lente et contrôlée = plus de masse. Si pas assez de force : bandes élastiques ou machine assistée.',
+    descEN: 'Overhand grip slightly wider than shoulders. Initiate by depressing the scapula, not pulling with the arms. Bring chest to bar. Slow controlled descent = more mass. Not strong enough: use resistance bands or assisted machine.'
   },
   'row-barre': {
     title: 'ROWING BARRE PRONATION — Épaisseur du Dos',
+    titleEN: 'BARBELL ROW (OVERHAND) — Back Thickness',
     url: 'https://www.youtube-nocookie.com/embed/kBWAon7ItDw?autoplay=1&mute=1&rel=0',
-    desc: 'Corps à 45° minimum, dos plat et neutre. Tire la barre vers le nombril, pas vers la poitrine. Coudes rasent les flancs. Contracte les omoplates ensemble en fin de mouvement. Évite les balancements pour utiliser les muscles du dos, pas l\'inertie.'
+    desc: 'Corps à 45° minimum, dos plat et neutre. Tire la barre vers le nombril, pas vers la poitrine. Coudes rasent les flancs. Contracte les omoplates ensemble en fin de mouvement. Évite les balancements pour utiliser les muscles du dos, pas l\'inertie.',
+    descEN: 'Body at 45° minimum, flat neutral back. Pull bar toward navel, not chest. Elbows graze the sides. Squeeze shoulder blades together at the end. Avoid swinging to use back muscles, not momentum.'
   },
   'incline-db': {
     title: 'DÉVELOPPÉ INCLINÉ HALTÈRES — Haut des Pecs',
+    titleEN: 'INCLINE DUMBBELL PRESS — Upper Chest',
     url: 'https://www.youtube-nocookie.com/embed/8iPEnn-ltC8?autoplay=1&mute=1&rel=0',
-    desc: 'Banc incliné à 30-45°. Coudes à 75° (pas à 90°). Mouvement en arc de cercle naturel. Focus sur l\'étirement des pectoraux en bas et la contraction en haut. Haltères se rejoignent légèrement mais ne se touchent pas.'
+    desc: 'Banc incliné à 30-45°. Coudes à 75° (pas à 90°). Mouvement en arc de cercle naturel. Focus sur l\'étirement des pectoraux en bas et la contraction en haut. Haltères se rejoignent légèrement mais ne se touchent pas.',
+    descEN: 'Bench inclined at 30-45°. Elbows at 75° (not 90°). Natural arc of motion. Focus on pec stretch at bottom and contraction at top. Dumbbells come close but don\'t touch.'
   },
   'lateral-raise': {
     title: 'ÉLÉVATIONS LATÉRALES — Deltoïdes Latéraux',
+    titleEN: 'LATERAL RAISES — Lateral Deltoids',
     url: 'https://www.youtube-nocookie.com/embed/3VcKaXpzqRo?autoplay=1&mute=1&rel=0',
-    desc: 'Légère flexion des coudes, dos légèrement incliné (10°). Monte jusqu\'à hauteur des épaules, pas plus haut. Le petit doigt légèrement en l\'air en fin de mouvement pour maximiser la contraction. Descente lente = meilleure hypertrophie. Commence léger.'
+    desc: 'Légère flexion des coudes, dos légèrement incliné (10°). Monte jusqu\'à hauteur des épaules, pas plus haut. Le petit doigt légèrement en l\'air en fin de mouvement pour maximiser la contraction. Descente lente = meilleure hypertrophie. Commence léger.',
+    descEN: 'Slight elbow bend, torso slightly inclined (10°). Raise to shoulder height, no higher. Pinky slightly raised at top to maximize contraction. Slow descent = better hypertrophy. Start light.'
   },
   'tricep-dips': {
     title: 'DIPS TRICEPS — Masse et Force',
+    titleEN: 'TRICEP DIPS — Mass and Strength',
     url: 'https://www.youtube-nocookie.com/embed/2z8JmcrW-As?autoplay=1&mute=1&rel=0',
-    desc: 'Corps vertical pour focus triceps. Coudes proches du corps. Descends jusqu\'à ce que les bras soient à 90°. Pousse via les triceps, pas les épaules. Pour les pectoraux : corps légèrement penché en avant. Ajoute du poids avec une ceinture une fois que tu maîtrises.'
+    desc: 'Corps vertical pour focus triceps. Coudes proches du corps. Descends jusqu\'à ce que les bras soient à 90°. Pousse via les triceps, pas les épaules. Pour les pectoraux : corps légèrement penché en avant. Ajoute du poids avec une ceinture une fois que tu maîtrises.',
+    descEN: 'Vertical torso for tricep focus. Elbows close to body. Lower until arms reach 90°. Push through triceps, not shoulders. For chest focus: lean slightly forward. Add weight with a belt once you master it.'
   },
   'leg-press': {
     title: 'LEG PRESS — Quadriceps et Fessiers',
+    titleEN: 'LEG PRESS — Quads and Glutes',
     url: 'https://www.youtube-nocookie.com/embed/IZxyjW7MPJQ?autoplay=1&mute=1&rel=0',
-    desc: 'Placement des pieds = résultat différent. Haut = fessiers + ischios. Bas = quadriceps. Largeur des hanches, orteils légèrement dehors. Descends jusqu\'à 90°. Ne verrouille jamais les genoux en extension. Dos plaqué contre le dossier tout le mouvement.'
+    desc: 'Placement des pieds = résultat différent. Haut = fessiers + ischios. Bas = quadriceps. Largeur des hanches, orteils légèrement dehors. Descends jusqu\'à 90°. Ne verrouille jamais les genoux en extension. Dos plaqué contre le dossier tout le mouvement.',
+    descEN: 'Foot placement = different results. High = glutes + hamstrings. Low = quadriceps. Hip-width apart, toes slightly out. Lower to 90°. Never lock knees at extension. Back flat against pad throughout.'
   },
   'rdl': {
     title: 'ROMANIAN DEADLIFT — Ischios Jambiers',
+    titleEN: 'ROMANIAN DEADLIFT — Hamstrings',
     url: 'https://www.youtube-nocookie.com/embed/JCXUYuzwNrM?autoplay=1&mute=1&rel=0',
-    desc: 'Pieds à largeur de hanches. Dos droit, barre proche des jambes tout du long. Pousse les hanches vers l\'arrière (pas les genoux qui fléchissent). Descends jusqu\'au milieu des tibias selon ta souplesse. Remonte en contractant les fessiers et les ischios.'
+    desc: 'Pieds à largeur de hanches. Dos droit, barre proche des jambes tout du long. Pousse les hanches vers l\'arrière (pas les genoux qui fléchissent). Descends jusqu\'au milieu des tibias selon ta souplesse. Remonte en contractant les fessiers et les ischios.',
+    descEN: 'Feet hip-width apart. Straight back, bar close to legs throughout. Push hips back (not bending knees). Lower to mid-shin depending on flexibility. Drive up by squeezing glutes and hamstrings.'
   },
   'leg-curl': {
     title: 'LEG CURL COUCHÉ — Ischios Jambiers Isolés',
+    titleEN: 'LYING LEG CURL — Isolated Hamstrings',
     url: 'https://www.youtube-nocookie.com/embed/ELOCsoDSmrg?autoplay=1&mute=1&rel=0',
-    desc: 'Couché sur le ventre, hanche bien plaquée. Contracte les ischios pour ramener les pieds vers les fesses. Maintiens 1 seconde en haut. Descente lente (3 secondes). Évite de lever les hanches. Pointes de pieds en avant pour plus de tension.'
+    desc: 'Couché sur le ventre, hanche bien plaquée. Contracte les ischios pour ramener les pieds vers les fesses. Maintiens 1 seconde en haut. Descente lente (3 secondes). Évite de lever les hanches. Pointes de pieds en avant pour plus de tension.',
+    descEN: 'Lying face down, hips flat against pad. Contract hamstrings to curl feet toward glutes. Hold 1 second at top. Slow descent (3 seconds). Avoid raising hips. Toes pointing forward for more tension.'
   },
   'calf-raises': {
     title: 'MOLLETS DEBOUT — Développement des Gastrocnémiens',
+    titleEN: 'STANDING CALF RAISES — Gastrocnemius Development',
     url: 'https://www.youtube-nocookie.com/embed/gwLzBJYoWlI?autoplay=1&mute=1&rel=0',
-    desc: 'Pleine amplitude de mouvement : partie la plus basse jusqu\'à la pointe des pieds maximale. Maintiens 2 secondes en haut pour maximiser la contraction. Descente lente. Les mollets s\'adaptent vite : varie pieds parallèles, en dedans, en dehors. Volume élevé nécessaire.'
+    desc: 'Pleine amplitude de mouvement : partie la plus basse jusqu\'à la pointe des pieds maximale. Maintiens 2 secondes en haut pour maximiser la contraction. Descente lente. Les mollets s\'adaptent vite : varie pieds parallèles, en dedans, en dehors. Volume élevé nécessaire.',
+    descEN: 'Full range of motion: lowest point to maximum toe raise. Hold 2 seconds at top to maximize contraction. Slow descent. Calves adapt quickly: vary feet parallel, inward, outward. High volume required.'
   },
   'facepull': {
     title: 'FACE PULL — Santé des Épaules et Arrière-Deltoïdes',
+    titleEN: 'FACE PULL — Shoulder Health and Rear Delts',
     url: 'https://www.youtube-nocookie.com/embed/rep-qVOkqgk?autoplay=1&mute=1&rel=0',
-    desc: 'Poulie haute avec corde. Tire vers le visage en écartant les mains (rotation externe). Les coudes montent légèrement au-dessus des épaules. Contraction maximale derrière la tête. Exercice essentiel pour la santé des coiffes rotatrices et prévenir les blessures.'
+    desc: 'Poulie haute avec corde. Tire vers le visage en écartant les mains (rotation externe). Les coudes montent légèrement au-dessus des épaules. Contraction maximale derrière la tête. Exercice essentiel pour la santé des coiffes rotatrices et prévenir les blessures.',
+    descEN: 'High cable with rope. Pull toward face while spreading hands apart (external rotation). Elbows rise slightly above shoulder height. Maximum contraction behind the head. Essential exercise for rotator cuff health and injury prevention.'
   },
   'bicep-curl': {
     title: 'CURL BICEPS BARRE — Masse des Bras',
+    titleEN: 'BARBELL BICEP CURL — Arm Mass',
     url: 'https://www.youtube-nocookie.com/embed/kwG2ipFRgfo?autoplay=1&mute=1&rel=0',
-    desc: 'Coudes fixes contre les flancs tout le mouvement. Flexion complète pour l\'amplitude maximale. Maintient 1 sec en haut, descente contrôlée en 3 secondes. La phase excentrique (descente) est aussi importante que la montée pour l\'hypertrophie. Prise supination (paumes vers le haut).'
+    desc: 'Coudes fixes contre les flancs tout le mouvement. Flexion complète pour l\'amplitude maximale. Maintient 1 sec en haut, descente contrôlée en 3 secondes. La phase excentrique (descente) est aussi importante que la montée pour l\'hypertrophie. Prise supination (paumes vers le haut).',
+    descEN: 'Elbows fixed at sides throughout. Full flexion for maximum range. Hold 1 sec at top, controlled 3-second descent. The eccentric phase (lowering) is as important as the lift for hypertrophy. Supinated grip (palms up).'
   },
   'cable-fly': {
     title: 'ÉCARTÉ POULIE BASSE — Étirement et Contraction des Pecs',
+    titleEN: 'LOW CABLE FLY — Pec Stretch and Contraction',
     url: 'https://www.youtube-nocookie.com/embed/Iwe6AmxVf7o?autoplay=1&mute=1&rel=0',
-    desc: 'Poulies basses, légère inclinaison du buste. Arc de cercle des bras vers le haut et l\'avant. Pause et contraction maximale quand les mains se croisent. Descente lente pour maximiser l\'étirement des pectoraux. Excellent pour la définition et le volume musculaire.'
+    desc: 'Poulies basses, légère inclinaison du buste. Arc de cercle des bras vers le haut et l\'avant. Pause et contraction maximale quand les mains se croisent. Descente lente pour maximiser l\'étirement des pectoraux. Excellent pour la définition et le volume musculaire.',
+    descEN: 'Low cables, slight forward lean. Arc arms up and forward. Pause and squeeze hard when hands cross. Slow return to maximize pec stretch. Excellent for definition and muscle volume.'
   },
   'pulldown': {
     title: 'TIRAGE VERTICAL POULIE — Alternative aux Tractions',
+    titleEN: 'LAT PULLDOWN — Pull-up Alternative',
     url: 'https://www.youtube-nocookie.com/embed/CAwf7n6Luuc?autoplay=1&mute=1&rel=0',
-    desc: 'Prise légèrement plus large que les épaules. Tire vers le haut de la poitrine en ramenant les coudes vers les hanches. Dos légèrement penché en arrière (10-15°). Ne tire pas derrière la nuque (risque de blessure). Contraction dorsale maximale en bas du mouvement.'
+    desc: 'Prise légèrement plus large que les épaules. Tire vers le haut de la poitrine en ramenant les coudes vers les hanches. Dos légèrement penché en arrière (10-15°). Ne tire pas derrière la nuque (risque de blessure). Contraction dorsale maximale en bas du mouvement.',
+    descEN: 'Grip slightly wider than shoulders. Pull to upper chest bringing elbows toward hips. Slight backward lean (10-15°). Never pull behind the neck (injury risk). Maximum lat contraction at bottom of movement.'
   },
   'hack-squat': {
     title: 'HACK SQUAT MACHINE — Quadriceps Massifs',
+    titleEN: 'HACK SQUAT MACHINE — Massive Quads',
     url: 'https://www.youtube-nocookie.com/embed/R3yMhCbgMKs?autoplay=1&mute=1&rel=0',
-    desc: 'Régle la machine selon ta morphologie. Pieds au milieu ou bas de la plateforme pour maximaliser le travail des quadriceps. Descends jusqu\'à 90° minimum. Pousse via les talons, pas les orteils. Dos plaqué contre le dossier tout le mouvement. Ne verrouille jamais les genoux en extension.'
+    desc: 'Régle la machine selon ta morphologie. Pieds au milieu ou bas de la plateforme pour maximaliser le travail des quadriceps. Descends jusqu\'à 90° minimum. Pousse via les talons, pas les orteils. Dos plaqué contre le dossier tout le mouvement. Ne verrouille jamais les genoux en extension.',
+    descEN: 'Adjust machine to your body type. Feet in the middle or low on platform to maximize quad work. Lower to 90° minimum. Push through heels, not toes. Back flat against pad throughout. Never lock knees at extension.'
   },
   'pec-deck': {
     title: 'PEC DECK BUTTERFLY — Isolation Pectoraux',
+    titleEN: 'PEC DECK BUTTERFLY — Chest Isolation',
     url: 'https://www.youtube-nocookie.com/embed/Ns09hzN8FnQ?autoplay=1&mute=1&rel=0',
-    desc: 'Règle la hauteur pour que les poignées soient à hauteur des épaules. Dos collé au dossier, poitrine haute. Coudes légèrement fléchis et fixes. Ferme en contractant les pecs au centre — imagine que tu essaies de rapprocher tes coudes. Retour lent pour maximiser l\'étirement. Exercice de finition idéal.'
+    desc: 'Règle la hauteur pour que les poignées soient à hauteur des épaules. Dos collé au dossier, poitrine haute. Coudes légèrement fléchis et fixes. Ferme en contractant les pecs au centre — imagine que tu essaies de rapprocher tes coudes. Retour lent pour maximiser l\'étirement. Exercice de finition idéal.',
+    descEN: 'Set height so handles are at shoulder level. Back against pad, chest up. Elbows slightly bent and fixed. Close by squeezing pecs at center — imagine trying to bring elbows together. Slow return to maximize stretch. Ideal finishing exercise.'
   },
   'seated-cable-row': {
     title: 'TIRAGE HORIZONTAL POULIE — Épaisseur du Dos',
+    titleEN: 'SEATED CABLE ROW — Back Thickness',
     url: 'https://www.youtube-nocookie.com/embed/GZbfZ033f74?autoplay=1&mute=1&rel=0',
-    desc: 'Assis, dos droit, jambes légèrement fléchies. Tire la poignée vers le nombril en gardant les coudes proches du corps. Serre les omoplates en fin de mouvement et maintiens 1 seconde. Retour lent et contrôlé en laissant les omoplates s\'étirer. Évite de te pencher en avant/arrière : le mouvement vient du dos, pas du buste.'
+    desc: 'Assis, dos droit, jambes légèrement fléchies. Tire la poignée vers le nombril en gardant les coudes proches du corps. Serre les omoplates en fin de mouvement et maintiens 1 seconde. Retour lent et contrôlé en laissant les omoplates s\'étirer. Évite de te pencher en avant/arrière : le mouvement vient du dos, pas du buste.',
+    descEN: 'Seated, back straight, knees slightly bent. Pull handle to navel keeping elbows close to body. Squeeze shoulder blades at end and hold 1 second. Slow controlled return letting scapula stretch. Avoid leaning forward/back: movement comes from back, not torso.'
   },
   'tricep-pushdown': {
     title: 'EXTENSION TRICEPS POULIE — Masse des Triceps',
+    titleEN: 'TRICEP PUSHDOWN — Tricep Mass',
     url: 'https://www.youtube-nocookie.com/embed/2-LAMcpzODU?autoplay=1&mute=1&rel=0',
-    desc: 'Poulie haute, barre droite ou en V. Coudes fixes et collés aux flancs, légèrement devant le corps. Extension complète jusqu\'à verrouillage des coudes. Contraction maximale en bas, maintien 1 sec. Remontée lente. Évite de pencher le buste pour tricher. Varie les prises (barre, corde, prise inversée) pour stimuler différentes têtes du triceps.'
+    desc: 'Poulie haute, barre droite ou en V. Coudes fixes et collés aux flancs, légèrement devant le corps. Extension complète jusqu\'à verrouillage des coudes. Contraction maximale en bas, maintien 1 sec. Remontée lente. Évite de pencher le buste pour tricher. Varie les prises (barre, corde, prise inversée) pour stimuler différentes têtes du triceps.',
+    descEN: 'High cable, straight or V-bar. Elbows fixed and close to sides, slightly in front of body. Full extension to elbow lockout. Maximum contraction at bottom, hold 1 sec. Slow return. Avoid leaning torso to cheat. Vary grips (bar, rope, reverse) to stimulate different tricep heads.'
   },
   'cable-curl': {
     title: 'CURL POULIE BASSE — Biceps Tension Constante',
+    titleEN: 'LOW CABLE CURL — Constant Tension Biceps',
     url: 'https://www.youtube-nocookie.com/embed/ksLQtfxkG0c?autoplay=1&mute=1&rel=0',
-    desc: 'Poulie basse, barre droite ou EZ. Prise supination (paumes vers le haut). Coudes fixes contre les flancs. Flexion complète jusqu\'aux épaules. Maintiens 1 seconde en haut en contractant fort. Descente lente en 3 secondes : c\'est la phase excentrique qui crée le plus de dommages musculaires et donc d\'hypertrophie. La tension ne relâche jamais contrairement aux haltères.'
+    desc: 'Poulie basse, barre droite ou EZ. Prise supination (paumes vers le haut). Coudes fixes contre les flancs. Flexion complète jusqu\'aux épaules. Maintiens 1 seconde en haut en contractant fort. Descente lente en 3 secondes : c\'est la phase excentrique qui crée le plus de dommages musculaires et donc d\'hypertrophie. La tension ne relâche jamais contrairement aux haltères.',
+    descEN: 'Low cable, straight or EZ bar. Supinated grip (palms up). Elbows fixed at sides. Full curl to shoulders. Hold 1 second at top squeezing hard. Slow 3-second descent: the eccentric phase creates the most muscle damage and hypertrophy. Tension never releases unlike with dumbbells.'
   },
   'hammer-curl': {
     title: 'CURL MARTEAU — Volume et Épaisseur des Bras',
+    titleEN: 'HAMMER CURL — Arm Volume and Thickness',
     url: 'https://www.youtube-nocookie.com/embed/zC3nLlEvin4?autoplay=1&mute=1&rel=0',
-    desc: 'Prise neutre (pouce vers le haut). Coudes fixes contre les flancs. Monte les haltères simultanément ou en alternance. Le brachial et le brachioradial sont les muscles principaux — ils donnent l\'épaisseur et la largeur au bras. Idéal à combiner avec le curl classique pour des biceps complets. Descente contrôlée obligatoire.'
+    desc: 'Prise neutre (pouce vers le haut). Coudes fixes contre les flancs. Monte les haltères simultanément ou en alternance. Le brachial et le brachioradial sont les muscles principaux — ils donnent l\'épaisseur et la largeur au bras. Idéal à combiner avec le curl classique pour des biceps complets. Descente contrôlée obligatoire.',
+    descEN: 'Neutral grip (thumb up). Elbows fixed at sides. Curl dumbbells simultaneously or alternating. Brachialis and brachioradialis are the main muscles — they give thickness and width to the arm. Ideal combined with standard curl for complete biceps. Controlled descent mandatory.'
   },
   'arnold-press': {
     title: 'DÉVELOPPÉ ARNOLD — Épaules Complètes',
+    titleEN: 'ARNOLD PRESS — Complete Shoulders',
     url: 'https://www.youtube-nocookie.com/embed/6Z15_WdXmVw?autoplay=1&mute=1&rel=0',
-    desc: 'Assis, dos droit. Départ avec les haltères à hauteur des épaules, paumes vers toi. En montant, effectue une rotation des poignets pour finir paumes vers l\'avant au sommet. Descente en effectuant la rotation inverse. Ce mouvement engage les 3 faisceaux du deltoïde sur toute l\'amplitude. Commence léger pour maîtriser la rotation.'
+    desc: 'Assis, dos droit. Départ avec les haltères à hauteur des épaules, paumes vers toi. En montant, effectue une rotation des poignets pour finir paumes vers l\'avant au sommet. Descente en effectuant la rotation inverse. Ce mouvement engage les 3 faisceaux du deltoïde sur toute l\'amplitude. Commence léger pour maîtriser la rotation.',
+    descEN: 'Seated, back straight. Start with dumbbells at shoulder height, palms facing you. As you press up, rotate wrists to finish palms forward at top. Reverse rotation on the way down. This movement engages all 3 deltoid heads through the full range. Start light to master the rotation.'
   },
   'bulgarian-squat': {
     title: 'FENTES BULGARES — Force Unilatérale',
+    titleEN: 'BULGARIAN SPLIT SQUAT — Unilateral Strength',
     url: 'https://www.youtube-nocookie.com/embed/2C-uNgKwPLE?autoplay=1&mute=1&rel=0',
-    desc: 'Pied arrière posé sur un banc ou une boîte à hauteur de genou. Jambe avant à environ 60-70 cm du banc. Descends verticalement en gardant le torse droit. Genou avant dans l\'axe des orteils. Remonte en poussant via le talon avant. Haltères dans chaque main ou barre sur les épaules. Excellent pour corriger les déséquilibres musculaires.'
+    desc: 'Pied arrière posé sur un banc ou une boîte à hauteur de genou. Jambe avant à environ 60-70 cm du banc. Descends verticalement en gardant le torse droit. Genou avant dans l\'axe des orteils. Remonte en poussant via le talon avant. Haltères dans chaque main ou barre sur les épaules. Excellent pour corriger les déséquilibres musculaires.',
+    descEN: 'Rear foot elevated on bench or box at knee height. Front foot about 60-70 cm from bench. Descend vertically keeping torso upright. Front knee tracks over toes. Drive up through the front heel. Dumbbells in each hand or barbell on shoulders. Excellent for correcting muscle imbalances.'
   },
   'tbar-row': {
     title: 'T-BAR ROW — Masse Dorsale Maximale',
+    titleEN: 'T-BAR ROW — Maximum Back Mass',
     url: 'https://www.youtube-nocookie.com/embed/FD13bEGlQNc?autoplay=1&mute=1&rel=0',
-    desc: 'Corps à 45°, dos neutre. Prise neutre sur la poignée en V pour préserver les épaules. Tire la barre vers la poitrine basse en gardant les coudes proches du corps. Contracte les omoplates en haut. Descente lente et complète. Permet de charger plus lourd que le rowing barre classique et de développer une masse dorsale impressionnante.'
+    desc: 'Corps à 45°, dos neutre. Prise neutre sur la poignée en V pour préserver les épaules. Tire la barre vers la poitrine basse en gardant les coudes proches du corps. Contracte les omoplates en haut. Descente lente et complète. Permet de charger plus lourd que le rowing barre classique et de développer une masse dorsale impressionnante.',
+    descEN: 'Body at 45°, neutral back. Neutral grip on the V-handle to protect shoulders. Pull bar to lower chest keeping elbows close to body. Squeeze shoulder blades at top. Slow full descent. Allows heavier loading than classic barbell row to build impressive back mass.'
   },
   'incline-barbell': {
     title: 'DÉVELOPPÉ INCLINÉ BARRE — Haut des Pectoraux',
+    titleEN: 'INCLINE BARBELL PRESS — Upper Chest',
     url: 'https://www.youtube-nocookie.com/embed/SrxSh9lLkn0?autoplay=1&mute=1&rel=0',
-    desc: 'Banc à 30-45° (trop incliné = épaules au lieu des pecs). Prise légèrement plus large que les épaules. Omoplates serrées et dos légèrement cambré. Barre descend sur le haut des pectoraux. Coudes à 75° (pas perpendiculaires). Extension explosive en contractant les pecs. Phase excentrique lente de 2-3 secondes pour maximiser l\'hypertrophie.'
+    desc: 'Banc à 30-45° (trop incliné = épaules au lieu des pecs). Prise légèrement plus large que les épaules. Omoplates serrées et dos légèrement cambré. Barre descend sur le haut des pectoraux. Coudes à 75° (pas perpendiculaires). Extension explosive en contractant les pecs. Phase excentrique lente de 2-3 secondes pour maximiser l\'hypertrophie.',
+    descEN: 'Bench at 30-45° (too steep = shoulders instead of pecs). Grip slightly wider than shoulders. Shoulder blades retracted and slight arch. Bar descends to upper chest. Elbows at 75° (not perpendicular). Explosive press squeezing pecs. Slow 2-3 second eccentric to maximize hypertrophy.'
   },
   'hyperextension': {
     title: 'HYPEREXTENSION — Lombaires et Chaîne Postérieure',
+    titleEN: 'HYPEREXTENSION — Lower Back and Posterior Chain',
     url: 'https://www.youtube-nocookie.com/embed/ph3pzWkPe6E?autoplay=1&mute=1&rel=0',
-    desc: 'Hanche positionnée sur le coussin pour permettre une flexion complète. Descends jusqu\'à 90° en gardant le dos neutre. Remonte en contractant les fessiers puis les lombaires. Dos neutre en haut — évite l\'hyperextension lombaire. Mains sur la poitrine ou derrière la tête. Ajoute des poids une fois maîtrisé. Exercice indispensable pour prévenir les blessures au dos.'
+    desc: 'Hanche positionnée sur le coussin pour permettre une flexion complète. Descends jusqu\'à 90° en gardant le dos neutre. Remonte en contractant les fessiers puis les lombaires. Dos neutre en haut — évite l\'hyperextension lombaire. Mains sur la poitrine ou derrière la tête. Ajoute des poids une fois maîtrisé. Exercice indispensable pour prévenir les blessures au dos.',
+    descEN: 'Hips positioned on pad to allow full flexion. Lower to 90° keeping back neutral. Drive up by squeezing glutes then lower back. Neutral back at top — avoid hyperextending lower back. Hands on chest or behind head. Add weight once mastered. Essential exercise to prevent back injuries.'
   },
   'ab-wheel': {
     title: 'AB WHEEL — Core Acier',
+    titleEN: 'AB WHEEL — Steel Core',
     url: 'https://www.youtube-nocookie.com/embed/p7_5UcRvHH8?autoplay=1&mute=1&rel=0',
-    desc: 'Commence genoux au sol. Corps gainé comme une planche, hanches ni hautes ni basses. Roule lentement vers l\'avant jusqu\'à extension maximale sans cambrer le bas du dos. Le retour se fait en contractant les abdominaux, pas en tirant avec les bras ou les épaules. Progression : genoux → mi-chemin → extension complète debout. Un des exercices de core les plus difficiles qui soit.'
+    desc: 'Commence genoux au sol. Corps gainé comme une planche, hanches ni hautes ni basses. Roule lentement vers l\'avant jusqu\'à extension maximale sans cambrer le bas du dos. Le retour se fait en contractant les abdominaux, pas en tirant avec les bras ou les épaules. Progression : genoux → mi-chemin → extension complète debout. Un des exercices de core les plus difficiles qui soit.',
+    descEN: 'Start on knees. Body braced like a plank, hips neither high nor low. Roll slowly forward to maximum extension without arching lower back. Return by contracting abs, not pulling with arms or shoulders. Progression: knees → halfway → full standing extension. One of the most challenging core exercises there is.'
   },
   'dragon-flag': {
     title: 'DRAGON FLAG — Force Abdominale Extrême',
+    titleEN: 'DRAGON FLAG — Extreme Abdominal Strength',
     url: 'https://www.youtube-nocookie.com/embed/pvz7k5gO-DE?autoplay=1&mute=1&rel=0',
-    desc: 'Allongé sur un banc, agrippe le derrière de la tête. Corps parfaitement droit, descends lentement en ne touchant que les épaules. Remonte en contractant l\'ensemble du core. Exercice inventé par Bruce Lee. Commence avec les genoux fléchis (variante plus facile) puis progresse vers le dragon flag complet jambes tendues. Très exigeant — ne force pas si tu n\'as pas encore la force de base.'
+    desc: 'Allongé sur un banc, agrippe le derrière de la tête. Corps parfaitement droit, descends lentement en ne touchant que les épaules. Remonte en contractant l\'ensemble du core. Exercice inventé par Bruce Lee. Commence avec les genoux fléchis (variante plus facile) puis progresse vers le dragon flag complet jambes tendues. Très exigeant — ne force pas si tu n\'as pas encore la force de base.',
+    descEN: 'Lying on a bench, grip behind the head. Body perfectly straight, lower slowly touching only the shoulders. Rise by contracting the entire core. Exercise invented by Bruce Lee. Start with knees bent (easier variation) then progress to full dragon flag with straight legs. Very demanding — don\'t force it if you lack base strength.'
   },
   'hanging-knee': {
     title: 'RELEVÉ DE GENOUX SUSPENDU — Bas des Abdos',
+    titleEN: 'HANGING KNEE RAISE — Lower Abs',
     url: 'https://www.youtube-nocookie.com/embed/Pr1ieGZ5atk?autoplay=1&mute=1&rel=0',
-    desc: 'Suspendu à une barre, les bras légèrement fléchis. Ramène les genoux vers la poitrine en contractant les abdos inférieurs. Évite de balancer — le mouvement vient des abdos pas de l\'élan. Progression : genoux fléchis → jambes semi-tendues → jambes droites (hanging leg raise). Maintiens 1 sec en haut pour maximiser la contraction.'
+    desc: 'Suspendu à une barre, les bras légèrement fléchis. Ramène les genoux vers la poitrine en contractant les abdos inférieurs. Évite de balancer — le mouvement vient des abdos pas de l\'élan. Progression : genoux fléchis → jambes semi-tendues → jambes droites (hanging leg raise). Maintiens 1 sec en haut pour maximiser la contraction.',
+    descEN: 'Hanging from a bar, arms slightly bent. Bring knees to chest contracting lower abs. Avoid swinging — movement comes from abs not momentum. Progression: knees bent → semi-straight legs → straight legs (hanging leg raise). Hold 1 sec at top to maximize contraction.'
   },
   'plank': {
     title: 'PLANCHE FRONTALE — Gainage Core Profond',
+    titleEN: 'FRONT PLANK — Deep Core Bracing',
     url: 'https://www.youtube-nocookie.com/embed/pSHjTRCQxIw?autoplay=1&mute=1&rel=0',
-    desc: 'Avant-bras au sol, coudes sous les épaules. Corps parfaitement aligné de la tête aux talons. Serre les fesses, contracte les abdos, pousse le sol. Ne laisse jamais les hanches s\'affaisser ni monter. Respire normalement. Objectif progression : 30 sec → 60 sec → 90 sec → 2 min. Une fois à 2 min confortables, passe aux variantes plus difficiles (planche avec levé de jambe, planche sur une main).'
+    desc: 'Avant-bras au sol, coudes sous les épaules. Corps parfaitement aligné de la tête aux talons. Serre les fesses, contracte les abdos, pousse le sol. Ne laisse jamais les hanches s\'affaisser ni monter. Respire normalement. Objectif progression : 30 sec → 60 sec → 90 sec → 2 min. Une fois à 2 min confortables, passe aux variantes plus difficiles (planche avec levé de jambe, planche sur une main).',
+    descEN: 'Forearms on floor, elbows under shoulders. Body perfectly aligned from head to heels. Squeeze glutes, brace abs, push the floor. Never let hips sag or rise. Breathe normally. Progression goals: 30 sec → 60 sec → 90 sec → 2 min. Once comfortable at 2 min, move to harder variations (leg raise plank, single-arm plank).'
   },
   'side-plank': {
     title: 'PLANCHE LATÉRALE — Obliques et Stabilité',
+    titleEN: 'SIDE PLANK — Obliques and Stability',
     url: 'https://www.youtube-nocookie.com/embed/K2eulwSzkP4?autoplay=1&mute=1&rel=0',
-    desc: 'Sur le côté, appui sur un avant-bras. Corps aligné de la tête aux pieds. Hanche haute — ne la laisse pas s\'affaisser. Serre les obliques et le core. Regarde droit devant. Variante difficile : lever le bras ou la jambe du dessus. Travaille chaque côté de façon équilibrée pour prévenir les déséquilibres posturaux.'
+    desc: 'Sur le côté, appui sur un avant-bras. Corps aligné de la tête aux pieds. Hanche haute — ne la laisse pas s\'affaisser. Serre les obliques et le core. Regarde droit devant. Variante difficile : lever le bras ou la jambe du dessus. Travaille chaque côté de façon équilibrée pour prévenir les déséquilibres posturaux.',
+    descEN: 'On your side, supported on one forearm. Body aligned from head to feet. Hips high — don\'t let them sag. Squeeze obliques and core. Look straight ahead. Hard variation: raise the top arm or leg. Work each side equally to prevent postural imbalances.'
   },
   'crunch-cable': {
     title: 'CRUNCH POULIE HAUTE — Abdos avec Résistance',
+    titleEN: 'HIGH CABLE CRUNCH — Abs with Resistance',
     url: 'https://www.youtube-nocookie.com/embed/2fbujeH3F0E?autoplay=1&mute=1&rel=0',
-    desc: 'A genoux face à la poulie haute, corde derrière la nuque. Fléchis le buste vers le bas en contractant les abdos — pas les hanches. Le mouvement est court et concentré. Pause et contraction maximale en bas. Remontée contrôlée. C\'est LE meilleur exercice pour hypertrophier les abdos car il utilise une résistance progressive comme n\'importe quel autre muscle. Augmente le poids régulièrement.'
+    desc: 'A genoux face à la poulie haute, corde derrière la nuque. Fléchis le buste vers le bas en contractant les abdos — pas les hanches. Le mouvement est court et concentré. Pause et contraction maximale en bas. Remontée contrôlée. C\'est LE meilleur exercice pour hypertrophier les abdos car il utilise une résistance progressive comme n\'importe quel autre muscle. Augmente le poids régulièrement.',
+    descEN: 'Kneeling facing high cable, rope behind neck. Flex torso downward contracting abs — not hips. Short concentrated movement. Pause and maximum contraction at bottom. Controlled return. This is THE best exercise for ab hypertrophy because it uses progressive resistance like any other muscle. Increase weight regularly.'
   },
   'russian-twist': {
     title: 'RUSSIAN TWIST LESTÉ — Obliques Épais',
+    titleEN: 'WEIGHTED RUSSIAN TWIST — Thick Obliques',
     url: 'https://www.youtube-nocookie.com/embed/wkD8rjkodUI?autoplay=1&mute=1&rel=0',
-    desc: 'Assis, jambes légèrement fléchies soulevées du sol. Buste à 45°. Tiens un disque, haltère ou médecine-ball. Tourne le buste de droite à gauche en touchant le sol de chaque côté. Le mouvement vient de la rotation du torse, pas des bras. Plus le buste est incliné, plus c\'est difficile. Pour progresser : augmente le poids ou ralentis la vitesse d\'exécution.'
+    desc: 'Assis, jambes légèrement fléchies soulevées du sol. Buste à 45°. Tiens un disque, haltère ou médecine-ball. Tourne le buste de droite à gauche en touchant le sol de chaque côté. Le mouvement vient de la rotation du torse, pas des bras. Plus le buste est incliné, plus c\'est difficile. Pour progresser : augmente le poids ou ralentis la vitesse d\'exécution.',
+    descEN: 'Seated, knees slightly bent and feet off the floor. Torso at 45°. Hold a plate, dumbbell or medicine ball. Rotate torso left and right touching the floor on each side. Movement comes from torso rotation, not the arms. More torso lean = harder. To progress: increase weight or slow down execution.'
   },
   'leg-raise': {
     title: 'RELEVÉ DE JAMBES — Bas du Ventre',
+    titleEN: 'LEG RAISE — Lower Abs',
     url: 'https://www.youtube-nocookie.com/embed/l4kQd9eWclE?autoplay=1&mute=1&rel=0',
-    desc: 'Allongé sur le dos, mains sous les fesses ou à plat. Jambes tendues, monte-les jusqu\'à 90°. Descends lentement sans poser les talons au sol. Le bas du dos doit rester plaqué — si tu cambres, c\'est que tu vas trop bas ou que les abdos ne sont pas assez forts. Variante débutant : jambes fléchies. Variante avancée : descente à 15° du sol.'
+    desc: 'Allongé sur le dos, mains sous les fesses ou à plat. Jambes tendues, monte-les jusqu\'à 90°. Descends lentement sans poser les talons au sol. Le bas du dos doit rester plaqué — si tu cambres, c\'est que tu vas trop bas ou que les abdos ne sont pas assez forts. Variante débutant : jambes fléchies. Variante avancée : descente à 15° du sol.',
+    descEN: 'Lying on back, hands under glutes or flat. Legs straight, raise to 90°. Lower slowly without touching heels to floor. Lower back must stay flat — if it arches, you\'re going too low or abs aren\'t strong enough. Beginner variation: bent knees. Advanced: lower to 15° from floor.'
   },
   'bicycle-crunch': {
     title: 'BICYCLE CRUNCH — Abdos Complets',
+    titleEN: 'BICYCLE CRUNCH — Complete Abs',
     url: 'https://www.youtube-nocookie.com/embed/9FGilxCbdz8?autoplay=1&mute=1&rel=0',
-    desc: 'Allongé, mains derrière la nuque sans tirer sur la tête. Ramène le coude droit vers le genou gauche en tendant la jambe droite, et vice versa. Le mouvement est lent et contrôlé — pas de mouvement de balancier rapide. La rotation du buste doit être maximale. Étude ACE : l\'un des 3 meilleurs exercices abdominaux. Idéal pour les obliques et le droit de l\'abdomen.'
+    desc: 'Allongé, mains derrière la nuque sans tirer sur la tête. Ramène le coude droit vers le genou gauche en tendant la jambe droite, et vice versa. Le mouvement est lent et contrôlé — pas de mouvement de balancier rapide. La rotation du buste doit être maximale. Étude ACE : l\'un des 3 meilleurs exercices abdominaux. Idéal pour les obliques et le droit de l\'abdomen.',
+    descEN: 'Lying down, hands behind neck without pulling on the head. Bring right elbow to left knee while extending the right leg, and vice versa. Movement is slow and controlled — no rapid swinging. Torso rotation must be maximal. ACE study: one of the 3 best abdominal exercises. Ideal for obliques and rectus abdominis.'
   },
   'front-raise': {
     title: 'ÉLÉVATIONS FRONTALES — Faisceau Antérieur des Épaules',
+    titleEN: 'FRONT RAISES — Anterior Deltoid',
     url: 'https://www.youtube-nocookie.com/embed/soxrZlIl35U?autoplay=1&mute=1&rel=0',
-    desc: 'Debout ou assis, haltères en prise neutre ou pronation. Monte les bras devant toi jusqu\'à hauteur des épaules. Garde les coudes légèrement fléchis. Descente contrôlée. Travaille le faisceau antérieur (avant) du deltoïde. À combiner avec des élévations latérales pour des épaules équilibrées. Attention : le faisceau antérieur est déjà très sollicité par le développé couché.'
+    desc: 'Debout ou assis, haltères en prise neutre ou pronation. Monte les bras devant toi jusqu\'à hauteur des épaules. Garde les coudes légèrement fléchis. Descente contrôlée. Travaille le faisceau antérieur (avant) du deltoïde. À combiner avec des élévations latérales pour des épaules équilibrées. Attention : le faisceau antérieur est déjà très sollicité par le développé couché.',
+    descEN: 'Standing or seated, dumbbells in neutral or pronated grip. Raise arms in front to shoulder height. Keep elbows slightly bent. Controlled descent. Works the anterior deltoid head. Combine with lateral raises for balanced shoulders. Note: anterior deltoid is already heavily worked by bench press.'
   },
   'reverse-fly': {
     title: 'OISEAU / ÉCARTÉ PENCHÉ — Arrière des Épaules',
+    titleEN: 'REVERSE FLY / BENT-OVER RAISE — Rear Delts',
     url: 'https://www.youtube-nocookie.com/embed/ttvASHlhFP4?autoplay=1&mute=1&rel=0',
-    desc: 'Penché en avant à 45-90°, dos plat. Bras tendus vers le bas au départ. Écarte les bras sur les côtés jusqu\'à hauteur des épaules en gardant les coudes légèrement fléchis. Contracte les arrière-deltoïdes et les rhomboïdes en haut. Retour lent. Exercice essentiel pour équilibrer les épaules et éviter les blessures. Commence léger — ce muscle est souvent sous-développé.'
+    desc: 'Penché en avant à 45-90°, dos plat. Bras tendus vers le bas au départ. Écarte les bras sur les côtés jusqu\'à hauteur des épaules en gardant les coudes légèrement fléchis. Contracte les arrière-deltoïdes et les rhomboïdes en haut. Retour lent. Exercice essentiel pour équilibrer les épaules et éviter les blessures. Commence léger — ce muscle est souvent sous-développé.',
+    descEN: 'Bent forward at 45-90°, flat back. Arms hanging down at start. Raise arms out to sides to shoulder height keeping elbows slightly bent. Squeeze rear delts and rhomboids at top. Slow return. Essential for shoulder balance and injury prevention. Start light — this muscle is often underdeveloped.'
   },
   'pullover': {
     title: 'PULL-OVER HALTÈRE — Grand Dorsal et Dentelé',
+    titleEN: 'DUMBBELL PULLOVER — Lats and Serratus',
     url: 'https://www.youtube-nocookie.com/embed/FK4rHFCBEBE?autoplay=1&mute=1&rel=0',
-    desc: 'Allongé transversalement sur un banc, hanches basses pour l\'amplitude. Haltère tenu à deux mains au-dessus de la poitrine. Descends l\'haltère derrière la tête en arc de cercle jusqu\'à sentir un étirement profond dans les lats. Remonte en contractant le grand dorsal. Garde les coudes légèrement fléchis. Excellent pour élargir la cage thoracique et développer le grand dorsal en étirement.'
+    desc: 'Allongé transversalement sur un banc, hanches basses pour l\'amplitude. Haltère tenu à deux mains au-dessus de la poitrine. Descends l\'haltère derrière la tête en arc de cercle jusqu\'à sentir un étirement profond dans les lats. Remonte en contractant le grand dorsal. Garde les coudes légèrement fléchis. Excellent pour élargir la cage thoracique et développer le grand dorsal en étirement.',
+    descEN: 'Lying across a bench, hips low for range of motion. Dumbbell held with both hands over the chest. Lower dumbbell behind head in an arc until feeling a deep lat stretch. Pull back up contracting the lats. Keep elbows slightly bent. Excellent for widening the rib cage and developing the lats in stretch.'
   }
 };
 
@@ -6343,8 +6446,11 @@ function openModal(exerciseId) {
   const ytId = match ? match[1] : '';
   const ytWatchUrl = ytId ? `https://www.youtube.com/watch?v=${ytId}` : '#';
 
-  document.getElementById('modalTitle').textContent = video.title;
-  document.getElementById('modalDesc').textContent = video.desc;
+  const title = currentLang === 'en' ? (video.titleEN || video.title) : video.title;
+  const desc = currentLang === 'en' ? (video.descEN || video.desc) : video.desc;
+
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalDesc').textContent = desc;
   document.getElementById('modalIframe').src = '';
   document.getElementById('modalIframe').style.display = 'none';
   document.getElementById('modalThumb').style.display = 'flex';
@@ -6405,10 +6511,31 @@ function switchWarmup(tab) {
 function switchProgram(prog) {
   document.querySelectorAll('.programme-content').forEach(c => c.classList.remove('active'));
   document.getElementById('prog-' + prog).classList.add('active');
-  document.querySelectorAll('#programme .tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', b.onclick.toString().includes("'" + prog + "'"));
-  });
-  // Scroll to programs section
+
+  const poidsProgs = ['circuit', 'cutting', 'cardio3j'];
+  const isPoids = poidsProgs.includes(prog);
+
+  if (isPoids) {
+    // Clear all poids tab buttons (including any lingering inline styles)
+    document.querySelectorAll('#poidsTabs .tab-btn').forEach(b => {
+      b.classList.remove('active');
+      b.style.background = '';
+      b.style.color = '';
+    });
+    // Activate correct one via class (CSS handles the color)
+    document.querySelectorAll('#poidsTabs .tab-btn').forEach(b => {
+      if (b.getAttribute('onclick')?.includes("'" + prog + "'")) {
+        b.classList.add('active');
+      }
+    });
+  } else {
+    document.querySelectorAll('#programme .tab-btn').forEach(b => {
+      if (!b.closest('#poidsTabs')) {
+        b.classList.toggle('active', b.getAttribute('onclick')?.includes("'" + prog + "'") || false);
+      }
+    });
+  }
+
   document.getElementById('programme').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
@@ -6440,7 +6567,7 @@ function calculateCalories() {
   const goal = parseFloat(document.getElementById('calcGoal').value);
 
   if (!age || !weight || !height || isNaN(age) || isNaN(weight) || isNaN(height)) {
-    alert('Veuillez remplir tous les champs correctement !');
+    alert(currentLang === 'en' ? 'Please fill in all fields correctly!' : 'Veuillez remplir tous les champs correctement !');
     return;
   }
 
@@ -6468,11 +6595,17 @@ function calculateCalories() {
   document.getElementById('macroCarb').textContent = carbs + 'g';
   document.getElementById('macroFat').textContent = fat + 'g';
 
-  const noteText = goal === 250 
-    ? '🟢 Lean Bulk : progression lente mais minimise la prise de gras. Parfait si tu débutes ou si tu es sensible à la prise de gras.'
-    : goal === 500 
-    ? '🟡 Surplus modéré recommandé : bon compromis prise de masse / gras. Attends-toi à prendre 0.5-1kg / mois dont ~70% de muscle.'
-    : '🔴 Surplus agressif : gains rapides mais prise de gras plus importante. Recommandé seulement pour les débutants avec un bon métabolisme.';
+  const noteText = currentLang === 'en'
+    ? (goal === 250
+      ? '🟢 Lean Bulk: slow progress but minimizes fat gain. Perfect if you\'re starting out or sensitive to fat gain.'
+      : goal === 500
+      ? '🟡 Moderate surplus recommended: good compromise between muscle and fat. Expect to gain 0.5-1kg / month with ~70% muscle.'
+      : '🔴 Aggressive surplus: faster gains but more fat accumulation. Recommended only for beginners with a good metabolism.')
+    : (goal === 250
+      ? '🟢 Lean Bulk : progression lente mais minimise la prise de gras. Parfait si tu débutes ou si tu es sensible à la prise de gras.'
+      : goal === 500
+      ? '🟡 Surplus modéré recommandé : bon compromis prise de masse / gras. Attends-toi à prendre 0.5-1kg / mois dont ~70% de muscle.'
+      : '🔴 Surplus agressif : gains rapides mais prise de gras plus importante. Recommandé seulement pour les débutants avec un bon métabolisme.');
   
   document.getElementById('resultNote').textContent = noteText;
 
@@ -6636,7 +6769,7 @@ async function saveSubscriptionToGitHub(subscription) {
 
 // Appelé quand l'utilisateur active les notifs
 async function requestNotifPermissionFull() {
-  if (!('Notification' in window)) { alert('Notifications non supportées.'); return; }
+  if (!('Notification' in window)) { alert(currentLang === 'en' ? 'Notifications not supported.' : 'Notifications non supportées.'); return; }
   const perm = await Notification.requestPermission();
   checkNotifBanner();
   if (perm === 'granted') {
@@ -6684,15 +6817,17 @@ window.addEventListener('beforeinstallprompt', e => {
         </div>
         <div style="flex:1;">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:3px;color:#fff;">IRONFORGE</div>
-          <div style="font-size:0.7rem;color:#6b6b80;margin-top:3px;">⚡ Accès rapide · 📶 Hors ligne · 🔔 Notifs push</div>
+          <div style="font-size:0.7rem;color:#6b6b80;margin-top:3px;">${currentLang === 'en' ? '⚡ Quick access · 📶 Offline · 🔔 Push notifs' : '⚡ Accès rapide · 📶 Hors ligne · 🔔 Notifs push'}</div>
         </div>
       </div>
       <div style="font-size:0.78rem;color:#888;line-height:1.5;">
-        Installez l'application pour recevoir les <strong style="color:#f0ede8;">notifications de vos programmes</strong> et messages de suivi en temps réel.
+        ${currentLang === 'en'
+          ? 'Install the app to receive <strong style="color:#f0ede8;">program notifications</strong> and real-time follow-up messages.'
+          : 'Installez l\'application pour recevoir les <strong style="color:#f0ede8;">notifications de vos programmes</strong> et messages de suivi en temps réel.'}
       </div>
       <div style="display:flex;gap:10px;">
-        <button id="pwa-install" style="flex:1;background:linear-gradient(135deg,#E63946,#FF6B35);border:none;color:white;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:10px;">⚡ Installer</button>
-        <button id="pwa-dismiss" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#888;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:10px;">Plus tard</button>
+        <button id="pwa-install" style="flex:1;background:linear-gradient(135deg,#E63946,#FF6B35);border:none;color:white;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:10px;">⚡ ${currentLang === 'en' ? 'Install' : 'Installer'}</button>
+        <button id="pwa-dismiss" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#888;padding:13px;font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:10px;">${currentLang === 'en' ? 'Later' : 'Plus tard'}</button>
       </div>
     </div>
   `;
@@ -7818,7 +7953,7 @@ function addSchedule() {
   const time     = document.getElementById('schTime').value;
   const location = document.getElementById('schLocation').value.trim();
 
-  if (!date || !time) { alert('Remplis la date et l\'heure !'); return; }
+  if (!date || !time) { alert(currentLang === 'en' ? 'Fill in the date and time!' : "Remplis la date et l'heure !"); return; }
 
   const schedules = storageGet('schedules') || [];
   const id = Date.now();
@@ -7837,13 +7972,14 @@ function addSchedule() {
 
   // Notif 1 : confirmation immédiate
   const dayName = item.dayLabel?.split('—')[0]?.trim() || item.progName;
-  const loc = location ? ` à ${location}` : '';
+  const loc = location ? (currentLang === 'en' ? ` at ${location}` : ` à ${location}`) : '';
   const d = new Date(item.datetime);
-  const timeStr = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false });
-  const dateStr = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const locale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+  const timeStr = d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: currentLang === 'en' });
+  const dateStr = d.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' });
   sendNotif(
-    '✅ Séance programmée !',
-    `${dayName}${loc} le ${dateStr} à ${timeStr}`,
+    currentLang === 'en' ? '✅ Session scheduled!' : '✅ Séance programmée !',
+    currentLang === 'en' ? `${dayName}${loc} on ${dateStr} at ${timeStr}` : `${dayName}${loc} le ${dateStr} à ${timeStr}`,
     'confirm-' + id
   );
 
@@ -7856,7 +7992,7 @@ function addSchedule() {
 }
 
 // ── MESSAGES DE NOTIFICATION ─────────────────────────────────
-function getNotifTitle() { return "⚡ C'est l'heure de ta séance !"; }
+function getNotifTitle() { return currentLang === 'en' ? "⚡ Time for your session!" : "⚡ C'est l'heure de ta séance !"; }
 function getNotifBody(dayName, loc) { return dayName + (loc ? ' ' + loc : ''); }
 function scheduleNotification(item) {
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
@@ -7890,7 +8026,7 @@ function updateScheduleUI() {
   if (!container) return;
 
   if (!schedules.length) {
-    container.innerHTML = '<div style="color:var(--gray);font-size:0.85rem;padding:20px 0;text-align:center;">Aucune séance planifiée</div>';
+    container.innerHTML = `<div style="color:var(--gray);font-size:0.85rem;padding:20px 0;text-align:center;">${currentLang === 'en' ? 'No session scheduled' : 'Aucune séance planifiée'}</div>`;
     document.getElementById('session-mode-btn')?.classList.remove('has-scheduled');
     return;
   }
@@ -7901,19 +8037,24 @@ function updateScheduleUI() {
     const diffMin = Math.round(diff / 60000);
     const diffH = Math.floor(diffMin / 60);
     const d = new Date(item.datetime);
-    const dateStr = d.toLocaleDateString('fr-FR', { weekday:'short', day:'numeric', month:'short' });
-    const timeStr = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12: false });
+    const locale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+    const dateStr = d.toLocaleDateString(locale, { weekday:'short', day:'numeric', month:'short' });
+    const timeStr = d.toLocaleTimeString(locale, { hour:'2-digit', minute:'2-digit', hour12: currentLang === 'en' });
     const isSoon = diff < 30 * 60 * 1000 && diff > 0;
-    let countdown = diff < 0 ? 'En cours' : diffH > 0 ? `Dans ${diffH}h${diffMin%60 > 0 ? diffMin%60 + 'min' : ''}` : `Dans ${diffMin} min`;
+    let countdown = diff < 0
+      ? (currentLang === 'en' ? 'In progress' : 'En cours')
+      : diffH > 0
+        ? (currentLang === 'en' ? `In ${diffH}h${diffMin%60 > 0 ? diffMin%60 + 'min' : ''}` : `Dans ${diffH}h${diffMin%60 > 0 ? diffMin%60 + 'min' : ''}`)
+        : (currentLang === 'en' ? `In ${diffMin} min` : `Dans ${diffMin} min`);
 
     return `<div class="sch-item">
       <div class="sch-item-icon">📅</div>
       <div class="sch-item-info">
         <div class="sch-item-prog">${item.dayLabel.split('—')[0].trim()}</div>
-        <div class="sch-item-time">${dateStr} à ${timeStr}${item.location ? ' · ' + item.location : ''}</div>
+        <div class="sch-item-time">${dateStr} ${currentLang === 'en' ? 'at' : 'à'} ${timeStr}${item.location ? ' · ' + item.location : ''}</div>
       </div>
       <div class="sch-item-countdown ${isSoon ? 'soon' : ''}">${countdown}</div>
-      <button class="sch-item-del" onclick="deleteSchedule(${item.id})" aria-label="Supprimer">✕</button>
+      <button class="sch-item-del" onclick="deleteSchedule(${item.id})" aria-label="${currentLang === 'en' ? 'Delete' : 'Supprimer'}">✕</button>
     </div>`;
   }).join('');
 }
@@ -7969,34 +8110,34 @@ function setTimer(seconds) {
   timerTotal = seconds; timerRemaining = seconds; timerRunning = false;
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   updateTimerDisplay();
-  document.getElementById('timerStartBtn').textContent = 'Démarrer';
+  document.getElementById('timerStartBtn').textContent = currentLang === 'en' ? 'Start' : 'Démarrer';
 }
 function startTimer() {
   if (timerRunning) return;
   timerRunning = true;
-  document.getElementById('timerStartBtn').textContent = 'Pause';
+  document.getElementById('timerStartBtn').textContent = currentLang === 'en' ? 'Pause' : 'Pause';
   timerInterval = setInterval(() => {
     timerRemaining--;
     updateTimerDisplay();
     if (timerRemaining <= 0) {
       clearInterval(timerInterval); timerInterval = null; timerRunning = false;
-      document.getElementById('timerStartBtn').textContent = 'Terminé ✓';
+      document.getElementById('timerStartBtn').textContent = currentLang === 'en' ? 'Done ✓' : 'Terminé ✓';
       document.getElementById('timerDisplay').style.color = '#38ef7d';
       if (navigator.vibrate) navigator.vibrate([200,100,200]);
-      sendNotif('⏰ Repos terminé !', 'C\'est reparti !');
+      sendNotif(currentLang === 'en' ? '⏰ Rest over!' : '⏰ Repos terminé !', currentLang === 'en' ? 'Go — next set!' : "C'est reparti !");
     }
   }, 1000);
 }
 function toggleTimer() {
   if (timerRemaining <= 0) { setTimer(timerTotal); return; }
-  if (timerRunning) { clearInterval(timerInterval); timerInterval = null; timerRunning = false; document.getElementById('timerStartBtn').textContent = 'Reprendre'; }
+  if (timerRunning) { clearInterval(timerInterval); timerInterval = null; timerRunning = false; document.getElementById('timerStartBtn').textContent = currentLang === 'en' ? 'Resume' : 'Reprendre'; }
   else startTimer();
 }
 function resetTimer() {
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   timerRunning = false; timerRemaining = timerTotal;
   updateTimerDisplay();
-  document.getElementById('timerStartBtn').textContent = 'Démarrer';
+  document.getElementById('timerStartBtn').textContent = currentLang === 'en' ? 'Start' : 'Démarrer';
   const d = document.getElementById('timerDisplay');
   if (d) d.style.removeProperty('color');
 }
@@ -8018,8 +8159,8 @@ function addTrackerEntry() {
   const weight   = parseFloat(document.getElementById('trackWeight').value) || 0;
   const reps     = parseInt(document.getElementById('trackReps').value) || 0;
   const sets     = parseInt(document.getElementById('trackSets').value) || 1;
-  if (!reps) { alert('Entre au moins le nombre de reps !'); return; }
-  workoutLog.push({ exercise, weight, reps, sets, time: new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12: false }) });
+  if (!reps) { alert(currentLang === 'en' ? 'Enter at least the number of reps!' : 'Entre au moins le nombre de reps !'); return; }
+  workoutLog.push({ exercise, weight, reps, sets, time: new Date().toLocaleTimeString(currentLang === 'en' ? 'en-US' : 'fr-FR', { hour:'2-digit', minute:'2-digit', hour12: currentLang === 'en' }) });
   renderTracker();
   document.getElementById('trackWeight').value = '';
   document.getElementById('trackReps').value = '';
@@ -8029,7 +8170,7 @@ function renderTracker() {
   const statsDiv  = document.getElementById('trackerStats');
   const clearBtn  = document.getElementById('trackerClearBtn');
   if (workoutLog.length === 0) {
-    container.innerHTML = '<div class="tracker-empty">Aucune série enregistrée.<br>Commence ta séance !</div>';
+    container.innerHTML = `<div class="tracker-empty">${currentLang === 'en' ? 'No sets recorded.<br>Start your session!' : 'Aucune série enregistrée.<br>Commence ta séance !'}</div>`;
     statsDiv.style.display = 'none'; clearBtn.style.display = 'none'; return;
   }
   statsDiv.style.display = 'grid'; clearBtn.style.display = 'block';
@@ -8038,17 +8179,17 @@ function renderTracker() {
   const uniqueEx  = new Set(workoutLog.map(e=>e.exercise)).size;
   document.getElementById('statExercises').textContent = uniqueEx;
   document.getElementById('statSeries').textContent    = totalSets;
-  document.getElementById('statVolume').textContent    = Math.round(totalVol).toLocaleString('fr-FR');
+  document.getElementById('statVolume').textContent    = Math.round(totalVol).toLocaleString(currentLang === 'en' ? 'en-US' : 'fr-FR');
   container.innerHTML = workoutLog.map((e,i) => `
     <div class="tracker-entry">
       <div class="tracker-ex-name">${e.exercise}</div>
       <div class="tracker-badge">${e.sets}×${e.reps}${e.weight ? ' · ' + e.weight + 'kg' : ''}</div>
       <span style="color:var(--gray);font-size:0.72rem;font-family:'Barlow Condensed',sans-serif;">${e.time}</span>
-      <button class="tracker-delete" onclick="deleteTrackerEntry(${i})" aria-label="Supprimer">✕</button>
+      <button class="tracker-delete" onclick="deleteTrackerEntry(${i})" aria-label="${currentLang === 'en' ? 'Delete' : 'Supprimer'}">✕</button>
     </div>`).join('');
 }
 function deleteTrackerEntry(index) { workoutLog.splice(index,1); renderTracker(); }
-function clearTracker() { if(confirm('Effacer toute la séance ?')){ workoutLog=[]; renderTracker(); } }
+function clearTracker() { if(confirm(currentLang === 'en' ? 'Clear the entire session?' : 'Effacer toute la séance ?')){ workoutLog=[]; renderTracker(); } }
 
 // ── CALCUL EXPORT ──────────────────────────────────────────────
 function copyCalcResults() {
@@ -8057,11 +8198,13 @@ function copyCalcResults() {
   const carb  = document.getElementById('macroCarb')?.textContent || '';
   const fat   = document.getElementById('macroFat')?.textContent || '';
   const note  = document.getElementById('resultNote')?.textContent || '';
-  const text  = `🔥 IRONFORGE — Mes besoins caloriques\n━━━━━━━━━━━━━━━━━━━━━━━━\nCalories totales : ${cals} kcal/jour\nProtéines : ${prot}\nGlucides : ${carb}\nLipides : ${fat}\n━━━━━━━━━━━━━━━━━━━━━━━━\n${note}`;
+  const text  = currentLang === 'en'
+    ? `🔥 IRONFORGE — My calorie needs\n━━━━━━━━━━━━━━━━━━━━━━━━\nTotal calories: ${cals} kcal/day\nProtein: ${prot}\nCarbs: ${carb}\nFat: ${fat}\n━━━━━━━━━━━━━━━━━━━━━━━━\n${note}`
+    : `🔥 IRONFORGE — Mes besoins caloriques\n━━━━━━━━━━━━━━━━━━━━━━━━\nCalories totales : ${cals} kcal/jour\nProtéines : ${prot}\nGlucides : ${carb}\nLipides : ${fat}\n━━━━━━━━━━━━━━━━━━━━━━━━\n${note}`;
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('calcCopyBtn');
-    if(btn){ btn.textContent='✅ Copié !'; setTimeout(()=>{ btn.textContent='📋 Copier mes résultats'; },2000); }
-  }).catch(() => alert('Copiez manuellement :\n\n' + text));
+    if(btn){ btn.textContent = currentLang === 'en' ? '✅ Copied!' : '✅ Copié !'; setTimeout(()=>{ btn.textContent = currentLang === 'en' ? '📋 Copy my results' : '📋 Copier mes résultats'; },2000); }
+  }).catch(() => alert((currentLang === 'en' ? 'Copy manually:\n\n' : 'Copiez manuellement :\n\n') + text));
 }
 
 // ── FAQ ────────────────────────────────────────────────────────
@@ -8078,33 +8221,33 @@ function toggleFaq(questionEl) {
     <div class="cpb-header">
       <div class="cpb-header-left">
         <div class="cpb-header-icon">✏️</div>
-        <div class="cpb-title">Créer mon programme</div>
+        <div class="cpb-title" data-i18n="cpb_title">Créer mon programme</div>
       </div>
       <button class="cpb-close" onclick="closeCustomProgramBuilder()">✕</button>
     </div>
     <div class="cpb-body">
       <!-- Saved programs list -->
       <div class="cpb-saved-section" id="cpbSavedSection" style="display:none;">
-        <div class="cpb-saved-title">Mes programmes enregistrés</div>
+        <div class="cpb-saved-title" data-i18n="cpb_saved_title">Mes programmes enregistrés</div>
         <div id="cpbSavedList"></div>
         <div style="height:1px;background:rgba(255,255,255,0.06);margin:16px 0;"></div>
       </div>
 
       <!-- Program name -->
       <div class="cpb-prog-name-wrap">
-        <label>Nom du programme</label>
-        <input type="text" class="cpb-prog-name-input" id="cpbProgName" placeholder="Ex : Mon PPL Perso">
+        <label data-i18n="cpb_prog_name_label">Nom du programme</label>
+        <input type="text" class="cpb-prog-name-input" id="cpbProgName" placeholder="Ex : Mon PPL Perso" data-i18n-placeholder="cpb_prog_name_placeholder">
       </div>
 
       <div class="cpb-days-list" id="cpbDaysList"></div>
 
-      <button class="cpb-add-day-btn" onclick="cpbAddDay()">
+      <button class="cpb-add-day-btn" onclick="cpbAddDay()" data-i18n="cpb_add_day">
         + Ajouter un jour
       </button>
     </div>
     <div class="cpb-footer">
-      <button class="cpb-cancel-btn" onclick="closeCustomProgramBuilder()">Annuler</button>
-      <button class="cpb-save-btn" onclick="cpbSaveProgram()">💾 ENREGISTRER & UTILISER</button>
+      <button class="cpb-cancel-btn" onclick="closeCustomProgramBuilder()" data-i18n="cpb_cancel">Annuler</button>
+      <button class="cpb-save-btn" onclick="cpbSaveProgram()" data-i18n="cpb_save">💾 ENREGISTRER & UTILISER</button>
     </div>
   </div>
 </div>
@@ -8160,9 +8303,9 @@ function updateDailyProgDays() {
 }
 
 function saveDailyReminders() {
-  if (!('Notification' in window)) { alert('Notifications non supportées sur ce navigateur.'); return; }
+  if (!('Notification' in window)) { alert(currentLang === 'en' ? 'Notifications not supported on this browser.' : 'Notifications non supportées sur ce navigateur.'); return; }
   const days = storageGet('dailyRemindersDays') || [1,2,3,4,5];
-  if (!days.length) { alert('Sélectionne au moins un jour !'); return; }
+  if (!days.length) { alert(currentLang === 'en' ? 'Select at least one day!' : 'Sélectionne au moins un jour !'); return; }
 
   const progKey = document.getElementById('dailyProg').value;
   const time = document.getElementById('dailyTime').value || '18:00';
@@ -8199,7 +8342,7 @@ function saveDailyReminders() {
   } else if (Notification.permission === 'granted') {
     _doSchedule();
   } else {
-    alert('Les notifications sont bloquées. Autorise-les dans les paramètres de ton navigateur.');
+    alert(currentLang === 'en' ? 'Notifications are blocked. Allow them in your browser settings.' : 'Les notifications sont bloquées. Autorise-les dans les paramètres de ton navigateur.');
   }
 }
 
@@ -8234,7 +8377,7 @@ function renderDailyRemindersItems() {
   const el = document.getElementById('dailyRemindersItems');
   if (!el) return;
   if (!reminders.length) {
-    el.innerHTML = '<div style="color:var(--gray);font-size:0.82rem;text-align:center;padding:16px 0;">Aucun rappel actif</div>';
+    el.innerHTML = `<div style="color:var(--gray);font-size:0.82rem;text-align:center;padding:16px 0;">${currentLang === 'en' ? 'No active reminders' : 'Aucun rappel actif'}</div>`;
     return;
   }
   el.innerHTML = reminders.map(r => `
@@ -8242,9 +8385,9 @@ function renderDailyRemindersItems() {
       <div class="sch-item-icon">🔔</div>
       <div class="sch-item-info">
         <div class="sch-item-prog">${r.progName}</div>
-        <div class="sch-item-time">${r.days.map(d=>DAYS_FR[d]).join(', ')} · ${r.time} · ${r.reminderMin === 0 ? 'À l\'heure exacte' : '−' + r.reminderMin + 'min'}</div>
+        <div class="sch-item-time">${r.days.map(d=>DAYS_FR[d]).join(', ')} · ${r.time} · ${r.reminderMin === 0 ? (currentLang === 'en' ? 'At exact time' : "À l'heure exacte") : '−' + r.reminderMin + 'min'}</div>
       </div>
-      <div class="sch-item-countdown" style="background:rgba(255,183,3,0.1);color:var(--gold);">Actif</div>
+      <div class="sch-item-countdown" style="background:rgba(255,183,3,0.1);color:var(--gold);">${currentLang === 'en' ? 'Active' : 'Actif'}</div>
       <button class="sch-item-del" onclick="deleteDailyReminder('${r.id}')">✕</button>
     </div>
   `).join('');
@@ -8299,6 +8442,8 @@ function openCustomProgramBuilder() {
   editingCustomProgId = null;
   document.getElementById('cpbProgName').value = '';
   document.getElementById('cpbDaysList').innerHTML = '';
+  // Re-apply translations in case language changed
+  applyDataI18n(currentLang);
   cpbRenderSavedPrograms();
   cpbAddDay();
   document.getElementById('custom-prog-overlay').classList.add('active');
@@ -8325,7 +8470,8 @@ function cpbAddDay(dayData) {
   const defTime = dayData?.notifTime ?? '18:00';
   const [defH, defM] = defTime.split(':');
 
-  const wdLabels = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const isEN = currentLang === 'en';
+  const wdLabels = isEN ? ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] : ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 
   const el = document.createElement('div');
   el.className = 'cpb-day open';
@@ -8335,9 +8481,9 @@ function cpbAddDay(dayData) {
   el.innerHTML = `
     <div class="cpb-day-header">
       <span class="cpb-day-num">${cpbDayCount}</span>
-      <input class="cpb-day-name-input" type="text" value="${dayData?.label||''}" placeholder="Nom (ex: PUSH · Pecs / Épaules)">
+      <input class="cpb-day-name-input" type="text" value="${dayData?.label||''}" placeholder="${isEN ? 'Name (e.g. PUSH · Chest / Shoulders)' : 'Nom (ex: PUSH · Pecs / Épaules)'}">
       <div class="cpb-day-actions">
-        <button class="cpb-day-remove" onclick="document.getElementById('${dayId}').remove()" title="Supprimer">✕</button>
+        <button class="cpb-day-remove" onclick="document.getElementById('${dayId}').remove()" title="${isEN ? 'Delete' : 'Supprimer'}">✕</button>
         <button class="cpb-day-toggle" onclick="this.closest('.cpb-day').classList.toggle('open')">▼</button>
       </div>
     </div>
@@ -8345,7 +8491,7 @@ function cpbAddDay(dayData) {
 
       <!-- ── Planification notification ── -->
       <div class="cpb-day-schedule">
-        <span class="cpb-day-schedule-label">🔔 Rappel</span>
+        <span class="cpb-day-schedule-label">🔔 ${isEN ? 'Reminder' : 'Rappel'}</span>
         <div class="cpb-weekday-picker" id="${dayId}-wdpicker">
           ${wdLabels.map((d,i) => `
             <button type="button" class="cpb-wd-btn${defWd===i?' active':''}"
@@ -8365,14 +8511,14 @@ function cpbAddDay(dayData) {
 
       <!-- ── Exercices ── -->
       <div class="cpb-ex-labels">
-        <span class="cpb-ex-label">Exercice</span>
-        <span class="cpb-ex-label">Séries</span>
+        <span class="cpb-ex-label">${isEN ? 'Exercise' : 'Exercice'}</span>
+        <span class="cpb-ex-label">${isEN ? 'Sets' : 'Séries'}</span>
         <span class="cpb-ex-label">Reps</span>
-        <span class="cpb-ex-label">Repos (s)</span>
+        <span class="cpb-ex-label">${isEN ? 'Rest (s)' : 'Repos (s)'}</span>
         <span class="cpb-ex-label"></span>
       </div>
       <div class="cpb-exercises-list" id="${dayId}-exlist"></div>
-      <button class="cpb-add-ex-btn" onclick="cpbAddExercise('${dayId}-exlist')">+ Exercice</button>
+      <button class="cpb-add-ex-btn" onclick="cpbAddExercise('${dayId}-exlist')">${isEN ? '+ Exercise' : '+ Exercice'}</button>
     </div>
   `;
 
@@ -8414,11 +8560,11 @@ function cpbAddExercise(listId, exData) {
   el.className = 'cpb-ex';
   el.id = exId;
   el.innerHTML = `
-    <input class="cpb-ex-input" type="text" placeholder="Nom de l'exercice" value="${exData?.name||''}">
+    <input class="cpb-ex-input" type="text" placeholder="${currentLang === 'en' ? 'Exercise name' : "Nom de l'exercice"}" value="${exData?.name||''}">
     <input class="cpb-ex-input" type="number" placeholder="4" min="1" max="20" value="${exData?.sets||''}">
     <input class="cpb-ex-input" type="text" placeholder="8-12" value="${exData?.reps||''}">
     <input class="cpb-ex-input" type="number" placeholder="90" min="0" max="600" value="${exData?.restSec||''}">
-    <button class="cpb-ex-del" onclick="document.getElementById('${exId}').remove()" title="Supprimer">✕</button>
+    <button class="cpb-ex-del" onclick="document.getElementById('${exId}').remove()" title="${currentLang === 'en' ? 'Delete' : 'Supprimer'}">✕</button>
   `;
   document.getElementById(listId).appendChild(el);
 }
@@ -8478,7 +8624,7 @@ function cpbSaveProgram() {
   });
 
   if (Object.keys(days).length === 0) {
-    alert('Ajoute au moins un exercice !');
+    alert(currentLang === 'en' ? 'Add at least one exercise!' : 'Ajoute au moins un exercice !');
     return;
   }
 
@@ -8597,10 +8743,10 @@ function cpbRenderSavedPrograms() {
     return `<div class="cpb-saved-item">
       <div style="flex:1;min-width:0;">
         <div class="cpb-saved-item-name">${p.name}</div>
-        <div class="cpb-saved-item-meta">${dayCount} jour${dayCount>1?'s':''} · ${exCount} exercice${exCount>1?'s':''}${notifDays ? ' · 🔔 ' + notifDays : ''}</div>
+        <div class="cpb-saved-item-meta">${dayCount} ${currentLang === 'en' ? (dayCount>1?'days':'day') : ('jour'+(dayCount>1?'s':''))} · ${exCount} ${currentLang === 'en' ? (exCount>1?'exercises':'exercise') : ('exercice'+(exCount>1?'s':''))}${notifDays ? ' · 🔔 ' + notifDays : ''}</div>
       </div>
-      <button class="cpb-saved-item-edit" onclick="cpbEditProgram('${p.id}')">Modifier</button>
-      <button class="cpb-saved-item-use" onclick="cpbUseProgram('${p.id}')">▶ Utiliser</button>
+      <button class="cpb-saved-item-edit" onclick="cpbEditProgram('${p.id}')">${currentLang === 'en' ? 'Edit' : 'Modifier'}</button>
+      <button class="cpb-saved-item-use" onclick="cpbUseProgram('${p.id}')">▶ ${currentLang === 'en' ? 'Use' : 'Utiliser'}</button>
       <button class="cpb-saved-item-del" onclick="cpbDeleteProgram('${p.id}')">✕</button>
     </div>`;
   }).join('');
@@ -8640,7 +8786,7 @@ function cpbEditProgram(id) {
 }
 
 function cpbDeleteProgram(id) {
-  if (!confirm('Supprimer ce programme ?')) return;
+  if (!confirm(currentLang === 'en' ? 'Delete this program?' : 'Supprimer ce programme ?')) return;
   cpbCancelProgramReminders(id);
   let customProgs = storageGet('customPrograms') || [];
   customProgs = customProgs.filter(p => p.id !== id);
@@ -8663,8 +8809,8 @@ function cpbDeleteProgram(id) {
 <div id="tpSheet">
   <!-- Header -->
   <div class="tp-hdr">
-    <span class="tp-hdr-title">Choisir l'heure</span>
-    <button class="tp-hdr-ok" onclick="tpOK()">Valider</button>
+    <span class="tp-hdr-title" data-i18n="tp_title">Choisir l'heure</span>
+    <button class="tp-hdr-ok" onclick="tpOK()" data-i18n="tp_ok">Valider</button>
   </div>
 
   <!-- Drums + arrows -->
@@ -8681,14 +8827,14 @@ function cpbDeleteProgram(id) {
 
   <!-- Labels -->
   <div class="tp-labels-row">
-    <div class="tp-lbl">Heures</div>
+    <div class="tp-lbl" data-i18n="tp_hours">Heures</div>
     <div class="tp-lbl-gap"></div>
-    <div class="tp-lbl">Minutes</div>
+    <div class="tp-lbl" data-i18n="tp_minutes">Minutes</div>
   </div>
 
   <!-- Footer -->
   <div class="tp-footer">
-    <button class="tp-btn-cancel" onclick="tpClose()">Annuler</button>
+    <button class="tp-btn-cancel" onclick="tpClose()" data-i18n="tp_cancel">Annuler</button>
   </div>
 </div>
 
@@ -8774,6 +8920,7 @@ function cpbDeleteProgram(id) {
     document.getElementById('tpBackdrop').classList.add('show');
     document.getElementById('tpSheet').classList.add('show');
     document.body.style.overflow='hidden';
+    if(typeof applyDataI18n === 'function' && typeof currentLang !== 'undefined') applyDataI18n(currentLang);
   };
 
   window.tpClose=function(){
@@ -9620,6 +9767,18 @@ const TRANSLATIONS_KEYS = {
     tabs_general:'Programmes généraux', tabs_spe:'Spécialisation par muscle',
     tabs_poids:'Programmes perte de poids',
     calc_goal_label:'Objectif',
+    cpb_title:'Créer mon programme',
+    cpb_saved_title:'Mes programmes enregistrés',
+    cpb_prog_name_label:'Nom du programme',
+    cpb_prog_name_placeholder:'Ex : Mon PPL Perso',
+    cpb_add_day:'+ Ajouter un jour',
+    cpb_cancel:'Annuler',
+    cpb_save:'💾 ENREGISTRER & UTILISER',
+    tp_title:"Choisir l'heure",
+    tp_ok:'Valider',
+    tp_hours:'Heures',
+    tp_minutes:'Minutes',
+    tp_cancel:'Annuler',
   },
   en: {
     nav_programme:'Program', nav_warmup:'Warm-up', nav_exercises:'Exercises',
@@ -9638,6 +9797,18 @@ const TRANSLATIONS_KEYS = {
     tabs_general:'General programs', tabs_spe:'Muscle specialization',
     tabs_poids:'Weight loss programs',
     calc_goal_label:'Goal',
+    cpb_title:'Create my program',
+    cpb_saved_title:'My saved programs',
+    cpb_prog_name_label:'Program name',
+    cpb_prog_name_placeholder:'E.g. My Custom PPL',
+    cpb_add_day:'+ Add a day',
+    cpb_cancel:'Cancel',
+    cpb_save:'💾 SAVE & USE',
+    tp_title:'Choose time',
+    tp_ok:'Confirm',
+    tp_hours:'Hours',
+    tp_minutes:'Minutes',
+    tp_cancel:'Cancel',
   }
 };
 
@@ -9646,6 +9817,11 @@ function applyDataI18n(lang) {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (T[key]) el.textContent = T[key];
+  });
+  // Handle placeholder translations
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (T[key]) el.setAttribute('placeholder', T[key]);
   });
 }
 
@@ -9728,9 +9904,9 @@ function setGoal(goal) {
     if (circuit) circuit.classList.add('active');
     const poidsTabBtns = document.querySelectorAll('#poidsTabs .tab-btn');
     poidsTabBtns.forEach((b, i) => {
-      b.style.background = i===0 ? 'linear-gradient(135deg,#11998e,#38ef7d)' : '';
-      b.style.color = i===0 ? '#0a0a0c' : '';
-      b.classList.toggle('active', i===0);
+      b.style.background = '';
+      b.style.color = '';
+      b.classList.toggle('active', i === 0);
     });
   } else {
     document.querySelectorAll('.programme-content.poids-only').forEach(el => el.classList.remove('active'));
