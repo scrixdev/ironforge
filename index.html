@@ -2589,7 +2589,74 @@
     line-height: 1.6;
   }
 
-  /* ── LANGUAGE + GOAL TOGGLES ── */
+  /* ── HERO MODE SWITCH — minimal ── */
+  .hero-mode-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    animation: fadeUp 0.9s ease 0.35s both;
+  }
+  .hms-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(136,136,153,0.6);
+    padding: 0;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .hms-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -4px; left: 0; right: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .hms-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.25s;
+    flex-shrink: 0;
+  }
+  .hms-btn:hover { color: var(--gray); }
+  .hms-masse.active { color: var(--red); }
+  .hms-poids.active { color: #38ef7d; }
+  .hms-btn.active .hms-dot { opacity: 1; }
+  .hms-btn.active::after { opacity: 0.4; }
+  .hms-sep {
+    color: rgba(136,136,153,0.25);
+    font-size: 0.7rem;
+    user-select: none;
+  }
+  .hms-sep-lang { margin: 0 4px; }
+  .hms-lang {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    color: rgba(136,136,153,0.45);
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .hms-lang.active { color: var(--gray); }
+  .hms-lang:hover { color: var(--light); }
+
+  /* ── LANGUAGE + GOAL TOGGLES (nav) ── */
   .nav-controls {
     display: flex;
     align-items: center;
@@ -2627,25 +2694,20 @@
     overflow: hidden;
   }
   .goal-btn {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 0.68rem;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
+    font-size: 0.9rem;
     padding: 6px 10px;
     border: none;
     background: transparent;
     color: var(--gray);
     cursor: pointer;
     transition: all 0.2s;
-    white-space: nowrap;
+    line-height: 1;
+    filter: grayscale(1) opacity(0.5);
   }
-  .goal-btn.active-masse {
-    background: linear-gradient(135deg, var(--red), var(--orange));
-    color: white;
-  }
-  .goal-btn.active-poids {
-    background: linear-gradient(135deg, #11998e, #38ef7d);
-    color: #0a0a0c;
+  .goal-btn:hover { filter: grayscale(0) opacity(0.8); }
+  .goal-btn.active-masse, .goal-btn.active-poids {
+    filter: grayscale(0) opacity(1);
+    background: rgba(255,255,255,0.06);
   }
 
   /* ── WEIGHT LOSS TABS COLOR ── */
@@ -3106,12 +3168,6 @@
     <li><a href="#faq">FAQ</a></li>
   </ul>
   <div class="nav-controls">
-    <!-- Goal toggle -->
-    <div class="goal-toggle">
-      <button class="goal-btn active-masse" id="goalBtnMasse" onclick="setGoal('masse')" data-i18n="goal_masse">💪 Masse</button>
-      <button class="goal-btn" id="goalBtnPoids" onclick="setGoal('poids')" data-i18n="goal_poids">🔥 Perte de poids</button>
-    </div>
-    <!-- Language toggle -->
     <div class="lang-toggle">
       <button class="lang-btn active" id="langBtnFR" onclick="setLang('fr')">FR</button>
       <button class="lang-btn" id="langBtnEN" onclick="setLang('en')">EN</button>
@@ -3133,14 +3189,15 @@
   <a href="#supplements" onclick="toggleMenu()" data-i18n="nav_supplements">Suppléments</a>
   <a href="#workout-tracker" onclick="toggleMenu()">Tracker</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
-  <div style="display:flex;gap:8px;padding:12px 0;">
-    <div class="goal-toggle" style="flex:1;">
-      <button class="goal-btn active-masse" onclick="setGoal('masse');toggleMenu();" data-i18n="goal_masse" style="flex:1;">💪 Masse</button>
-      <button class="goal-btn" onclick="setGoal('poids');toggleMenu();" data-i18n="goal_poids" style="flex:1;">🔥 Perte de poids</button>
+  <div style="display:flex;gap:8px;padding:12px 0;flex-direction:column;">
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;letter-spacing:3px;color:var(--gray);text-transform:uppercase;margin-bottom:4px;">Mode</div>
+    <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;">
+      <button onclick="setGoal('masse');toggleMenu();" style="flex:1;padding:10px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;border:none;background:linear-gradient(135deg,rgba(230,57,70,0.2),rgba(255,107,53,0.1));color:var(--light);cursor:pointer;" id="mobileGoalMasse">💪 Prise de Masse</button>
+      <button onclick="setGoal('poids');toggleMenu();" style="flex:1;padding:10px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:2px;text-transform:uppercase;border:none;border-left:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--gray);cursor:pointer;" id="mobileGoalPoids">🔥 Perte de Poids</button>
     </div>
-    <div class="lang-toggle">
-      <button class="lang-btn active" onclick="setLang('fr');toggleMenu();">FR</button>
-      <button class="lang-btn" onclick="setLang('en');toggleMenu();">EN</button>
+    <div style="display:flex;gap:0;border:1px solid rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;margin-top:4px;">
+      <button onclick="setLang('fr');toggleMenu();" style="flex:1;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:2px;border:none;background:linear-gradient(135deg,var(--red),var(--orange));color:white;cursor:pointer;" id="mobileLangFR">🇫🇷 FR</button>
+      <button onclick="setLang('en');toggleMenu();" style="flex:1;padding:8px;font-family:'Barlow Condensed',sans-serif;font-size:0.78rem;letter-spacing:2px;border:none;border-left:1px solid rgba(255,255,255,0.08);background:transparent;color:var(--gray);cursor:pointer;" id="mobileLangEN">🇬🇧 EN</button>
     </div>
   </div>
 </div>
@@ -3156,6 +3213,18 @@
       <span data-i18n="hero_title_span">TON CORPS</span>
     </h1>
     <p class="hero-sub" data-i18n="hero_sub">Programme · Nutrition · Calcul Calorique · Exercices</p>
+
+    <!-- Switch mode — discret, intégré -->
+    <div class="hero-mode-switch" id="heroModeSwitch">
+      <button class="hms-btn hms-masse active" id="hmsModeMasse" onclick="setGoal('masse')">
+        <span class="hms-dot"></span><span data-i18n="goal_masse">Prise de masse</span>
+      </button>
+      <span class="hms-sep">·</span>
+      <button class="hms-btn hms-poids" id="hmsModePoids" onclick="setGoal('poids')">
+        <span class="hms-dot"></span><span data-i18n="goal_poids">Perte de poids</span>
+      </button>
+    </div>
+
     <div class="hero-ctas">
       <a href="#calories" class="btn-primary" data-i18n="hero_cta1">Calculer mes calories</a>
       <a href="#programme" class="btn-outline" data-i18n="hero_cta2">Voir le programme</a>
@@ -8831,6 +8900,12 @@ function setLang(lang) {
   document.getElementById('langBtnFR').classList.toggle('active', lang === 'fr');
   document.getElementById('langBtnEN').classList.toggle('active', lang === 'en');
 
+  // Sync hero lang buttons
+  const hlFR = document.getElementById('hmsLangFR');
+  const hlEN = document.getElementById('hmsLangEN');
+  if (hlFR) hlFR.classList.toggle('active', lang === 'fr');
+  if (hlEN) hlEN.classList.toggle('active', lang === 'en');
+
   // Mobile lang buttons
   document.querySelectorAll('.lang-btn').forEach(btn => {
     if (btn.textContent === 'FR') btn.classList.toggle('active', lang === 'fr');
@@ -8865,7 +8940,7 @@ function setGoal(goal) {
   document.body.classList.toggle('mode-poids', goal === 'poids');
   document.body.classList.toggle('mode-masse', goal === 'masse');
 
-  // Toggle button states
+  // Toggle button states — nav
   const btnMasse = document.getElementById('goalBtnMasse');
   const btnPoids = document.getElementById('goalBtnPoids');
   if (btnMasse) {
@@ -8878,18 +8953,25 @@ function setGoal(goal) {
     btnPoids.classList.toggle('active-masse', false);
   }
 
-  // Mobile goal buttons
-  document.querySelectorAll('.goal-btn').forEach(btn => {
-    const isBtn = btn.getAttribute('data-i18n');
-    if (isBtn === 'goal_masse') {
-      btn.classList.toggle('active-masse', goal === 'masse');
-      btn.classList.remove('active-poids');
-    }
-    if (isBtn === 'goal_poids') {
-      btn.classList.toggle('active-poids', goal === 'poids');
-      btn.classList.remove('active-masse');
-    }
-  });
+  // Toggle hero mode switch buttons
+  const hmsM = document.getElementById('hmsModeMasse');
+  const hmsP = document.getElementById('hmsModePoids');
+  if (hmsM) hmsM.classList.toggle('active', goal === 'masse');
+  if (hmsP) hmsP.classList.toggle('active', goal === 'poids');
+
+  // Sync mobile menu goal buttons
+  const mobMasse = document.getElementById('mobileGoalMasse');
+  const mobPoids = document.getElementById('mobileGoalPoids');
+  if (mobMasse) {
+    mobMasse.style.background = goal === 'masse' ? 'linear-gradient(135deg,rgba(230,57,70,0.3),rgba(255,107,53,0.15))' : 'transparent';
+    mobMasse.style.color = goal === 'masse' ? 'var(--light)' : 'var(--gray)';
+  }
+  if (mobPoids) {
+    mobPoids.style.background = goal === 'poids' ? 'linear-gradient(135deg,rgba(17,153,142,0.3),rgba(56,239,125,0.1))' : 'transparent';
+    mobPoids.style.color = goal === 'poids' ? '#38ef7d' : 'var(--gray)';
+  }
+
+  // Mobile menu lang buttons sync handled via setLang
 
   // Show/hide masse vs poids tabs
   const masseTabs = document.getElementById('masseTabs');
