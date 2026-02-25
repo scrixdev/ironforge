@@ -2588,6 +2588,88 @@
     color: var(--gold);
     line-height: 1.6;
   }
+
+  /* ── LANGUAGE + GOAL TOGGLES ── */
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .lang-toggle {
+    display: flex;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .lang-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .lang-btn.active {
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: white;
+  }
+  .goal-toggle {
+    display: flex;
+    background: var(--dark3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .goal-btn {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border: none;
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .goal-btn.active-masse {
+    background: linear-gradient(135deg, var(--red), var(--orange));
+    color: white;
+  }
+  .goal-btn.active-poids {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
+    color: #0a0a0c;
+  }
+
+  /* ── WEIGHT LOSS TABS COLOR ── */
+  .tab-btn[onclick*="'circuit'"].active   { background: linear-gradient(135deg, #11998e, #38ef7d); color: #0a0a0c; }
+  .tab-btn[onclick*="'cutting'"].active   { background: linear-gradient(135deg, #0f9960, #23d160); color: #0a0a0c; }
+  .tab-btn[onclick*="'cardio3j'"].active  { background: linear-gradient(135deg, #00b4d8, #0077b6); color: white; }
+
+  /* ── GOAL BANNER ── */
+  .goal-banner {
+    display: none;
+    background: linear-gradient(135deg, rgba(17,153,142,0.12), rgba(56,239,125,0.06));
+    border: 1px solid rgba(17,153,142,0.35);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 28px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 1px;
+    color: #38ef7d;
+  }
+  body.mode-masse .programme-content.poids-only { display: none !important; }
+  body.mode-masse .poids-only  { display: none !important; }
+  body.mode-poids .masse-only  { display: none !important; }
+  body.mode-poids .goal-banner { display: block; }
 </style>
 </head>
 <script>
@@ -3011,34 +3093,56 @@
 <!-- NAVIGATION -->
 <nav>
   <a href="#" class="logo" style="text-decoration:none;">IRONFORGE</a>
-  <ul class="nav-links">
-    <li><a href="#programme">Programme</a></li>
-    <li><a href="#echauffement">Échauffement</a></li>
-    <li><a href="#exercices">Exercices</a></li>
-    <li><a href="#calories">Calories</a></li>
-    <li><a href="#nutrition">Nutrition</a></li>
-    <li><a href="#recettes">Recettes</a></li>
-    <li><a href="#conseils">Conseils</a></li>
-    <li><a href="#supplements">Suppléments</a></li>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#programme" data-i18n="nav_programme">Programme</a></li>
+    <li><a href="#echauffement" data-i18n="nav_warmup">Échauffement</a></li>
+    <li><a href="#exercices" data-i18n="nav_exercises">Exercices</a></li>
+    <li><a href="#calories" data-i18n="nav_calories">Calories</a></li>
+    <li><a href="#nutrition" data-i18n="nav_nutrition">Nutrition</a></li>
+    <li><a href="#recettes" data-i18n="nav_recipes">Recettes</a></li>
+    <li><a href="#conseils" data-i18n="nav_tips">Conseils</a></li>
+    <li><a href="#supplements" data-i18n="nav_supplements">Suppléments</a></li>
     <li><a href="#workout-tracker">Tracker</a></li>
     <li><a href="#faq">FAQ</a></li>
   </ul>
+  <div class="nav-controls">
+    <!-- Goal toggle -->
+    <div class="goal-toggle">
+      <button class="goal-btn active-masse" id="goalBtnMasse" onclick="setGoal('masse')" data-i18n="goal_masse">💪 Masse</button>
+      <button class="goal-btn" id="goalBtnPoids" onclick="setGoal('poids')" data-i18n="goal_poids">🔥 Perte de poids</button>
+    </div>
+    <!-- Language toggle -->
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="langBtnFR" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" id="langBtnEN" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
   <button class="nav-burger" onclick="toggleMenu()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 <!-- MENU MOBILE -->
 <div class="mobile-menu" id="mobileMenu">
-  <a href="#programme" onclick="toggleMenu()">Programme</a>
-  <a href="#echauffement" onclick="toggleMenu()">Échauffement</a>
-  <a href="#exercices" onclick="toggleMenu()">Exercices</a>
-  <a href="#calories" onclick="toggleMenu()">Calories</a>
-  <a href="#nutrition" onclick="toggleMenu()">Nutrition</a>
-  <a href="#recettes" onclick="toggleMenu()">Recettes</a>
-  <a href="#conseils" onclick="toggleMenu()">Conseils</a>
-  <a href="#supplements" onclick="toggleMenu()">Suppléments</a>
+  <a href="#programme" onclick="toggleMenu()" data-i18n="nav_programme">Programme</a>
+  <a href="#echauffement" onclick="toggleMenu()" data-i18n="nav_warmup">Échauffement</a>
+  <a href="#exercices" onclick="toggleMenu()" data-i18n="nav_exercises">Exercices</a>
+  <a href="#calories" onclick="toggleMenu()" data-i18n="nav_calories">Calories</a>
+  <a href="#nutrition" onclick="toggleMenu()" data-i18n="nav_nutrition">Nutrition</a>
+  <a href="#recettes" onclick="toggleMenu()" data-i18n="nav_recipes">Recettes</a>
+  <a href="#conseils" onclick="toggleMenu()" data-i18n="nav_tips">Conseils</a>
+  <a href="#supplements" onclick="toggleMenu()" data-i18n="nav_supplements">Suppléments</a>
   <a href="#workout-tracker" onclick="toggleMenu()">Tracker</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
+  <div style="display:flex;gap:8px;padding:12px 0;">
+    <div class="goal-toggle" style="flex:1;">
+      <button class="goal-btn active-masse" onclick="setGoal('masse');toggleMenu();" data-i18n="goal_masse" style="flex:1;">💪 Masse</button>
+      <button class="goal-btn" onclick="setGoal('poids');toggleMenu();" data-i18n="goal_poids" style="flex:1;">🔥 Perte de poids</button>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('fr');toggleMenu();">FR</button>
+      <button class="lang-btn" onclick="setLang('en');toggleMenu();">EN</button>
+    </div>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -3046,32 +3150,40 @@
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
   <div class="hero-content">
-    <div class="hero-badge">⚡ Guide Complet Prise de Masse</div>
-    <h1 class="hero-title">
+    <div class="hero-badge" id="heroBadge" data-i18n="hero_badge">⚡ Guide Complet Prise de Masse</div>
+    <h1 class="hero-title" id="heroTitle">
       FORGE<br>
-      <span>TON CORPS</span>
+      <span data-i18n="hero_title_span">TON CORPS</span>
     </h1>
-    <p class="hero-sub">Programme · Nutrition · Calcul Calorique · Exercices</p>
+    <p class="hero-sub" data-i18n="hero_sub">Programme · Nutrition · Calcul Calorique · Exercices</p>
     <div class="hero-ctas">
-      <a href="#calories" class="btn-primary">Calculer mes calories</a>
-      <a href="#programme" class="btn-outline">Voir le programme</a>
+      <a href="#calories" class="btn-primary" data-i18n="hero_cta1">Calculer mes calories</a>
+      <a href="#programme" class="btn-outline" data-i18n="hero_cta2">Voir le programme</a>
     </div>
-    <div class="hero-stats">
-      <div class="stat">
+    <div class="hero-stats" id="heroStats">
+      <div class="stat masse-only">
         <div class="stat-number">5</div>
-        <div class="stat-label">Jours / semaine</div>
+        <div class="stat-label" data-i18n="stat1_masse">Jours / semaine</div>
       </div>
-      <div class="stat">
+      <div class="stat masse-only">
         <div class="stat-number">+500</div>
-        <div class="stat-label">Kcal surplus</div>
+        <div class="stat-label" data-i18n="stat2_masse">Kcal surplus</div>
+      </div>
+      <div class="stat poids-only" style="display:none;">
+        <div class="stat-number">4</div>
+        <div class="stat-label" data-i18n="stat1_poids">Séances / semaine</div>
+      </div>
+      <div class="stat poids-only" style="display:none;">
+        <div class="stat-number">-500</div>
+        <div class="stat-label" data-i18n="stat2_poids">Kcal déficit</div>
       </div>
       <div class="stat">
         <div class="stat-number">2g</div>
-        <div class="stat-label">Protéines / kg</div>
+        <div class="stat-label" data-i18n="stat3">Protéines / kg</div>
       </div>
       <div class="stat">
         <div class="stat-number">8h</div>
-        <div class="stat-label">Sommeil requis</div>
+        <div class="stat-label" data-i18n="stat4">Sommeil requis</div>
       </div>
     </div>
   </div>
@@ -3081,13 +3193,19 @@
 <section id="programme" aria-label="Programmes d'entraînement">
   <div class="section-header fade-in-up">
     <span class="section-num">01</span>
-    <h2 class="section-title">PROGRAMME D'ENTRAÎNEMENT</h2>
+    <h2 class="section-title" data-i18n="section_programme">PROGRAMME D'ENTRAÎNEMENT</h2>
     <div class="section-line"></div>
   </div>
 
+  <!-- Goal banner perte de poids -->
+  <div class="goal-banner fade-in-up" id="poidsGoalBanner">
+    🔥 <strong>MODE PERTE DE POIDS ACTIVÉ</strong> — Programmes adaptés au déficit calorique avec cardio intégré. Maintiens 2g de protéines/kg pour préserver ta masse musculaire.
+  </div>
+
   <div class="tabs-wrapper fade-in-up">
-    <div class="tabs-group">
-      <div class="tabs-group-label">Programmes généraux</div>
+    <!-- Programmes MASSE (cachés en mode poids) -->
+    <div class="tabs-group masse-only" id="masseTabs">
+      <div class="tabs-group-label" data-i18n="tabs_general">Programmes généraux</div>
       <div class="programme-tabs" id="prog-tabs-main">
         <button class="tab-btn active" onclick="switchProgram('ppl')">PPL — Push/Pull/Legs</button>
         <button class="tab-btn" onclick="switchProgram('fullbody')">Full Body</button>
@@ -3096,8 +3214,8 @@
         <button class="tab-btn" onclick="switchProgram('perso')">Mon Programme Perso</button>
       </div>
     </div>
-    <div class="tabs-group" style="margin-top:12px;">
-      <div class="tabs-group-label">Spécialisation par muscle</div>
+    <div class="tabs-group masse-only" style="margin-top:12px;">
+      <div class="tabs-group-label" data-i18n="tabs_spe">Spécialisation par muscle</div>
       <div class="programme-tabs">
         <button class="tab-btn spe" onclick="switchProgram('pecs')">Pectoraux</button>
         <button class="tab-btn spe" onclick="switchProgram('abdos')">Abdominaux</button>
@@ -3105,7 +3223,16 @@
         <button class="tab-btn spe" onclick="switchProgram('epaules')">Épaules</button>
         <button class="tab-btn spe" onclick="switchProgram('dos')">Dos</button>
         <button class="tab-btn spe" onclick="switchProgram('jambes')">Jambes</button>
+      </div>
+    </div>
 
+    <!-- Programmes PERTE DE POIDS (cachés en mode masse) -->
+    <div class="tabs-group poids-only" id="poidsTabs" style="display:none;">
+      <div class="tabs-group-label" data-i18n="tabs_poids">Programmes perte de poids</div>
+      <div class="programme-tabs">
+        <button class="tab-btn active" onclick="switchProgram('circuit')" style="background:linear-gradient(135deg,#11998e,#38ef7d);color:#0a0a0c;">Circuit HIIT 4j</button>
+        <button class="tab-btn" onclick="switchProgram('cutting')">Cutting PPL</button>
+        <button class="tab-btn" onclick="switchProgram('cardio3j')">Cardio + Muscu 3j</button>
       </div>
     </div>
   </div>
@@ -3935,6 +4062,162 @@
     </div>
   </div>
 
+  <!-- ═══ PROGRAMMES PERTE DE POIDS ═══ -->
+
+  <!-- CIRCUIT HIIT 4J -->
+  <div class="programme-content poids-only" id="prog-circuit">
+    <div class="day-card fade-in-up" style="grid-column: 1 / -1;">
+      <div class="day-header" style="background: linear-gradient(135deg, rgba(17,153,142,0.25), rgba(56,239,125,0.08));">
+        <div>
+          <div class="day-name" style="background:linear-gradient(90deg,#11998e,#38ef7d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">CIRCUIT HIIT — 4 JOURS / SEMAINE</div>
+          <div class="day-focus">Lundi · Mardi · Jeudi · Vendredi · Repos Mer, Sam, Dim · Brûler les graisses tout en gardant la masse</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;opacity:0.8;">
+          <div class="ex-num" style="color:#38ef7d;">💡</div>
+          <div class="ex-info">
+            <div class="ex-name" style="color:#38ef7d;">Principe : circuits intenses → brûle les calories pendant ET après l'entraînement (EPOC)</div>
+            <div class="ex-sets">Repos entre circuits : 90 sec maximum · Repos entre exercices : 20 sec · Fréquence cardiaque cible : 75-85% FC max</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(17,153,142,0.2),rgba(56,239,125,0.05));"><div><div class="day-name">JOUR 1 — UPPER CIRCUIT</div><div class="day-focus">Lundi · Haut du corps + cardio</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#38ef7d;">C1</div><div class="ex-info"><div class="ex-name">Circuit 1 × 4 tours</div><div class="ex-sets">Burpees 12 reps → Pompes 15 reps → Tirage poulie 15 reps → Jumping Jacks 30 sec · Repos 90 sec</div></div></div>
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num" style="color:#38ef7d;">C2</div><div class="ex-info"><div class="ex-name">Circuit 2 × 3 tours</div><div class="ex-sets">Développé haltères 15 reps → Row haltère 15 reps → OHP haltères 12 reps → Mountain climbers 20 sec</div></div><div class="ex-play" aria-label="Voir la vidéo">▶</div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#38ef7d;">FIN</div><div class="ex-info"><div class="ex-name">Cardio finition</div><div class="ex-sets">10 min vélo ou corde à sauter · Intensité modérée · Zone de brûlage des graisses</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(17,153,142,0.2),rgba(56,239,125,0.05));"><div><div class="day-name">JOUR 2 — LOWER CIRCUIT</div><div class="day-focus">Mardi · Bas du corps + fessiers</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('squat')"><div class="ex-num" style="color:#38ef7d;">C1</div><div class="ex-info"><div class="ex-name">Circuit 1 × 4 tours</div><div class="ex-sets">Squat sauté 15 reps → Fentes alternées 20 reps → Box step-up 12/jambe → High Knees 30 sec</div></div><div class="ex-play" aria-label="Voir la vidéo">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-press')"><div class="ex-num" style="color:#38ef7d;">C2</div><div class="ex-info"><div class="ex-name">Circuit 2 × 3 tours</div><div class="ex-sets">Leg Press 15 reps → RDL haltères 15 reps → Fentes bulgares 10/jambe → Corde à sauter 40 sec</div></div><div class="ex-play" aria-label="Voir la vidéo">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ab-wheel')"><div class="ex-num" style="color:#38ef7d;">CORE</div><div class="ex-info"><div class="ex-name">Finition Core</div><div class="ex-sets">Ab wheel 3×10 → Planche 3×45 sec → Russian twist 3×20 · Repos 30 sec entre exercices</div></div><div class="ex-play" aria-label="Voir la vidéo">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(17,153,142,0.2),rgba(56,239,125,0.05));"><div><div class="day-name">JOUR 3 — FULL HIIT</div><div class="day-focus">Jeudi · Corps complet · Intensité max</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#38ef7d;">TABATA</div><div class="ex-info"><div class="ex-name">Tabata x 5 rounds (20 sec travail / 10 sec repos)</div><div class="ex-sets">Burpees → Squat sauté → Pompes → Fentes sautées → Mountain climbers · 4 min/exercice</div></div></div>
+        <div class="exercise-item" onclick="openModal('deadlift')"><div class="ex-num" style="color:#38ef7d;">FORCE</div><div class="ex-info"><div class="ex-name">Force compound : 4×8</div><div class="ex-sets">Soulevé de terre 4×8 · Repos 2 min · Maintien masse musculaire pendant le déficit</div></div><div class="ex-play" aria-label="Voir la vidéo">▶</div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(17,153,142,0.2),rgba(56,239,125,0.05));"><div><div class="day-name">JOUR 4 — CARDIO RÉSISTANCE</div><div class="day-focus">Vendredi · Volume + endurance</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#38ef7d;">CARDIO</div><div class="ex-info"><div class="ex-name">20 min LISS · Vélo ou elliptique</div><div class="ex-sets">Zone 2 (60-70% FC max) · Optimal pour oxydation des graisses · Ne pas aller trop vite</div></div></div>
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num" style="color:#38ef7d;">MUSCU</div><div class="ex-info"><div class="ex-name">Circuits légers : 3 tours</div><div class="ex-sets">Développé haltères 15 reps → Pull-down 15 reps → OHP 12 reps → Squat 15 reps · Repos 60 sec</div></div><div class="ex-play" aria-label="Voir la vidéo">▶</div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#38ef7d;">STRETCH</div><div class="ex-info"><div class="ex-name">Étirements 10 min</div><div class="ex-sets">Récupération active · Essentiel pour reduire les courbatures et performer la semaine suivante</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color:rgba(17,153,142,0.4);">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(255,183,3,0.12),rgba(255,183,3,0.04));"><div><div class="day-name" style="color:var(--gold);">NUTRITION EN DÉFICIT — PRINCIPES CLÉS</div><div class="day-focus" style="color:var(--gold);">Sans ça, tous tes efforts sont inutiles</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Déficit de 400-500 kcal max · Pas plus</div><div class="ex-sets">Au-delà : perte musculaire accélérée, fatigue, ralentissement du métabolisme · Perte idéale : 0.5-1 kg/semaine</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Maintenir 2g de protéines / kg de poids de corps</div><div class="ex-sets">Protéines = préserver la masse musculaire pendant la perte de poids · Ne jamais descendre en dessous</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Glucides : réduire, pas supprimer</div><div class="ex-sets">Garde des glucides autour de l'entraînement · Réduis-les le soir et les jours sans sport · Légumes en illimité</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">1 repas libre par semaine</div><div class="ex-sets">Prévient la leptine de chuter (hormone de satiété) · Évite l'effet yo-yo · Maintient la motivation</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUTTING PPL -->
+  <div class="programme-content poids-only" id="prog-cutting">
+    <div class="day-card fade-in-up" style="grid-column:1/-1;">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(15,153,96,0.2),rgba(35,209,96,0.07));">
+        <div>
+          <div class="day-name" style="background:linear-gradient(90deg,#0f9960,#23d160);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">CUTTING PPL — SÈCHE AVEC MASSE CONSERVÉE</div>
+          <div class="day-focus">6 jours · Push Pull Legs adapté déficit · Cardio post-séance · Pour intermédiaires / avancés</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;opacity:0.8;">
+          <div class="ex-num" style="color:#23d160;">💡</div>
+          <div class="ex-info"><div class="ex-name" style="color:#23d160;">Le cutting = garder le volume d'entraînement, réduire les calories — pas l'inverse</div><div class="ex-sets">Les charges restent proches du maximum · Séries plus courtes (6-10 reps) · 20 min de cardio après chaque séance</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(15,153,96,0.15),rgba(35,209,96,0.05));"><div><div class="day-name">PUSH — FORCE</div><div class="day-focus">Lundi · Pecs + Épaules + Triceps · Charges lourdes</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('bench-press')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Développé Couché Barre</div><div class="ex-sets">4×6 · Maintient la force · 3 min repos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('incline-db')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Développé Incliné Haltères</div><div class="ex-sets">3×8-10 · Tempo 3-1-1 · 2 min repos</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ohp')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Développé Militaire</div><div class="ex-sets">3×8 · Force épaules conservée</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('lateral-raise')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Élévations Latérales</div><div class="ex-sets">3×15 · Repos 60 sec</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('tricep-pushdown')"><div class="ex-num">05</div><div class="ex-info"><div class="ex-name">Extension Triceps Poulie</div><div class="ex-sets">3×12 · Superset avec dips si possible</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#23d160;">🏃</div><div class="ex-info"><div class="ex-name" style="color:#23d160;">Cardio post-séance : 20 min elliptique</div><div class="ex-sets">Zone 2 (65% FC max) · Brûle les graisses sans casser le muscle</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(15,153,96,0.15),rgba(35,209,96,0.05));"><div><div class="day-name">PULL — FORCE</div><div class="day-focus">Mardi · Dos + Biceps · Volume maintenu</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('deadlift')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Soulevé de Terre</div><div class="ex-sets">3×5 · Charge lourde conservée · Roi du cutting</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('pulldown')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Tirage Vertical Poulie</div><div class="ex-sets">4×8-10 · Étirement complet</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('row-barre')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Rowing Barre</div><div class="ex-sets">3×8 · Dos épais maintenu</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('bicep-curl')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Curl Biceps Barre</div><div class="ex-sets">3×10 · Superset avec curl marteau</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#23d160;">🏃</div><div class="ex-info"><div class="ex-name" style="color:#23d160;">Cardio post-séance : 20 min vélo ou marche rapide</div><div class="ex-sets">Inclinaison 8-10% sur tapis · Brûle les graisses sans catabolisme musculaire</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(15,153,96,0.15),rgba(35,209,96,0.05));"><div><div class="day-name">LEGS — DÉFICIT</div><div class="day-focus">Jeudi · Jambes + Core · La séance la plus brûle-graisses</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" onclick="openModal('squat')"><div class="ex-num">01</div><div class="ex-info"><div class="ex-name">Squat Barre</div><div class="ex-sets">4×6-8 · Jambes fortes même en déficit</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('rdl')"><div class="ex-num">02</div><div class="ex-info"><div class="ex-name">Romanian Deadlift</div><div class="ex-sets">3×10 · Ischios et fessiers préservés</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('leg-press')"><div class="ex-num">03</div><div class="ex-info"><div class="ex-name">Leg Press</div><div class="ex-sets">3×12 · Finition quadriceps</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" onclick="openModal('ab-wheel')"><div class="ex-num">04</div><div class="ex-info"><div class="ex-name">Circuit Core · 3 tours</div><div class="ex-sets">Ab wheel 10 → Planche 45 sec → Russian twist 20 · Brûle plus de calories</div></div><div class="ex-play">▶</div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#23d160;">🏃</div><div class="ex-info"><div class="ex-name" style="color:#23d160;">Cardio post-séance : 25 min (jour le plus intense)</div><div class="ex-sets">Intervals : 1 min vite / 2 min lent × 8 rounds · HIIT optimal après squats</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARDIO + MUSCU 3J -->
+  <div class="programme-content poids-only" id="prog-cardio3j">
+    <div class="day-card fade-in-up" style="grid-column:1/-1;">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(0,180,216,0.18),rgba(0,119,182,0.08));">
+        <div>
+          <div class="day-name" style="background:linear-gradient(90deg,#00b4d8,#0077b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">CARDIO + MUSCU — 3 JOURS · IDÉAL DÉBUTANTS</div>
+          <div class="day-focus">Lundi · Mercredi · Vendredi · Programme full body léger + cardio · Parfait pour commencer une perte de poids</div>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;opacity:0.8;">
+          <div class="ex-num" style="color:#00b4d8;">💡</div>
+          <div class="ex-info"><div class="ex-name" style="color:#00b4d8;">3 séances suffisent si tu respectes ton déficit calorique · L'alimentation = 80% des résultats</div><div class="ex-sets">Chaque séance : 30 min muscu full body + 25-30 min cardio · Total ~60 min · Accessible à tous</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(0,180,216,0.15),rgba(0,119,182,0.05));"><div><div class="day-name">SÉANCE TYPE — FULL BODY</div><div class="day-focus">Lun · Mer · Ven · Répété 3 fois / semaine</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">💪</div><div class="ex-info"><div class="ex-name">MUSCU — 30 min · 3 séries de chaque</div><div class="ex-sets">Squat × 15 reps → Développé haltères × 12 reps → Rowing haltère × 12 reps → Fentes × 10/jambe → OHP × 10 reps</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">🏃</div><div class="ex-info"><div class="ex-name">CARDIO — 25-30 min après la muscu</div><div class="ex-sets">Tapis roulant (marche rapide 6km/h incliné 8%) OU vélo OU elliptique · Zone 2 : 65-70% FC max · Parle sans être essoufflé</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">🧘</div><div class="ex-info"><div class="ex-name">ÉTIREMENTS — 5-10 min · Jamais sauter</div><div class="ex-sets">Quadriceps · Ischios · Pectoraux · Dos · Accélère la récupération et réduit les courbatures</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(0,180,216,0.15),rgba(0,119,182,0.05));"><div><div class="day-name">PROGRESSION SUR 8 SEMAINES</div><div class="day-focus">Comment évoluer le programme semaine après semaine</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">S1-2</div><div class="ex-info"><div class="ex-name">Semaines 1-2 : Adaptation</div><div class="ex-sets">3×10 reps · Cardio 20 min · Poids légers · L'objectif c'est de bouger, pas de souffrir</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">S3-4</div><div class="ex-info"><div class="ex-name">Semaines 3-4 : Augmente le cardio</div><div class="ex-sets">3×12 reps · Cardio 25 min · Légère hausse des charges · Premières pertes visibles</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">S5-6</div><div class="ex-info"><div class="ex-name">Semaines 5-6 : Intensifie la muscu</div><div class="ex-sets">4×12 reps · Cardio 30 min · Hausse des charges · Le corps s'adapte vite maintenant</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:#00b4d8;">S7-8</div><div class="ex-info"><div class="ex-name">Semaines 7-8 : Dépassement</div><div class="ex-sets">4×15 reps · Cardio 30 min + 1 HIIT optionnel · Passe au programme CIRCUIT HIIT 4j ensuite</div></div></div>
+      </div>
+    </div>
+    <div class="day-card fade-in-up" style="border-color:rgba(0,180,216,0.3);">
+      <div class="day-header" style="background:linear-gradient(135deg,rgba(255,183,3,0.12),rgba(255,183,3,0.04));"><div><div class="day-name" style="color:var(--gold);">ALIMENTS À PRIVILÉGIER — PERTE DE POIDS</div><div class="day-focus" style="color:var(--gold);">Ce que tu mets dans ton assiette change tout</div></div></div>
+      <div class="day-body">
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Protéines maigres : poulet, blanc d'œuf, thon, fromage blanc 0%</div><div class="ex-sets">Rassasiantes, thermogéniques (brûlent des calories à la digestion), préservent le muscle</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Légumes à volonté : brocolis, courgettes, salade, épinards</div><div class="ex-sets">Très peu caloriques, riches en fibres (satiété +++), vitamines essentielles</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Glucides complexes : riz complet, patate douce, flocons d'avoine</div><div class="ex-sets">Autour de l'entraînement seulement · Energie durable sans pic de glycémie</div></div></div>
+        <div class="exercise-item" style="pointer-events:none;"><div class="ex-num" style="color:var(--gold);">✦</div><div class="ex-info"><div class="ex-name">Eau : 3-4 litres par jour minimum</div><div class="ex-sets">L'hydratation booste le métabolisme, réduit la rétention d'eau, améliore les performances</div></div></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ÉCHAUFFEMENT -->
 
 </section>
@@ -4410,11 +4693,14 @@
         </select>
       </div>
       <div class="form-group">
-        <label class="form-label">Objectif prise de masse</label>
+        <label class="form-label" data-i18n="calc_goal_label">Objectif prise de masse</label>
         <select class="form-select" id="calcGoal">
-          <option value="250">Lean Bulk — +250 kcal (prise lente, peu de gras)</option>
-          <option value="500" selected>Prise de masse — +500 kcal (recommandé)</option>
-          <option value="750">Prise de masse rapide — +750 kcal</option>
+          <option value="250" class="masse-option">Lean Bulk — +250 kcal (prise lente, peu de gras)</option>
+          <option value="500" selected class="masse-option">Prise de masse — +500 kcal (recommandé)</option>
+          <option value="750" class="masse-option">Prise de masse rapide — +750 kcal</option>
+          <option value="-300" class="poids-option" style="display:none;">Déficit léger — -300 kcal (perte lente, idéale)</option>
+          <option value="-500" class="poids-option" style="display:none;">Déficit modéré — -500 kcal (recommandé)</option>
+          <option value="-750" class="poids-option" style="display:none;">Déficit agressif — -750 kcal (pour avancés)</option>
         </select>
       </div>
       <button class="calc-btn" onclick="calculateCalories()">CALCULER MES BESOINS</button>
@@ -4427,7 +4713,7 @@
       </div>
       <div id="calcResultContent" class="result-hidden">
         <div class="result-main">
-          <div class="result-label">Calories quotidiennes pour la prise de masse</div>
+          <div class="result-label" id="resultLabel">Calories quotidiennes pour la prise de masse</div>
           <div class="result-calories" id="resultCalories">0</div>
           <div class="result-unit">KCAL / JOUR</div>
         </div>
@@ -4441,7 +4727,7 @@
             <span style="font-family: 'Bebas Neue'; font-size: 1rem;" id="resultTDEE">0</span>
           </div>
           <div style="display: flex; justify-content: space-between;">
-            <span style="font-size: 0.85rem; color: var(--orange);">Surplus calorique</span>
+            <span style="font-size: 0.85rem; color: var(--orange);" id="surplusLabel">Surplus calorique</span>
             <span style="font-family: 'Bebas Neue'; font-size: 1rem; color: var(--orange);" id="resultSurplus">0</span>
           </div>
         </div>
@@ -8418,5 +8704,296 @@ function cpbDeleteProgram(id) {
     }
   });
 }();
+</script>
+<!-- ═══ IRONFORGE — i18n + Goal Switch ═══ -->
+<script>
+// ── TRANSLATIONS DICTIONARY ─────────────────────────────────
+const TRANSLATIONS = {
+  fr: {
+    nav_programme:    'Programme',
+    nav_warmup:       'Échauffement',
+    nav_exercises:    'Exercices',
+    nav_calories:     'Calories',
+    nav_nutrition:    'Nutrition',
+    nav_recipes:      'Recettes',
+    nav_tips:         'Conseils',
+    nav_supplements:  'Suppléments',
+    goal_masse:       '💪 Masse',
+    goal_poids:       '🔥 Perte de poids',
+    hero_badge_masse: '⚡ Guide Complet Prise de Masse',
+    hero_badge_poids: '🔥 Guide Complet Perte de Poids',
+    hero_title_span:  'TON CORPS',
+    hero_sub:         'Programme · Nutrition · Calcul Calorique · Exercices',
+    hero_cta1:        'Calculer mes calories',
+    hero_cta2:        'Voir le programme',
+    stat1_masse:      'Jours / semaine',
+    stat2_masse:      'Kcal surplus',
+    stat1_poids:      'Séances / semaine',
+    stat2_poids:      'Kcal déficit',
+    stat3:            'Protéines / kg',
+    stat4:            'Sommeil requis',
+    section_programme:'PROGRAMME D\'ENTRAÎNEMENT',
+    tabs_general:     'Programmes généraux',
+    tabs_spe:         'Spécialisation par muscle',
+    tabs_poids:       'Programmes perte de poids',
+    calc_goal_label:  'Objectif',
+  },
+  en: {
+    nav_programme:    'Program',
+    nav_warmup:       'Warm-up',
+    nav_exercises:    'Exercises',
+    nav_calories:     'Calories',
+    nav_nutrition:    'Nutrition',
+    nav_recipes:      'Recipes',
+    nav_tips:         'Tips',
+    nav_supplements:  'Supplements',
+    goal_masse:       '💪 Bulk',
+    goal_poids:       '🔥 Weight Loss',
+    hero_badge_masse: '⚡ Complete Muscle Gain Guide',
+    hero_badge_poids: '🔥 Complete Weight Loss Guide',
+    hero_title_span:  'YOUR BODY',
+    hero_sub:         'Program · Nutrition · Calorie Calculator · Exercises',
+    hero_cta1:        'Calculate my calories',
+    hero_cta2:        'See the program',
+    stat1_masse:      'Days / week',
+    stat2_masse:      'Kcal surplus',
+    stat1_poids:      'Sessions / week',
+    stat2_poids:      'Kcal deficit',
+    stat3:            'Protein / kg',
+    stat4:            'Sleep required',
+    section_programme:'TRAINING PROGRAM',
+    tabs_general:     'General programs',
+    tabs_spe:         'Muscle specialization',
+    tabs_poids:       'Weight loss programs',
+    calc_goal_label:  'Goal',
+  }
+};
+
+// EN translations for dynamic text blocks
+const DYNAMIC_EN = {
+  calcGoalOptions_masse: [
+    'Lean Bulk — +250 kcal (slow, minimal fat)',
+    'Bulk — +500 kcal (recommended)',
+    'Fast Bulk — +750 kcal'
+  ],
+  calcGoalOptions_poids: [
+    'Light deficit — -300 kcal (slow, ideal)',
+    'Moderate deficit — -500 kcal (recommended)',
+    'Aggressive deficit — -750 kcal (advanced)'
+  ],
+  calcGoalLabel_masse: 'Daily calories for muscle gain',
+  calcGoalLabel_poids: 'Daily calories for weight loss',
+  surplusLabel_masse:  'Caloric surplus',
+  surplusLabel_poids:  'Caloric deficit',
+  goalBannerText: '🔥 <strong>WEIGHT LOSS MODE ON</strong> — Programs adapted for caloric deficit with integrated cardio. Keep 2g protein/kg to preserve muscle mass.',
+  calcGoalFormLabel_masse: 'Bulk goal',
+  calcGoalFormLabel_poids: 'Weight loss goal',
+};
+const DYNAMIC_FR = {
+  calcGoalOptions_masse: [
+    'Lean Bulk — +250 kcal (prise lente, peu de gras)',
+    'Prise de masse — +500 kcal (recommandé)',
+    'Prise de masse rapide — +750 kcal'
+  ],
+  calcGoalOptions_poids: [
+    'Déficit léger — -300 kcal (perte lente, idéale)',
+    'Déficit modéré — -500 kcal (recommandé)',
+    'Déficit agressif — -750 kcal (pour avancés)'
+  ],
+  calcGoalLabel_masse: 'Calories quotidiennes pour la prise de masse',
+  calcGoalLabel_poids: 'Calories quotidiennes pour la perte de poids',
+  surplusLabel_masse:  'Surplus calorique',
+  surplusLabel_poids:  'Déficit calorique',
+  goalBannerText: '🔥 <strong>MODE PERTE DE POIDS ACTIVÉ</strong> — Programmes adaptés au déficit calorique avec cardio intégré. Maintiens 2g de protéines/kg pour préserver ta masse musculaire.',
+  calcGoalFormLabel_masse: 'Objectif prise de masse',
+  calcGoalFormLabel_poids: 'Objectif perte de poids',
+};
+
+// ── CURRENT STATE ────────────────────────────────────────────
+let currentLang = localStorage.getItem('if_lang') || 'fr';
+let currentGoal = localStorage.getItem('if_goal') || 'masse';
+
+// ── APPLY TRANSLATIONS ───────────────────────────────────────
+function applyTranslations(lang) {
+  const T = TRANSLATIONS[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[key] !== undefined) el.textContent = T[key];
+  });
+}
+
+// ── SET LANGUAGE ─────────────────────────────────────────────
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('if_lang', lang);
+
+  // Toggle button states
+  document.getElementById('langBtnFR').classList.toggle('active', lang === 'fr');
+  document.getElementById('langBtnEN').classList.toggle('active', lang === 'en');
+
+  // Mobile lang buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    if (btn.textContent === 'FR') btn.classList.toggle('active', lang === 'fr');
+    if (btn.textContent === 'EN') btn.classList.toggle('active', lang === 'en');
+  });
+
+  // Apply i18n
+  applyTranslations(lang);
+
+  // Update goal button text to match lang
+  const T = TRANSLATIONS[lang];
+  document.querySelectorAll('[data-i18n="goal_masse"]').forEach(el => el.textContent = T.goal_masse);
+  document.querySelectorAll('[data-i18n="goal_poids"]').forEach(el => el.textContent = T.goal_poids);
+
+  // Update hero badge based on current goal
+  const D = lang === 'en' ? DYNAMIC_EN : DYNAMIC_FR;
+  const heroBadge = document.getElementById('heroBadge');
+  if (heroBadge) heroBadge.textContent = currentGoal === 'masse' ? D.calcGoalLabel_masse.replace('Calories quotidiennes pour la ', '').replace('Daily calories for ', '').replace('⚡ Guide Complet Prise de Masse', TRANSLATIONS[lang].hero_badge_masse).replace('🔥 Guide Complet Perte de Poids', TRANSLATIONS[lang].hero_badge_poids) : '';
+  if (heroBadge) heroBadge.textContent = currentGoal === 'masse' ? T.hero_badge_masse : T.hero_badge_poids;
+
+  // Update calorie form labels
+  updateCalcGoalOptions(lang, currentGoal);
+  updateGoalBanner(lang, currentGoal);
+}
+
+// ── SET GOAL ─────────────────────────────────────────────────
+function setGoal(goal) {
+  currentGoal = goal;
+  localStorage.setItem('if_goal', goal);
+
+  // Update body class
+  document.body.classList.toggle('mode-poids', goal === 'poids');
+  document.body.classList.toggle('mode-masse', goal === 'masse');
+
+  // Toggle button states
+  const btnMasse = document.getElementById('goalBtnMasse');
+  const btnPoids = document.getElementById('goalBtnPoids');
+  if (btnMasse) {
+    btnMasse.classList.toggle('active-masse', goal === 'masse');
+    btnMasse.classList.remove('active-poids');
+  }
+  if (btnPoids) {
+    btnPoids.classList.toggle('active-poids', goal === 'poids');
+    btnPoids.classList.remove('active-masse');
+    btnPoids.classList.toggle('active-masse', false);
+  }
+
+  // Mobile goal buttons
+  document.querySelectorAll('.goal-btn').forEach(btn => {
+    const isBtn = btn.getAttribute('data-i18n');
+    if (isBtn === 'goal_masse') {
+      btn.classList.toggle('active-masse', goal === 'masse');
+      btn.classList.remove('active-poids');
+    }
+    if (isBtn === 'goal_poids') {
+      btn.classList.toggle('active-poids', goal === 'poids');
+      btn.classList.remove('active-masse');
+    }
+  });
+
+  // Show/hide masse vs poids tabs
+  const masseTabs = document.getElementById('masseTabs');
+  const poidsTabs = document.getElementById('poidsTabs');
+  const masseTabSpe = masseTabs ? masseTabs.nextElementSibling : null;
+
+  if (masseTabs) masseTabs.style.display = goal === 'masse' ? '' : 'none';
+  // The spe tabs group is the next sibling with classe masse-only
+  document.querySelectorAll('.tabs-group.masse-only').forEach(el => {
+    el.style.display = goal === 'masse' ? '' : 'none';
+  });
+  if (poidsTabs) poidsTabs.style.display = goal === 'poids' ? '' : 'none';
+
+  // Show/hide programme content
+  document.querySelectorAll('.programme-content.poids-only').forEach(el => {
+    el.style.display = goal === 'poids' ? '' : 'none';
+  });
+
+  // If switching to poids, activate first poids program
+  if (goal === 'poids') {
+    // remove active from all
+    document.querySelectorAll('.programme-content').forEach(el => el.classList.remove('active'));
+    // activate circuit
+    const circuit = document.getElementById('prog-circuit');
+    if (circuit) circuit.classList.add('active');
+    // Update tab highlight
+    const poidsTabBtns = document.querySelectorAll('#poidsTabs .tab-btn');
+    poidsTabBtns.forEach((b, i) => {
+      b.style.background = i === 0 ? 'linear-gradient(135deg,#11998e,#38ef7d)' : '';
+      b.style.color = i === 0 ? '#0a0a0c' : '';
+      b.classList.toggle('active', i === 0);
+    });
+  } else {
+    // Switch back to masse: deactivate poids programs and show ppl
+    document.querySelectorAll('.programme-content.poids-only').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.programme-content').forEach(el => el.classList.remove('active'));
+    const ppl = document.getElementById('prog-ppl');
+    if (ppl) ppl.classList.add('active');
+    // Reset main tabs
+    document.querySelectorAll('#prog-tabs-main .tab-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  }
+
+  // Hero badge update
+  const heroBadge = document.getElementById('heroBadge');
+  if (heroBadge) {
+    const T = TRANSLATIONS[currentLang];
+    heroBadge.textContent = goal === 'masse' ? T.hero_badge_masse : T.hero_badge_poids;
+  }
+
+  // Hero stats toggle
+  document.querySelectorAll('.stat.masse-only').forEach(el => el.style.display = goal === 'masse' ? '' : 'none');
+  document.querySelectorAll('.stat.poids-only').forEach(el => el.style.display = goal === 'poids' ? '' : 'none');
+
+  // Calorie calc goal options
+  updateCalcGoalOptions(currentLang, goal);
+  updateGoalBanner(currentLang, goal);
+}
+
+function updateCalcGoalOptions(lang, goal) {
+  const D = lang === 'en' ? DYNAMIC_EN : DYNAMIC_FR;
+  const select = document.getElementById('calcGoal');
+  if (!select) return;
+
+  const masseOpts = select.querySelectorAll('.masse-option');
+  const poidsOpts = select.querySelectorAll('.poids-option');
+
+  masseOpts.forEach((opt, i) => {
+    opt.style.display = goal === 'masse' ? '' : 'none';
+    if (D.calcGoalOptions_masse[i]) opt.textContent = D.calcGoalOptions_masse[i];
+  });
+  poidsOpts.forEach((opt, i) => {
+    opt.style.display = goal === 'poids' ? '' : 'none';
+    if (D.calcGoalOptions_poids[i]) opt.textContent = D.calcGoalOptions_poids[i];
+  });
+
+  // Select first visible option
+  const firstVisible = select.querySelector('option:not([style*="display: none"])');
+  if (firstVisible) select.value = firstVisible.value;
+
+  // Update form label
+  const goalLabel = document.querySelector('label[data-i18n="calc_goal_label"]');
+  if (goalLabel) goalLabel.textContent = goal === 'masse' ? D.calcGoalFormLabel_masse : D.calcGoalFormLabel_poids;
+
+  // Update result label if visible
+  const resultLabel = document.getElementById('resultLabel');
+  if (resultLabel) resultLabel.textContent = goal === 'masse' ? D.calcGoalLabel_masse : D.calcGoalLabel_poids;
+
+  const surplusLabel = document.getElementById('surplusLabel');
+  if (surplusLabel) surplusLabel.textContent = goal === 'masse' ? D.surplusLabel_masse : D.surplusLabel_poids;
+}
+
+function updateGoalBanner(lang, goal) {
+  const banner = document.getElementById('poidsGoalBanner');
+  if (!banner) return;
+  const D = lang === 'en' ? DYNAMIC_EN : DYNAMIC_FR;
+  banner.innerHTML = D.goalBannerText;
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+(function initGoalLang() {
+  // Apply saved state
+  document.body.classList.add('mode-' + currentGoal);
+  setLang(currentLang);
+  setGoal(currentGoal);
+})();
 </script>
 </html>
