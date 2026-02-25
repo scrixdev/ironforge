@@ -6938,6 +6938,29 @@ function openSessionMode() {
   document.getElementById('session-overlay').classList.add('active');
   document.body.style.overflow = 'hidden';
 
+  // Re-apply translations to the session overlay (was hidden at init)
+  if (currentLang === 'en') {
+    const overlay = document.getElementById('session-overlay');
+    const walker = document.createTreeWalker(overlay, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const tag = node.parentElement?.tagName;
+        if (['SCRIPT','STYLE'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        if (node.textContent.trim() === '') return NodeFilter.FILTER_SKIP;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(node => {
+      const trimmed = node.textContent.trim();
+      if (FR_EN[trimmed]) {
+        const leading = node.textContent.match(/^\s*/)[0];
+        const trailing = node.textContent.match(/\s*$/)[0];
+        node.textContent = leading + FR_EN[trimmed] + trailing;
+      }
+    });
+  }
+
   // Restaurer le programme actif
   const savedKey = getActiveProgramKey();
   if (savedKey) {
@@ -7002,8 +7025,12 @@ function renderTodayCard() {
   const prog = PROGRAMS[key];
   const todaySession = getTodaySession(key);
   const now = new Date();
-  const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
-  const mois  = ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+  const jours = currentLang === 'en'
+    ? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+    : ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+  const mois = currentLang === 'en'
+    ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    : ['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
 
   document.getElementById('todayDateLabel').textContent =
     `${jours[now.getDay()]} ${now.getDate()} ${mois[now.getMonth()]} · ${prog.name}`;
@@ -7015,8 +7042,8 @@ function renderTodayCard() {
     todayCard.style.display = 'block';
     noProgCard.style.display = 'none';
     document.getElementById('todaySessionIcon').textContent = '😴';
-    document.getElementById('todaySessionName').textContent = 'JOUR DE REPOS';
-    document.getElementById('todaySessionDesc').textContent = 'Récupération active — étirements, marche légère';
+    document.getElementById('todaySessionName').textContent = currentLang === 'en' ? 'REST DAY' : 'JOUR DE REPOS';
+    document.getElementById('todaySessionDesc').textContent = currentLang === 'en' ? 'Active recovery — stretching, light walk' : 'Récupération active — étirements, marche légère';
     document.getElementById('todayExCount').textContent = '';
     document.getElementById('todayExPreview').innerHTML = '';
     document.querySelector('#todayCard button').style.display = 'none';
@@ -7042,7 +7069,7 @@ function renderTodayCard() {
   document.getElementById('todaySessionIcon').textContent = icon;
   document.getElementById('todaySessionName').textContent = day.label?.split('—')[0]?.trim().toUpperCase() || day.muscle.toUpperCase();
   document.getElementById('todaySessionDesc').textContent = day.label?.split('—')[1]?.trim() || day.muscle;
-  document.getElementById('todayExCount').textContent = `${day.exercises.length} exercices`;
+  document.getElementById('todayExCount').textContent = `${day.exercises.length} ${currentLang === 'en' ? 'exercises' : 'exercices'}`;
 
   // Aperçu exercices
   document.getElementById('todayExPreview').innerHTML = day.exercises.map(ex => `
@@ -7153,7 +7180,7 @@ function launchSession() {
   switchSessionTab('live');
   renderLiveExercise();
   startElapsed();
-  sendNotif('🏋️ Séance démarrée !', PROGRAMS[currentProgKey].name + ' — ' + day.muscle);
+  sendNotif(currentLang === 'en' ? '🏋️ Session started!' : '🏋️ Séance démarrée !', PROGRAMS[currentProgKey].name + ' — ' + day.muscle);
 }
 
 // ── RENDU EXERCICE EN COURS ───────────────────────────────────
@@ -7166,14 +7193,18 @@ function renderLiveExercise() {
 
   document.getElementById('liveProgName').textContent   = PROGRAMS[currentSession.progKey]?.name.toUpperCase() || currentSession.progName.toUpperCase();
   document.getElementById('liveSessionDay').textContent = currentSession.dayLabel;
-  document.getElementById('liveExIdx').textContent      = `Exercice ${currentEx + 1} / ${totalEx}`;
+  document.getElementById('liveExIdx').textContent = currentLang === 'en'
+    ? `Exercise ${currentEx + 1} / ${totalEx}`
+    : `Exercice ${currentEx + 1} / ${totalEx}`;
   document.getElementById('liveExCount').textContent    = `${ex.name}`;
   document.getElementById('liveProgressFill').style.width = ((currentEx / totalEx) * 100) + '%';
 
   document.getElementById('liveExMuscle').textContent = ex.muscle.toUpperCase();
   document.getElementById('liveExName').textContent   = ex.name.toUpperCase();
   const noteTxt = ex.note ? ` · ${ex.note}` : '';
-  document.getElementById('liveExSets').textContent   = `${ex.sets} séries × ${ex.reps} reps${noteTxt} · Repos ${fmtTime(ex.restSec)}`;
+  document.getElementById('liveExSets').textContent = currentLang === 'en'
+    ? `${ex.sets} sets × ${ex.reps} reps${noteTxt} · Rest ${fmtTime(ex.restSec)}`
+    : `${ex.sets} séries × ${ex.reps} reps${noteTxt} · Repos ${fmtTime(ex.restSec)}`;
   document.getElementById('liveCurrentSetNum').textContent = `${currentSet}/${ex.sets}`;
 
   // ── Perf précédente ────────────────────────────────────────
@@ -7183,7 +7214,9 @@ function renderLiveExercise() {
   const prevTxt = document.getElementById('livePrevPerfText');
   if (prevPerf) {
     prevEl.style.display = 'flex';
-    prevTxt.textContent = `Dernière fois : ${prevPerf.best}kg × ${prevPerf.reps} reps · Volume ${prevPerf.volume}kg`;
+    prevTxt.textContent = currentLang === 'en'
+      ? `Last time: ${prevPerf.best}kg × ${prevPerf.reps} reps · Volume ${prevPerf.volume}kg`
+      : `Dernière fois : ${prevPerf.best}kg × ${prevPerf.reps} reps · Volume ${prevPerf.volume}kg`;
   } else {
     prevEl.style.display = 'none';
   }
@@ -7211,7 +7244,9 @@ function renderLiveExercise() {
   // Next/Finish button
   const isLast = currentEx >= exercises.length - 1;
   const nextBtn = document.getElementById('liveNextBtn');
-  nextBtn.textContent = isLast && currentSet >= ex.sets ? 'Terminer 🏁' : 'Exo suivant →';
+  nextBtn.textContent = isLast && currentSet >= ex.sets
+    ? (currentLang === 'en' ? 'Finish 🏁' : 'Terminer 🏁')
+    : (currentLang === 'en' ? 'Next exercise →' : 'Exo suivant →');
   nextBtn.className = 'live-nav-btn' + (isLast && currentSet >= ex.sets ? ' finish' : '');
 
   document.getElementById('liveNotes').value = '';
@@ -7298,7 +7333,9 @@ function validateSet() {
   } else {
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
     const nextBtn = document.getElementById('liveNextBtn');
-    nextBtn.textContent = currentEx >= exercises.length - 1 ? 'Terminer 🏁' : 'Exo suivant →';
+    nextBtn.textContent = currentEx >= exercises.length - 1
+      ? (currentLang === 'en' ? 'Finish 🏁' : 'Terminer 🏁')
+      : (currentLang === 'en' ? 'Next exercise →' : 'Exo suivant →');
     nextBtn.className = 'live-nav-btn' + (currentEx >= exercises.length - 1 ? ' finish' : '');
   }
 }
@@ -7333,7 +7370,7 @@ function liveStartTimer(seconds) {
       document.getElementById('liveTimerCount').textContent = '✓ GO!';
       document.getElementById('liveTimerCount').style.color = '#38ef7d';
       if (navigator.vibrate) navigator.vibrate([200,100,200,100,200]);
-      sendNotif('⏰ Repos terminé !', 'C\'est reparti — prochaine série !');
+      sendNotif('⏰ ' + (currentLang === 'en' ? 'Rest over!' : 'Repos terminé !'), currentLang === 'en' ? "Go — next set!" : "C'est reparti — prochaine série !");
       setTimeout(() => {
         if (document.getElementById('liveTimerCount'))
           document.getElementById('liveTimerCount').style.removeProperty('color');
@@ -7385,10 +7422,15 @@ function showSummary() {
   const totalVolume  = log.reduce((a,e) => a + (e.weight * e.reps), 0);
   const totalReps    = log.reduce((a,e) => a + e.reps, 0);
 
-  document.getElementById('summaryTimeText').textContent =
-    `Durée : ${fmtTime(elapsedSec)} · ${new Date(currentSession.startTime).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'})}`;
+  document.getElementById('summaryTimeText').textContent = currentLang === 'en'
+    ? `Duration: ${fmtTime(elapsedSec)} · ${new Date(currentSession.startTime).toLocaleDateString('en-US', {weekday:'long', day:'numeric', month:'long'})}`
+    : `Durée : ${fmtTime(elapsedSec)} · ${new Date(currentSession.startTime).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'})}`;
 
-  document.getElementById('summaryStats').innerHTML = `
+  document.getElementById('summaryStats').innerHTML = currentLang === 'en' ? `
+    <div class="summary-stat"><div class="summary-stat-val">${totalSets}</div><div class="summary-stat-lbl">Sets</div></div>
+    <div class="summary-stat"><div class="summary-stat-val">${totalReps}</div><div class="summary-stat-lbl">Reps</div></div>
+    <div class="summary-stat"><div class="summary-stat-val">${Math.round(totalVolume/1000*10)/10}t</div><div class="summary-stat-lbl">Volume</div></div>
+  ` : `
     <div class="summary-stat"><div class="summary-stat-val">${totalSets}</div><div class="summary-stat-lbl">Séries</div></div>
     <div class="summary-stat"><div class="summary-stat-val">${totalReps}</div><div class="summary-stat-lbl">Répétitions</div></div>
     <div class="summary-stat"><div class="summary-stat-val">${Math.round(totalVolume/1000*10)/10}t</div><div class="summary-stat-lbl">Volume</div></div>
@@ -7437,7 +7479,7 @@ function saveSession() {
   document.getElementById('stab-live').style.display = 'none';
   switchSessionTab('history');
   renderHistory();
-  sendNotif('💾 Séance sauvegardée !', `${progName} — ${dayLabel.split('—')[0].trim()}`);
+  sendNotif(currentLang === 'en' ? '💾 Session saved!' : '💾 Séance sauvegardée !', `${progName} — ${dayLabel.split('—')[0].trim()}`);
   document.getElementById('session-mode-btn').classList.add('has-scheduled');
 }
 
@@ -7462,7 +7504,7 @@ function populateExerciseSelect() {
   const allEx = new Set();
   history.forEach(s => s.log.forEach(e => { if (e.weight > 0) allEx.add(e.exName); }));
   const sel = document.getElementById('progExSelect');
-  sel.innerHTML = '<option value="">— Choisir un exercice —</option>';
+  sel.innerHTML = `<option value="">${currentLang === 'en' ? '— Choose an exercise —' : '— Choisir un exercice —'}</option>`;
   [...allEx].sort().forEach(name => {
     const opt = document.createElement('option'); opt.value = name; opt.textContent = name;
     sel.appendChild(opt);
@@ -7473,7 +7515,7 @@ function populateExerciseSelect() {
 function renderProgression() {
   const exName = document.getElementById('progExSelect').value;
   const container = document.getElementById('progressionChart');
-  if (!exName) { container.innerHTML = '<div style="color:var(--gray);text-align:center;padding:40px 0;font-size:0.85rem;">Sélectionne un exercice</div>'; return; }
+  if (!exName) { container.innerHTML = `<div style="color:var(--gray);text-align:center;padding:40px 0;font-size:0.85rem;">${currentLang === 'en' ? 'Select an exercise' : 'Sélectionne un exercice'}</div>`; return; }
 
   const history = storageGet('history') || [];
   const points = [];
@@ -7483,10 +7525,10 @@ function renderProgression() {
     const best = Math.max(...sets.map(s => s.weight));
     const vol = sets.reduce((a,s) => a + s.weight * s.reps, 0);
     const d = new Date(session.date);
-    points.push({ date: d, dateStr: d.toLocaleDateString('fr-FR',{day:'numeric',month:'short'}), best, vol: Math.round(vol), sets: sets.length });
+    points.push({ date: d, dateStr: d.toLocaleDateString(currentLang === 'en' ? 'en-US' : 'fr-FR',{day:'numeric',month:'short'}), best, vol: Math.round(vol), sets: sets.length });
   });
 
-  if (!points.length) { container.innerHTML = '<div style="color:var(--gray);text-align:center;padding:40px 0;font-size:0.85rem;">Pas encore de données pour cet exercice</div>'; return; }
+  if (!points.length) { container.innerHTML = `<div style="color:var(--gray);text-align:center;padding:40px 0;font-size:0.85rem;">${currentLang === 'en' ? 'No data yet for this exercise' : 'Pas encore de données pour cet exercice'}</div>`; return; }
 
   const maxWeight = Math.max(...points.map(p => p.best));
   const minWeight = Math.min(...points.map(p => p.best));
@@ -7518,15 +7560,15 @@ function renderProgression() {
       <div style="display:flex;gap:16px;align-items:center;">
         <div style="text-align:center;">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);">${maxWeight}kg</div>
-          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Record</div>
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">${currentLang === 'en' ? 'Record' : 'Record'}</div>
         </div>
         <div style="text-align:center;">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:${deltaColor};">${deltaStr}</div>
-          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Évolution</div>
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">${currentLang === 'en' ? 'Progress' : 'Évolution'}</div>
         </div>
         <div style="text-align:center;">
           <div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--orange);">${points.length}</div>
-          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">Séances</div>
+          <div style="font-size:0.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--gray);">${currentLang === 'en' ? 'Sessions' : 'Séances'}</div>
         </div>
       </div>
     </div>
@@ -7559,7 +7601,7 @@ function renderProgression() {
         <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:rgba(255,255,255,0.02);border-radius:6px;font-size:0.78rem;">
           <span style="color:var(--gray);font-family:'Barlow Condensed';">${p.dateStr}</span>
           <span style="color:var(--light);font-family:'Bebas Neue';letter-spacing:1px;">${p.best}kg</span>
-          <span style="color:var(--gray);">${p.sets} séries · vol ${p.vol}kg</span>
+          <span style="color:var(--gray);">${p.sets} ${currentLang === 'en' ? 'sets · vol' : 'séries · vol'} ${p.vol}kg</span>
         </div>
       `).join('')}
     </div>
@@ -7581,14 +7623,14 @@ function renderRecords() {
   });
 
   if (!Object.keys(records).length) {
-    container.innerHTML = '<div style="color:var(--gray);text-align:center;padding:40px 0;font-size:0.85rem;">Complète des séances pour voir tes records !</div>';
+    container.innerHTML = `<div style="color:var(--gray);text-align:center;padding:40px 0;font-size:0.85rem;">${currentLang === 'en' ? 'Complete sessions to see your records!' : 'Complète des séances pour voir tes records !'}</div>`;
     return;
   }
 
   const sorted = Object.entries(records).sort((a,b) => b[1].weight - a[1].weight);
   container.innerHTML = sorted.map(([name, r], i) => {
     const d = new Date(r.date);
-    const dateStr = d.toLocaleDateString('fr-FR', { day:'numeric', month:'short', year:'numeric' });
+    const dateStr = d.toLocaleDateString(currentLang === 'en' ? 'en-US' : 'fr-FR', { day:'numeric', month:'short', year:'numeric' });
     const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '🏆';
     return `<div style="display:flex;align-items:center;gap:12px;background:var(--dark3);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px 16px;margin-bottom:8px;transition:border-color 0.2s;" onmouseover="this.style.borderColor='rgba(255,183,3,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.07)'">
       <div style="font-size:1.4rem;flex-shrink:0;">${medal}</div>
@@ -7617,17 +7659,19 @@ function renderHistory() {
   document.getElementById('gstatPRs').textContent       = totalPRs;
 
   if (!history.length) {
-    container.innerHTML = '<div class="history-empty">Aucune séance enregistrée.<br>Lance ta première séance et sauvegarde-la !</div>';
+    container.innerHTML = `<div class="history-empty">${currentLang === 'en' ? 'No session recorded.<br>Start your first session and save it!' : 'Aucune séance enregistrée.<br>Lance ta première séance et sauvegarde-la !'}</div>`;
     return;
   }
 
   container.innerHTML = history.map((s, i) => {
     const d = new Date(s.date);
-    const dateStr = d.toLocaleDateString('fr-FR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-    const timeStr = d.toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit', hour12: false });
+    const locale = currentLang === 'en' ? 'en-US' : 'fr-FR';
+    const dateStr = d.toLocaleDateString(locale, { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    const timeStr = d.toLocaleTimeString(locale, { hour:'2-digit', minute:'2-digit', hour12: currentLang === 'en' });
     const grouped = {};
     s.log.forEach(e => { if (!grouped[e.exName]) grouped[e.exName] = []; grouped[e.exName].push(e); });
     const prCount = s.log.filter(e => e.isPR).length;
+    const setsLabel = currentLang === 'en' ? 'sets' : 'séries';
     return `<div class="history-session" id="hs-${s.id}">
       <div class="history-session-header" onclick="toggleHistory('${s.id}')">
         <div class="history-date-block">
@@ -7636,7 +7680,7 @@ function renderHistory() {
         </div>
         <div class="history-badges">
           <div class="history-badge">${fmtTime(s.duration||0)}</div>
-          <div class="history-badge green">${s.totalSets} séries</div>
+          <div class="history-badge green">${s.totalSets} ${setsLabel}</div>
           ${prCount > 0 ? `<div class="history-badge" style="background:rgba(255,183,3,0.15);color:var(--gold);">🏆 ${prCount} PR</div>` : ''}
         </div>
       </div>
@@ -7649,7 +7693,7 @@ function renderHistory() {
             <div class="history-ex-detail">${sets.map(s=>`${s.weight||0}kg×${s.reps}`).join(' / ')}</div>
           </div>`;
         }).join('')}
-        <button class="history-delete-btn" onclick="deleteSession(${s.id})">🗑 Supprimer cette séance</button>
+        <button class="history-delete-btn" onclick="deleteSession(${s.id})">${currentLang === 'en' ? '🗑 Delete this session' : '🗑 Supprimer cette séance'}</button>
       </div>
     </div>`;
   }).join('');
@@ -7661,7 +7705,7 @@ function toggleHistory(id) {
 }
 
 function deleteSession(id) {
-  if (!confirm('Supprimer cette séance ?')) return;
+  if (!confirm(currentLang === 'en' ? 'Delete this session?' : 'Supprimer cette séance ?')) return;
   const history = (storageGet('history') || []).filter(s => s.id !== id);
   storageSet('history', history);
   renderHistory();
@@ -9433,6 +9477,56 @@ const FR_EN = {
   // GOAL BANNER
   '🔥 MODE PERTE DE POIDS ACTIVÉ': '🔥 WEIGHT LOSS MODE ACTIVE',
 
+  // SESSION MODE — STATIC HTML
+  '⚡ Mode Séance': '⚡ Session Mode',
+  'Repos entre séries': 'Rest between sets',
+  'Démarrer': 'Start',
+  '🔴 En cours': '🔴 Live',
+  'Planifier': 'Schedule',
+  'Historique': 'History',
+  '⚡ LANCER MA SÉANCE DU JOUR': "⚡ LAUNCH TODAY'S SESSION",
+  '⚡ LANCER LA SÉANCE': '⚡ LAUNCH SESSION',
+  'AUCUN PROGRAMME ACTIF': 'NO ACTIVE PROGRAM',
+  'Choisis un programme ci-dessous ou crée le tien pour voir ta séance du jour automatiquement.': 'Choose a program below or create your own to see your daily session automatically.',
+  'Changer de programme': 'Change program',
+  'Choisir une séance manuellement': 'Choose a session manually',
+  '6j/sem · Push Pull Legs': '6d/week · Push Pull Legs',
+  '3j/sem · Polyvalent': '3d/week · Versatile',
+  '4j/sem · Force & Volume': '4d/week · Strength & Volume',
+  '3j/sem · Progression linéaire': '3d/week · Linear progression',
+  'Crée ton propre programme': 'Create your own program',
+  'Intermédiaire+': 'Intermediate+',
+  'Tous niveaux': 'All levels',
+  'Intermédiaire': 'Intermediate',
+  'Débutant': 'Beginner',
+  'Personnalisé': 'Custom',
+  'Programme Perso': 'Custom Program',
+  'SÉANCE TERMINÉE !': 'SESSION COMPLETE!',
+  'Exercice 1': 'Exercise 1',
+  'Séance unique': 'Single session',
+  'Rappels quotidiens': 'Daily reminders',
+  'Type de séance': 'Session type',
+  "— Sélectionne le programme d'abord —": '— Select program first —',
+  'Date': 'Date',
+  'Heure': 'Time',
+  "Heure d'entraînement chaque jour": 'Daily training time',
+  'Jours actifs': 'Active days',
+  '📅 PLANIFIER CETTE SÉANCE': '📅 SCHEDULE THIS SESSION',
+  '🔔 ACTIVER LES RAPPELS QUOTIDIENS': '🔔 ACTIVATE DAILY REMINDERS',
+  "🔔 Tu recevras une notification chaque jour sélectionné à l'heure choisie, même si l'app est fermée (si installée comme PWA).": '🔔 You will receive a notification every selected day at the chosen time, even if the app is closed (if installed as PWA).',
+  'Rappels quotidiens actifs': 'Active daily reminders',
+  'Séances planifiées': 'Scheduled sessions',
+  'Aucune séance planifiée': 'No session scheduled',
+  'Aucune séance enregistrée.': 'No session recorded.',
+  'Lance ta première séance et sauvegarde-la !': 'Start your first session and save it!',
+  '🗑 Supprimer cette séance': '🗑 Delete this session',
+  'Supprimer cette séance ?': 'Delete this session?',
+  'Sélectionne un exercice': 'Select an exercise',
+  'Pas encore de données pour cet exercice': 'No data yet for this exercise',
+  'Complète des séances pour voir tes records !': 'Complete sessions to see your records!',
+  'Record': 'Record',
+  'Évolution': 'Progress',
+  'Séances': 'Sessions',
   // Misc UI
   'Voir la vidéo': 'Watch video',
   '— Choisir le programme d\'abord —': '— Choose program first —',
@@ -9455,6 +9549,15 @@ const FR_EN = {
 // Build reverse EN→FR map
 const EN_FR = {};
 Object.entries(FR_EN).forEach(([fr, en]) => { EN_FR[en] = fr; });
+
+// ── t() — inline translation helper for JS-generated text ──────
+function t(frStr) {
+  return (currentLang === 'en' && FR_EN[frStr]) ? FR_EN[frStr] : frStr;
+}
+function tEN(frStr) {
+  // Always returns EN version (for dynamic text rendered after lang switch)
+  return currentLang === 'en' ? (FR_EN[frStr] || frStr) : frStr;
+}
 
 // ── CURRENT STATE ─────────────────────────────────────────────
 let _langActive = false; // prevent double-init
