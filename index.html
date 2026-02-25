@@ -8776,306 +8776,931 @@ function cpbDeleteProgram(id) {
 </script>
 <!-- ═══ IRONFORGE — i18n + Goal Switch ═══ -->
 <script>
-// ── TRANSLATIONS DICTIONARY ─────────────────────────────────
-const TRANSLATIONS = {
-  fr: {
-    nav_programme:    'Programme',
-    nav_warmup:       'Échauffement',
-    nav_exercises:    'Exercices',
-    nav_calories:     'Calories',
-    nav_nutrition:    'Nutrition',
-    nav_recipes:      'Recettes',
-    nav_tips:         'Conseils',
-    nav_supplements:  'Suppléments',
-    goal_masse:       '💪 Masse',
-    goal_poids:       '🔥 Perte de poids',
-    hero_badge_masse: '⚡ Guide Complet Prise de Masse',
-    hero_badge_poids: '🔥 Guide Complet Perte de Poids',
-    hero_title_span:  'TON CORPS',
-    hero_sub:         'Programme · Nutrition · Calcul Calorique · Exercices',
-    hero_cta1:        'Calculer mes calories',
-    hero_cta2:        'Voir le programme',
-    stat1_masse:      'Jours / semaine',
-    stat2_masse:      'Kcal surplus',
-    stat1_poids:      'Séances / semaine',
-    stat2_poids:      'Kcal déficit',
-    stat3:            'Protéines / kg',
-    stat4:            'Sommeil requis',
-    section_programme:'PROGRAMME D\'ENTRAÎNEMENT',
-    tabs_general:     'Programmes généraux',
-    tabs_spe:         'Spécialisation par muscle',
-    tabs_poids:       'Programmes perte de poids',
-    calc_goal_label:  'Objectif',
-  },
-  en: {
-    nav_programme:    'Program',
-    nav_warmup:       'Warm-up',
-    nav_exercises:    'Exercises',
-    nav_calories:     'Calories',
-    nav_nutrition:    'Nutrition',
-    nav_recipes:      'Recipes',
-    nav_tips:         'Tips',
-    nav_supplements:  'Supplements',
-    goal_masse:       '💪 Bulk',
-    goal_poids:       '🔥 Weight Loss',
-    hero_badge_masse: '⚡ Complete Muscle Gain Guide',
-    hero_badge_poids: '🔥 Complete Weight Loss Guide',
-    hero_title_span:  'YOUR BODY',
-    hero_sub:         'Program · Nutrition · Calorie Calculator · Exercises',
-    hero_cta1:        'Calculate my calories',
-    hero_cta2:        'See the program',
-    stat1_masse:      'Days / week',
-    stat2_masse:      'Kcal surplus',
-    stat1_poids:      'Sessions / week',
-    stat2_poids:      'Kcal deficit',
-    stat3:            'Protein / kg',
-    stat4:            'Sleep required',
-    section_programme:'TRAINING PROGRAM',
-    tabs_general:     'General programs',
-    tabs_spe:         'Muscle specialization',
-    tabs_poids:       'Weight loss programs',
-    calc_goal_label:  'Goal',
-  }
-};
+// ════════════════════════════════════════════════════════════
+//  IRONFORGE i18n — Full DOM text replacement system
+//  Approach: walk ALL text nodes, replace FR→EN using big dict
+// ════════════════════════════════════════════════════════════
 
-// EN translations for dynamic text blocks
-const DYNAMIC_EN = {
-  calcGoalOptions_masse: [
-    'Lean Bulk — +250 kcal (slow, minimal fat)',
-    'Bulk — +500 kcal (recommended)',
-    'Fast Bulk — +750 kcal'
-  ],
-  calcGoalOptions_poids: [
-    'Light deficit — -300 kcal (slow, ideal)',
-    'Moderate deficit — -500 kcal (recommended)',
-    'Aggressive deficit — -750 kcal (advanced)'
-  ],
-  calcGoalLabel_masse: 'Daily calories for muscle gain',
-  calcGoalLabel_poids: 'Daily calories for weight loss',
-  surplusLabel_masse:  'Caloric surplus',
-  surplusLabel_poids:  'Caloric deficit',
-  goalBannerText: '🔥 <strong>WEIGHT LOSS MODE ON</strong> — Programs adapted for caloric deficit with integrated cardio. Keep 2g protein/kg to preserve muscle mass.',
-  calcGoalFormLabel_masse: 'Bulk goal',
-  calcGoalFormLabel_poids: 'Weight loss goal',
-};
-const DYNAMIC_FR = {
-  calcGoalOptions_masse: [
-    'Lean Bulk — +250 kcal (prise lente, peu de gras)',
-    'Prise de masse — +500 kcal (recommandé)',
-    'Prise de masse rapide — +750 kcal'
-  ],
-  calcGoalOptions_poids: [
-    'Déficit léger — -300 kcal (perte lente, idéale)',
-    'Déficit modéré — -500 kcal (recommandé)',
-    'Déficit agressif — -750 kcal (pour avancés)'
-  ],
-  calcGoalLabel_masse: 'Calories quotidiennes pour la prise de masse',
-  calcGoalLabel_poids: 'Calories quotidiennes pour la perte de poids',
-  surplusLabel_masse:  'Surplus calorique',
-  surplusLabel_poids:  'Déficit calorique',
-  goalBannerText: '🔥 <strong>MODE PERTE DE POIDS ACTIVÉ</strong> — Programmes adaptés au déficit calorique avec cardio intégré. Maintiens 2g de protéines/kg pour préserver ta masse musculaire.',
-  calcGoalFormLabel_masse: 'Objectif prise de masse',
-  calcGoalFormLabel_poids: 'Objectif perte de poids',
-};
-
-// ── CURRENT STATE ────────────────────────────────────────────
 let currentLang = localStorage.getItem('if_lang') || 'fr';
 let currentGoal = localStorage.getItem('if_goal') || 'masse';
 
-// ── APPLY TRANSLATIONS ───────────────────────────────────────
-function applyTranslations(lang) {
-  const T = TRANSLATIONS[lang];
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    if (T[key] !== undefined) el.textContent = T[key];
+// ── FR → EN complete dictionary ──────────────────────────────
+const FR_EN = {
+  // NAV & UI
+  'Programme': 'Program',
+  'Échauffement': 'Warm-up',
+  'Exercices': 'Exercises',
+  'Calories': 'Calories',
+  'Nutrition': 'Nutrition',
+  'Recettes': 'Recipes',
+  'Conseils': 'Tips',
+  'Suppléments': 'Supplements',
+  'Tracker': 'Tracker',
+  'FAQ': 'FAQ',
+
+  // HERO
+  '⚡ Guide Complet Prise de Masse': '⚡ Complete Muscle Gain Guide',
+  '🔥 Guide Complet Perte de Poids': '🔥 Complete Weight Loss Guide',
+  'FORGE': 'FORGE',
+  'TON CORPS': 'YOUR BODY',
+  'Programme · Nutrition · Calcul Calorique · Exercices': 'Program · Nutrition · Calorie Calculator · Exercises',
+  'Calculer mes calories': 'Calculate my calories',
+  'Voir le programme': 'View program',
+  'Jours / semaine': 'Days / week',
+  'Kcal surplus': 'Kcal surplus',
+  'Séances / semaine': 'Sessions / week',
+  'Kcal déficit': 'Kcal deficit',
+  'Protéines / kg': 'Protein / kg',
+  'Sommeil requis': 'Sleep required',
+  'Prise de masse': 'Muscle gain',
+  'Perte de poids': 'Weight loss',
+
+  // SECTION TITLES
+  "PROGRAMME D'ENTRAÎNEMENT": 'TRAINING PROGRAM',
+  'ÉCHAUFFEMENT': 'WARM-UP',
+  'EXERCICES — TUTORIELS VIDÉO': 'EXERCISES — VIDEO TUTORIALS',
+  'CALCULATEUR CALORIQUE': 'CALORIE CALCULATOR',
+  'PLAN NUTRITIONNEL': 'NUTRITION PLAN',
+  'RECETTES PROTÉINÉES': 'HIGH-PROTEIN RECIPES',
+  'CONSEILS ESSENTIELS': 'ESSENTIAL TIPS',
+  'SUPPLÉMENTS': 'SUPPLEMENTS',
+  'SUIVI DE PROGRESSION': 'PROGRESS TRACKER',
+  'FAQ — QUESTIONS FRÉQUENTES': 'FAQ — FREQUENTLY ASKED QUESTIONS',
+
+  // PROGRAMME TABS
+  'Programmes généraux': 'General programs',
+  'Spécialisation par muscle': 'Muscle specialization',
+  'Programmes perte de poids': 'Weight loss programs',
+  'PPL — Push/Pull/Legs': 'PPL — Push/Pull/Legs',
+  'Full Body': 'Full Body',
+  'Upper/Lower': 'Upper/Lower',
+  'Débutant 5×5': 'Beginner 5×5',
+  'Mon Programme Perso': 'My Custom Program',
+  'Pectoraux': 'Chest',
+  'Abdominaux': 'Abs',
+  'Bras': 'Arms',
+  'Épaules': 'Shoulders',
+  'Dos': 'Back',
+  'Jambes': 'Legs',
+  'Circuit HIIT 4j': 'HIIT Circuit 4d',
+  'Cutting PPL': 'Cutting PPL',
+  'Cardio + Muscu 3j': 'Cardio + Weights 3d',
+
+  // WARMUP TABS
+  'GÉNÉRAL': 'GENERAL',
+  'PECTORAUX': 'CHEST',
+  'DOS': 'BACK',
+  'ÉPAULES': 'SHOULDERS',
+  'JAMBES': 'LEGS',
+
+  // NUTRITION TABS
+  'Petit Budget': 'Budget',
+  'Standard': 'Standard',
+  'Athlete Pro': 'Athlete Pro',
+
+  // DAY NAMES
+  'LUNDI': 'MONDAY',
+  'MARDI': 'TUESDAY',
+  'MERCREDI': 'WEDNESDAY',
+  'JEUDI': 'THURSDAY',
+  'VENDREDI': 'FRIDAY',
+  'SAMEDI': 'SATURDAY',
+  'DIMANCHE': 'SUNDAY',
+  'UPPER A': 'UPPER A',
+  'UPPER B': 'UPPER B',
+  'LOWER A': 'LOWER A',
+  'LOWER B': 'LOWER B',
+  'SÉANCE A': 'SESSION A',
+  'SÉANCE B': 'SESSION B',
+  'SÉANCE A — FORCE': 'SESSION A — STRENGTH',
+  'SÉANCE A — VOLUME': 'SESSION A — VOLUME',
+  'SÉANCE A — LARGEUR': 'SESSION A — WIDTH',
+  'SÉANCE A — QUADRICEPS': 'SESSION A — QUADS',
+  'SÉANCE B — VOLUME': 'SESSION B — VOLUME',
+  'SÉANCE B — ISOLATION': 'SESSION B — ISOLATION',
+  'SÉANCE B — ÉPAISSEUR': 'SESSION B — THICKNESS',
+  'SÉANCE B — ISCHIOS / FESSIERS': 'SESSION B — HAMSTRINGS / GLUTES',
+  'SÉANCE BICEPS': 'BICEPS SESSION',
+  'SÉANCE TRICEPS': 'TRICEPS SESSION',
+  'SÉANCE FORCE CORE': 'CORE STRENGTH SESSION',
+  'SÉANCE VOLUME': 'VOLUME SESSION',
+  'SÉANCE TYPE — FULL BODY': 'TEMPLATE SESSION — FULL BODY',
+  'JOUR 1 — UPPER CIRCUIT': 'DAY 1 — UPPER CIRCUIT',
+  'JOUR 2 — LOWER CIRCUIT': 'DAY 2 — LOWER CIRCUIT',
+  'JOUR 3 — FULL HIIT': 'DAY 3 — FULL HIIT',
+  'JOUR 4 — CARDIO RÉSISTANCE': 'DAY 4 — CARDIO RESISTANCE',
+  'PUSH — FORCE': 'PUSH — STRENGTH',
+  'PULL — FORCE': 'PULL — STRENGTH',
+  'LEGS — DÉFICIT': 'LEGS — DEFICIT',
+  'PROGRESSION SUR 8 SEMAINES': '8-WEEK PROGRESSION',
+  'PHASE 1 — CARDIO LÉGER': 'PHASE 1 — LIGHT CARDIO',
+  'PHASE 2 — MOBILITÉ ARTICULAIRE': 'PHASE 2 — JOINT MOBILITY',
+  'PHASE 3 — ACTIVATION': 'PHASE 3 — ACTIVATION',
+  'PROTOCOLE UNIVERSEL — TOUTES SÉANCES': 'UNIVERSAL PROTOCOL — ALL SESSIONS',
+  'PROGRAMME FULL BODY — 3 JOURS / SEMAINE': 'FULL BODY PROGRAM — 3 DAYS / WEEK',
+  'ÉCHAUFFEMENT DOS': 'BACK WARM-UP',
+  'ÉCHAUFFEMENT JAMBES': 'LEGS WARM-UP',
+  'ÉCHAUFFEMENT PECTORAUX': 'CHEST WARM-UP',
+  'ÉCHAUFFEMENT ÉPAULES': 'SHOULDERS WARM-UP',
+
+  // DAY FOCUS
+  'PUSH — Pec · Épaules · Triceps': 'PUSH — Chest · Shoulders · Triceps',
+  'PULL — Dos · Biceps · Arrière-Épaules': 'PULL — Back · Biceps · Rear Delts',
+  'PUSH — Répétition': 'PUSH — Repeat',
+  'PULL — Répétition': 'PULL — Repeat',
+  'LEGS — Quadriceps · Ischios · Fessiers': 'LEGS — Quads · Hamstrings · Glutes',
+  'Lundi · Mercredi · Vendredi': 'Monday · Wednesday · Friday',
+  'Lundi / Vendredi alternés': 'Monday / Friday alternating',
+  'Lundi — Force': 'Monday — Strength',
+  'Mardi — Force': 'Tuesday — Strength',
+  'Jeudi — Hypertrophie': 'Thursday — Hypertrophy',
+  'Vendredi — Hypertrophie': 'Friday — Hypertrophy',
+  'Lundi · Charges lourdes': 'Monday · Heavy loads',
+  'Lundi · Dos en V et grand dorsal': 'Monday · V-taper & lats',
+  'Lundi · Épaules larges et rondes': 'Monday · Wide round shoulders',
+  'Lundi · Quad dominant': 'Monday · Quad dominant',
+  'Lundi · Haut du corps + cardio': 'Monday · Upper body + cardio',
+  'Lundi · Pecs + Épaules + Triceps · Charges lourdes': 'Monday · Chest + Shoulders + Triceps · Heavy',
+  'Lundi & Jeudi · Abdos profonds': 'Monday & Thursday · Deep abs',
+  'Mardi · Focus biceps complets': 'Tuesday · Full bicep focus',
+  'Mardi · Bas du corps + fessiers': 'Tuesday · Lower body + glutes',
+  'Mardi · Dos + Biceps · Volume maintenu': 'Tuesday · Back + Biceps · Volume maintained',
+  'Mardi & Vendredi · Pump abdominal': 'Tuesday & Friday · Ab pump',
+  'Jeudi · Détail et définition': 'Thursday · Detail and definition',
+  'Jeudi · Rowings et masse dorsale': 'Thursday · Rows and back mass',
+  'Jeudi · Pump & hypertrophie': 'Thursday · Pump & hypertrophy',
+  'Jeudi · Chaîne postérieure': 'Thursday · Posterior chain',
+  'Jeudi · Corps complet · Intensité max': 'Thursday · Full body · Max intensity',
+  'Jeudi · Jambes + Core · La séance la plus brûle-graisses': 'Thursday · Legs + Core · Most fat-burning session',
+  'Vendredi · Focus triceps 3 têtes': 'Friday · Triceps 3 heads focus',
+  'Vendredi · Volume + endurance': 'Friday · Volume + endurance',
+  'Lun · Mer · Ven · Répété 3 fois / semaine': 'Mon · Wed · Fri · Repeated 3 times / week',
+  '5 minutes · Élever la température corporelle': '5 minutes · Raise body temperature',
+  '3 minutes · Lubrifier les articulations': '3 minutes · Lubricate joints',
+  '3 minutes · Activer les muscles ciblés': '3 minutes · Activate target muscles',
+  '10-15 minutes · À faire avant chaque entraînement sans exception': '10-15 minutes · Do before every workout without exception',
+  '10 min · Avant développé couché / incliné': '10 min · Before bench / incline press',
+  '10 min · Avant développé militaire / élévations': '10 min · Before OHP / lateral raises',
+  '10 min · Avant tractions / rowing / deadlift': '10 min · Before pull-ups / rows / deadlift',
+  '12-15 min · Avant squat / leg press / deadlift': '12-15 min · Before squat / leg press / deadlift',
+  '2 séances chest / semaine · Focus hypertrophie · 8-12 semaines': '2 chest sessions / week · Hypertrophy focus · 8-12 weeks',
+  '3 faisceaux · Deltoïdes larges et ronds · 2 séances / semaine · 10-12 semaines': '3 heads · Wide round deltoids · 2 sessions / week · 10-12 weeks',
+  'Biceps + Triceps + Avant-bras · 2 séances bras / semaine · +2-3 cm en 12 semaines': 'Biceps + Triceps + Forearms · 2 arm sessions / week · +2-3 cm in 12 weeks',
+  'Quadriceps + Ischios + Fessiers + Mollets · 2 séances / semaine · Jambes de compétition': 'Quads + Hamstrings + Glutes + Calves · 2 sessions / week · Competition legs',
+  'Largeur + Épaisseur + Lombaires · 2 séances / semaine · Dos en V massif': 'Width + Thickness + Lower back · 2 sessions / week · Massive V-back',
+  '3-4 séances abdos / semaine · Cardio + gainage + isolation · Résultats visibles en 8-12 semaines': '3-4 abs sessions / week · Cardio + core + isolation · Visible results in 8-12 weeks',
+  '6 jours · Push Pull Legs adapté déficit · Cardio post-séance · Pour intermédiaires / avancés': '6 days · Deficit-adapted PPL · Post-workout cardio · For intermediate / advanced',
+  'Lundi · Mardi · Jeudi · Vendredi · Repos Mer, Sam, Dim · Brûler les graisses tout en gardant la masse': 'Mon · Tue · Thu · Fri · Rest Wed, Sat, Sun · Burn fat while keeping muscle',
+  'Lundi · Mercredi · Vendredi · Programme full body léger + cardio · Parfait pour commencer une perte de poids': 'Mon · Wed · Fri · Light full body + cardio · Perfect for starting weight loss',
+  'Comment évoluer le programme semaine après semaine': 'How to progress the program week by week',
+
+  // EXERCISE NAMES
+  'Développé Couché Barre': 'Barbell Bench Press',
+  'Développé Couché': 'Bench Press',
+  'Développé Couché (Hypertrophie)': 'Bench Press (Hypertrophy)',
+  'Développé Incliné Haltères': 'Incline Dumbbell Press',
+  'Développé Incliné Barre': 'Incline Barbell Press',
+  'Développé Militaire': 'Overhead Press',
+  'Développé Militaire Barre': 'Barbell OHP',
+  'Développé Arnold': 'Arnold Press',
+  'Développé Arnold Haltères': 'Arnold Dumbbell Press',
+  'Développé Arnold Haltères (Volume)': 'Arnold Dumbbell Press (Volume)',
+  'Développé Arnold Lourd': 'Heavy Arnold Press',
+  'Élévations Latérales': 'Lateral Raises',
+  'Élévations Latérales Haltères': 'Dumbbell Lateral Raises',
+  'Élévations Latérales Dropset': 'Lateral Raises Dropset',
+  'Raises Latérales (Dropset)': 'Lateral Raises (Dropset)',
+  'Élévations Frontales Haltères': 'Dumbbell Front Raises',
+  'Oiseau (Écarté Penché Haltères)': 'Bent-over Dumbbell Rear Delt Fly',
+  'Face Pull': 'Face Pull',
+  'Face Pull Poulie': 'Cable Face Pull',
+  'Face Pull Poulie Haute': 'High Cable Face Pull',
+  'Face Pull (finition)': 'Face Pull (finisher)',
+  'Dips Triceps': 'Triceps Dips',
+  'Dips Triceps Lestés': 'Weighted Triceps Dips',
+  'Dips Banc (poids du corps)': 'Bench Dips (bodyweight)',
+  'Dips (focus pecs, buste penché)': 'Dips (chest focus, lean forward)',
+  'Extension Triceps Poulie': 'Cable Triceps Pushdown',
+  'Extension Triceps Poulie (finition)': 'Cable Triceps Pushdown (finisher)',
+  'Extension Poulie Corde (écartement)': 'Rope Cable Extension (split)',
+  'Extension Poulie Haute (barre)': 'High Cable Extension (bar)',
+  'Skull Crusher Barre EZ (extension couché)': 'EZ Bar Skull Crusher',
+  'Superset 1 : Curl Barre + Extension Poulie': 'Superset 1: Barbell Curl + Cable Pushdown',
+  'Superset 2 : Curl Marteau + Dips': 'Superset 2: Hammer Curl + Dips',
+  'Superset 3 : Curl Poulie + Skull Crusher': 'Superset 3: Cable Curl + Skull Crusher',
+  'Curl Biceps Barre': 'Barbell Bicep Curl',
+  'Curl Barre EZ ou Droite': 'EZ Bar or Straight Bar Curl',
+  'Curl Incliné Haltères (pic)': 'Incline Dumbbell Curl (peak)',
+  'Curl Marteau Haltères': 'Hammer Curl',
+  'Curl Poulie Basse': 'Low Cable Curl',
+  'Avant-bras : Curl de poignet + Reverse Curl': 'Forearms: Wrist Curl + Reverse Curl',
+  'Soulevé de Terre': 'Deadlift',
+  'Soulevé de Terre Roumain (sumo)': 'Romanian Sumo Deadlift',
+  'Romanian Deadlift': 'Romanian Deadlift',
+  'Romanian Deadlift Haltères': 'Dumbbell Romanian Deadlift',
+  'Tractions Pronation': 'Pull-ups (Overhand)',
+  'Tractions Pronation Large': 'Wide-grip Pull-ups',
+  'Tractions Supination (Chins)': 'Chin-ups (Underhand)',
+  'Rowing Barre': 'Barbell Row',
+  'Rowing Barre Pronation': 'Overhand Barbell Row',
+  'T-Bar Row': 'T-Bar Row',
+  'Tirage Vertical Poulie': 'Lat Pulldown',
+  'Tirage Vertical Poulie Haute': 'High Lat Pulldown',
+  'Tirage Vertical Poulie Large': 'Wide-grip Lat Pulldown',
+  'Tirage Horizontal Poulie': 'Seated Cable Row',
+  'Tirage Horizontal Poulie (supination)': 'Underhand Seated Cable Row',
+  'Pull-Over Haltère': 'Dumbbell Pullover',
+  'Pull-Over Haltère (pecs)': 'Dumbbell Pullover (chest)',
+  'Écarté Poulie Basse': 'Low Cable Fly',
+  'Écarté Poulie Croisée (bas-haut)': 'Cross Cable Fly (low-to-high)',
+  'Écarté haltères légers — 2 × 15': 'Light dumbbell fly — 2 × 15',
+  'Pec Deck (Butterfly)': 'Pec Deck (Butterfly)',
+  'Pec Deck Butterfly': 'Pec Deck Butterfly',
+  'Hyperextension': 'Back Extension',
+  'Hyperextension Lestée': 'Weighted Back Extension',
+  'Squat Barre Haute': 'High Bar Back Squat',
+  'Squat Barre': 'Barbell Squat',
+  'Hack Squat Machine': 'Hack Squat Machine',
+  'Leg Press': 'Leg Press',
+  'Leg Press (pieds bas)': 'Leg Press (feet low)',
+  'Leg Press (pieds hauts et larges)': 'Leg Press (feet high & wide)',
+  'Fentes Bulgares': 'Bulgarian Split Squat',
+  'Fentes Bulgares Haltères': 'Dumbbell Bulgarian Split Squat',
+  'Leg Curl Couché': 'Lying Leg Curl',
+  'Mollets Debout': 'Standing Calf Raises',
+  'Mollets Debout Machine': 'Machine Standing Calf Raises',
+  'Mollets Assis Machine': 'Seated Calf Raises',
+  'Mollets Assis (soléaires)': 'Seated Calf Raises (soleus)',
+  'Planche Frontale': 'Front Plank',
+  'Planche Latérale': 'Side Plank',
+  'Planche 30 secondes': '30-second Plank',
+  'Relevé de Jambes Allongé': 'Lying Leg Raise',
+  'Relevé de Genoux Suspendu': 'Hanging Knee Raise',
+  'Crunch Poulie Haute': 'High Cable Crunch',
+  'Russian Twist Lesté': 'Weighted Russian Twist',
+  'Dragon Flag (ou variante genou)': 'Dragon Flag (or knee variation)',
+  'Bicycle Crunch': 'Bicycle Crunch',
+  'Ab Wheel / Rouleau': 'Ab Wheel',
+  'Ab Wheel — Rouleau Abdominal': 'Ab Wheel — Abdominal Roller',
+  'Ab Wheel (finition)': 'Ab Wheel (finisher)',
+  'Band pull-aparts (élastique)': 'Band Pull-aparts',
+  'Pompes (push-ups) au poids du corps': 'Push-ups (bodyweight)',
+  'Pompes au poids du corps — 2 × 15': 'Push-ups bodyweight — 2 × 15',
+  'Squats au poids du corps': 'Bodyweight Squats',
+  'Squats au poids du corps profonds — 2 × 15': 'Deep bodyweight squats — 2 × 15',
+  'Vélo elliptique ou rameur': 'Elliptical or rowing machine',
+  'Vélo stationnaire 5 min': '5 min stationary bike',
+  'Rouleau de massage (foam roll)': 'Foam roller',
+  'Rotation externe avec élastique — 2 × 15': 'External rotation with band — 2 × 15',
+  'Rotation du cou (lente)': 'Slow neck rotation',
+  'Rotations des épaules': 'Shoulder circles',
+  'Rotations des épaules — 2 × 10': 'Shoulder circles — 2 × 10',
+  'Rotations des épaules — 3 × 10': 'Shoulder circles — 3 × 10',
+  'Rotations des hanches et du bassin': 'Hip and pelvis rotations',
+  'Rotations des poignets et des coudes': 'Wrist and elbow rotations',
+  'Chat/Vache (Cat-Cow) — 2 × 10': 'Cat-Cow — 2 × 10',
+  'Fentes dynamiques — 2 × 10 par jambe': 'Dynamic lunges — 2 × 10 per leg',
+  'Cercles de hanches debout — 10 par sens': 'Standing hip circles — 10 each way',
+  'Good mornings barre vide — 2 × 10': 'Empty bar good mornings — 2 × 10',
+  'Tirage vertical léger poulie — 2 × 15': 'Light lat pulldown — 2 × 15',
+  'Face pull léger poulie — 2 × 20': 'Light cable face pull — 2 × 20',
+  'Leg curl machine léger — 2 × 15': 'Light machine leg curl — 2 × 15',
+  'Suspension passive à la barre 30 sec': 'Passive dead hang 30 sec',
+  'Marche 30-45 min': '30-45 min walk',
+  'Stretching complet 20 min': 'Full stretch 20 min',
+
+  // WARM-UP TIPS
+  "Règle d'or : commence léger, monte progressivement": "Golden rule: start light, build progressively",
+  "L'échauffement prépare les articulations, les muscles ET le système nerveux · Ne saute jamais cette étape": "Warm-up prepares joints, muscles AND the nervous system · Never skip this step",
+  "Jamais de mouvement balistique à froid": "Never do ballistic movements cold",
+  "Jamais de squat lourd sans échauffement des genoux": "Never heavy squat without warming up knees",
+  "L'épaule est l'articulation la plus complexe — la préparer sérieusement": "The shoulder is the most complex joint — warm it up seriously",
+
+  // WARM-UP SERIES DESCRIPTIONS  
+  '10 cercles vers l\'avant + 10 vers l\'arrière · Amplitude maximale': '10 circles forward + 10 backward · Full range',
+  '10 cercles dans chaque sens · Joints souvent négligés': '10 circles each direction · Often neglected joints',
+  '10 cercles par côté · Essentiel pour le squat et le deadlift': '10 circles each side · Essential for squat and deadlift',
+  '2 × 15 reps · Active les rhomboïdes · Avant séance dos ou épaules': '2 × 15 reps · Activates rhomboids · Before back or shoulder session',
+  '2 × 15 reps lents · Active les jambes et le gainage · Avant séance legs': '2 × 15 reps slow · Activates legs and core · Before leg session',
+  '2 × 15 reps · Active pecs, épaules, triceps · Parfait avant toute séance push': '2 × 15 reps · Activates chest, shoulders, triceps · Perfect before any push session',
+  '5 min sur tapis roulant · Pente légère · Pour débuter': '5 min treadmill · Light incline · For beginners',
+  '2-3 min à rythme calme · Activation cardio-vasculaire douce': '2-3 min at calm pace · Gentle cardiovascular activation',
+  'Elliptique, vélo ou rameur · Température corporelle +1-2°C': 'Elliptical, bike or rower · Body temp +1-2°C',
+  'Lents, amplitude maximale · Mobilise chevilles, genoux, hanches · Descendrele plus bas possible': 'Slow, full range · Mobilizes ankles, knees, hips · Go as low as possible',
+  'Mains sur les hanches · Grande amplitude · Lubrifie les articulations coxo-fémorales': 'Hands on hips · Full range · Lubricates hip joints',
+  'Grande amplitude · Avant + arrière · Obligatoire à chaque séance épaules': 'Full range · Forward + backward · Mandatory for every shoulder session',
+  'Marche avant avec rotation du buste · Ouvre les hanches · Active fessiers': 'Forward walk with torso rotation · Opens hips · Activates glutes',
+  'À 4 pattes · Mobilise la colonne vertébrale · Essentiel avant deadlift': 'On all fours · Mobilizes spine · Essential before deadlift',
+  'Flexion hanches dos neutre · Active les lombaires et ischios · Avant deadlift': 'Hip hinge neutral back · Activates lower back and hamstrings · Before deadlift',
+  'Complètes, amplitude totale · Active pecs + stabilisateurs épaules': 'Full, complete range · Activates pecs + shoulder stabilizers',
+  'Poids très léger (5-10 kg) · Étirement + activation pectorale · Lent': 'Very light weight (5-10 kg) · Chest stretch + activation · Slow',
+  'Rameur ou elliptique · Active tout le haut du corps': 'Rower or elliptical · Activates entire upper body',
+  'Rameur recommandé — active spécifiquement le dos': 'Rower recommended — specifically activates the back',
+  'Charge très légère · Active le grand dorsal · Connexion esprit-muscle': 'Very light weight · Activates lats · Mind-muscle connection',
+  'Descends les omoplates d\'abord, puis tire · Connexion esprit-muscle': 'Depress scapula first, then pull · Mind-muscle connection',
+  'Poids très léger · Active les arrière-deltoïdes et stabilisateurs': 'Very light weight · Activates rear delts and stabilizers',
+  'Coude à 90° au corps · Active la coiffe des rotateurs · Prévention blessure': 'Elbow 90° at side · Activates rotator cuff · Injury prevention',
+  'Coiffe des rotateurs + capsule articulaire + 3 faisceaux du deltoïde à activer': 'Rotator cuff + joint capsule + all 3 deltoid heads to activate',
+  'Meilleur échauffement jambes · Lubrifie les genoux et les hanches': 'Best leg warm-up · Lubricates knees and hips',
+  'Poids léger · Active les ischios avant le deadlift ou le RDL': 'Light weight · Activates hamstrings before deadlift or RDL',
+  'Le cartilage a besoin de synovie pour être lubrifié · 5 min de vélo minimum': 'Cartilage needs synovial fluid to be lubricated · 5 min bike minimum',
+
+  // WARM-UP PROGRESSIONS
+  'Série 1 — Barre vide (20 kg) × 10 reps': 'Set 1 — Empty bar (20 kg) × 10 reps',
+  'Série 2 — 50% de ta charge de travail × 8 reps': 'Set 2 — 50% of working weight × 8 reps',
+  'Série 3 — 75% de ta charge de travail × 5 reps': 'Set 3 — 75% of working weight × 5 reps',
+  'Série 4 — 90% de ta charge de travail × 2-3 reps': 'Set 4 — 90% of working weight × 2-3 reps',
+  'Commencer à charger · Toujours bien contrôlé · Repos 1 min': 'Start loading · Always controlled · 1 min rest',
+  'S\'approcher du poids de travail · Repos 2 min': 'Approach working weight · 2 min rest',
+  'Finaliser l\'activation neuro-musculaire · Repos 3 min · Puis travailler': 'Finalize neuro-muscular activation · 3 min rest · Then go to work',
+  'Commencer à 50% de ton max estimé': 'Start at 50% of estimated max',
+  'Parfaire la technique · Sentir le mouvement · Jamais de fatigue': 'Perfect technique · Feel the movement · No fatigue',
+  'Montée en charge au développé couché': 'Bench press warm-up progression',
+  'Montée en charge squat obligatoire': 'Mandatory squat warm-up progression',
+  '1 × 30 sec · Engage le core avant chaque séance · Protège le dos': '1 × 30 sec · Engage core before each session · Protects the back',
+  'Réduisent temporairement la force de 5-8% · Les faire APRÈS la séance uniquement': 'Temporarily reduces strength by 5-8% · Do them AFTER the session only',
+  'Réduit les courbatures de 40% · Améliore la récupération · Ne pas sauter': 'Reduces soreness by 40% · Improves recovery · Never skip',
+  'Focus sur les groupes travaillés': 'Focus on worked muscle groups',
+  '10-15 min · Quadriceps, dos, mollets': '10-15 min · Quads, back, calves',
+  '2 min avant + 2 min après chaque séance · Investissement qui dure toute la carrière': '2 min before + 2 min after each session · Investment that lasts a career',
+  'Technique d\'abord, charges ensuite': 'Technique first, load second',
+  'Favorise la récupération musculaire': 'Promotes muscle recovery',
+
+  // EXERCISE TIPS (ex-sets content for specific tips)
+  'Repos 3-5 minutes entre les séries': '3-5 minutes rest between sets',
+  'Si tu rates 3 séries × 5 reps': 'If you miss 3 sets × 5 reps',
+  'Réduis la charge de 10% et repars': 'Reduce weight by 10% and restart',
+  'Progression garantie 6-12 mois': 'Guaranteed progression 6-12 months',
+  '+50-100kg au squat la première année': '+50-100kg on squat the first year',
+  'NUTRITION : maintenez le surplus calorique': 'NUTRITION: maintain caloric surplus',
+  '1 série × 5 reps · +5kg / séance': '1 set × 5 reps · +5kg / session',
+  '1 série × 5 reps (lundi uniquement)': '1 set × 5 reps (Monday only)',
+  '2 × max reps · Tout donner': '2 × max reps · Give everything',
+  'La construction se fait au repos !': 'Muscle is built at rest!',
+  'Varie les prises chaque séance': 'Vary grips each session',
+  'Pronation large → supination → neutre → prise mixte · Stimulation complète': 'Wide overhand → underhand → neutral → mixed grip · Full stimulation',
+
+  // PROGRAMME-SPECIFIC CONTENT
+  'Initie chaque rep avec les omoplates, pas les bras': 'Initiate each rep with scapula, not arms',
+  'Visualisation pour contracter le grand dorsal · Très efficace pour les débutants': 'Visualize contracting the lats · Very effective for beginners',
+  'Descends les omoplates d\'abord, puis tire · Connexion esprit-muscle': 'Depress scapula first, then pull · Mind-muscle connection',
+  'Le dos est le groupe musculaire le plus complexe · Varie les prises (pronation, supination, neutre) pour tout stimuler': 'Back is the most complex muscle group · Vary grips (overhand, underhand, neutral) to stimulate everything',
+  'Les triceps représentent 2/3 du volume du bras · Travaille-les autant que les biceps': 'Triceps make up 2/3 of arm volume · Train them as much as biceps',
+  'Étre à fond sur chaque répétition': 'Full range on every rep',
+  'Étire à fond sur chaque répétition': 'Full stretch on every rep',
+  'Travaille aussi le reste du corps 2×/semaine · Mange en surplus de 300-500 kcal · Dors 8h minimum': 'Also train the rest of the body 2×/week · Eat 300-500 kcal surplus · Sleep 8h minimum',
+  'Toujours inclure le face pull pour la santé': 'Always include face pull for shoulder health',
+  'Toujours finir par le face pull': 'Always finish with face pull',
+  'Face pull en fin de séance toujours': 'Face pull at end of session always',
+  'Face pull = assurance vie pour les épaules': 'Face pull = shoulder insurance policy',
+  'Face pull léger poulie — 2 × 20': 'Light cable face pull — 2 × 20',
+  'Prévient les blessures à la coiffe des rotateurs · 2 séries min par séance': 'Prevents rotator cuff injuries · 2 sets minimum per session',
+  'Rééquilibre les muscles de la coiffe · Prévient les déséquilibres ant/post épaule': 'Rebalances rotator cuff muscles · Prevents anterior/posterior shoulder imbalance',
+  'Le faisceau latéral répond mieux au volume qu\'à l\'intensité': 'The lateral head responds better to volume than intensity',
+  'Le faisceau postérieur est souvent négligé — essentiel pour la santé et la symétrie · Toujours finir par le face pull': 'The posterior head is often neglected — essential for health and symmetry · Always finish with face pull',
+  'Volume élevé sur les latérales : 20-30 séries / semaine': 'High volume on lateral raises: 20-30 sets / week',
+  'Ne monte jamais au-dessus des épaules sur les latérales': 'Never raise above shoulders on lateral raises',
+  'Commences à 50% de ton max estimé': 'Start at 50% of estimated max',
+  'Commences léger sur les élévations latérales': 'Start light on lateral raises',
+  'Commences à 50% de ton max estimé': 'Start at 50% of estimated max',
+  'Commences léger sur les élévations latérales': 'Start light on lateral raises',
+  'Commence léger sur les élévations latérales': 'Start light on lateral raises',
+  'Pense à "écraser un citron dans ton aisselle"': 'Think "crush a lemon in your armpit"',
+  'Si douleur à l\'épaule → stop immédiat': 'If shoulder pain → stop immediately',
+  'Jamais de chaud-chaud ou de froid-froid sur les pecs': 'Never ballistic or ballistic movements on chest',
+  'Les insertions du grand pectoral sont très susceptibles aux déchirures · Monte progressivement': 'Pec insertions are very susceptible to tears · Build up progressively',
+  'Descente lente 3-4 secondes': 'Slow 3-4 second descent',
+  'Stretching pecs entre chaque série': 'Chest stretch between each set',
+  'Dropsets sur le Pec Deck': 'Dropsets on Pec Deck',
+  'Pré-fatigue avec écarté avant développé': 'Pre-exhaust with fly before press',
+  'La phase excentrique est clé pour l\'hypertrophie pectorale': 'The eccentric phase is key for chest hypertrophy',
+  'Entraîne les abdos comme n\'importe quel muscle': 'Train abs like any other muscle',
+  'Le squat et le soulevé de terre = meilleurs exercices abdos': 'Squat and deadlift = best ab exercises',
+  'Les abdos : 30% entraînement, 70% alimentation': 'Abs: 30% training, 70% nutrition',
+  'Gainage naturel sous charge lourde = abdos solides et épais': 'Natural bracing under heavy load = solid thick abs',
+  'Programme abdos à ajouter à la fin de tes séances normales · 15-20 min suffisent · Intensité > durée': 'Add ab program at end of normal sessions · 15-20 min is enough · Intensity > duration',
+  "Les abdos se font aussi en cuisine : sans déficit calorique, pas de 6 pack visible": "Abs are also made in the kitchen: without caloric deficit, no visible 6 pack",
+
+  // INJURY PREVENTION
+  'Dos neutre TOUJOURS — jamais de flexion lombaire': 'Neutral spine ALWAYS — never lower back flexion',
+  'La cambrure sous charge = blessure immédiate · Préfère moins de poids à se blesser': 'Arching under load = immediate injury · Prefer less weight over getting hurt',
+  'Ceinture lombaire uniquement au-dessus de 80% du max': 'Weightlifting belt only above 80% of max',
+  'En dessous = musculature naturelle · La ceinture ne remplace pas une sangle musculaire forte': 'Below = natural musculature · Belt does not replace strong muscle support',
+  'Manœuvre de Valsalva pour les charges lourdes · Stabilise la pression intra-abdominale': 'Valsalva maneuver for heavy loads · Stabilizes intra-abdominal pressure',
+  'Douleur articulaire ≠ douleur musculaire · Ne jamais forcer sur une douleur pointue': 'Joint pain ≠ muscle pain · Never push through sharp pain',
+  'Genoux dans l\'axe des orteils toujours': 'Knees in line with toes always',
+  'Ni en dedans (valgus) ni en dehors · Signe précurseur de blessure aux ligaments': 'Not inward (valgus) or outward · Sign of impending ligament injury',
+  'Descends jusqu\'à la parallèle minimum · En dessous = plus de muscle · Ton égo est ton ennemi': 'Go to parallel minimum · Below = more muscle · Your ego is your enemy',
+  'Inspirez avant la montée, expirez en haut': 'Inhale before going up, exhale at top',
+  'Inspire avant la montée, expire en haut': 'Inhale before going up, exhale at top',
+
+  // CUTTING & WEIGHT LOSS CONTENT
+  'Déficit de 400-500 kcal max · Pas plus': 'Max 400-500 kcal deficit · No more',
+  'Maintenir 2g de protéines / kg de poids de corps': 'Maintain 2g protein / kg bodyweight',
+  'Glucides : réduire, pas supprimer': 'Carbs: reduce, don\'t eliminate',
+  '1 repas libre par semaine': '1 cheat meal per week',
+  'Eau : 3-4 litres par jour minimum': 'Water: 3-4 liters per day minimum',
+  'Protéines maigres : poulet, blanc d\'œuf, thon, fromage blanc 0%': 'Lean proteins: chicken, egg whites, tuna, 0% cottage cheese',
+  'Légumes à volonté : brocolis, courgettes, salade, épinards': 'Unlimited vegetables: broccoli, zucchini, salad, spinach',
+  'Glucides complexes : riz complet, patate douce, flocons d\'avoine': 'Complex carbs: brown rice, sweet potato, oat flakes',
+  'Au-delà : perte musculaire accélérée, fatigue, ralentissement du métabolisme · Perte idéale : 0.5-1 kg/semaine': 'Beyond: accelerated muscle loss, fatigue, metabolism slowdown · Ideal loss: 0.5-1 kg/week',
+  'Protéines = préserver la masse musculaire pendant la perte de poids · Ne jamais descendre en dessous': 'Protein = preserving muscle mass during weight loss · Never go below',
+  'Garde des glucides autour de l\'entraînement · Réduis-les le soir et les jours sans sport · Légumes en illimité': 'Keep carbs around training · Reduce them in the evening and on rest days · Vegetables unlimited',
+  'Prévient la leptine de chuter (hormone de satiété) · Évite l\'effet yo-yo · Maintient la motivation': 'Prevents leptin from dropping (satiety hormone) · Avoids yo-yo effect · Maintains motivation',
+  'Déficit de 300-500 kcal/jour · Cardio 2-3×/semaine · Patience 3-6 mois': 'Deficit of 300-500 kcal/day · Cardio 2-3×/week · Patience 3-6 months',
+  '2,2-2,5g/kg pour préserver le muscle pendant le déficit': '2.2-2.5g/kg to preserve muscle during deficit',
+  'Protéines élevées pendant la sèche': 'High protein during cut',
+  'Les charges restent proches du maximum · Séries plus courtes (6-10 reps) · 20 min de cardio après chaque séance': 'Weights stay close to maximum · Shorter sets (6-10 reps) · 20 min cardio after each session',
+  'Le cutting = garder le volume d\'entraînement, réduire les calories — pas l\'inverse': 'Cutting = keep training volume, reduce calories — not the other way',
+  'Principe : circuits intenses → brûle les calories pendant ET après l\'entraînement (EPOC)': 'Principle: intense circuits → burns calories during AND after training (EPOC)',
+  'Repos entre circuits : 90 sec maximum · Repos entre exercices : 20 sec · Fréquence cardiaque cible : 75-85% FC max': 'Rest between circuits: 90 sec max · Rest between exercises: 20 sec · Target heart rate: 75-85% max HR',
+  'L\'hydratation booste le métabolisme, réduit la rétention d\'eau, améliore les performances': 'Hydration boosts metabolism, reduces water retention, improves performance',
+  'Rassasiantes, thermogéniques (brûlent des calories à la digestion), préservent le muscle': 'Satiating, thermogenic (burn calories during digestion), preserve muscle',
+  'Très peu caloriques, riches en fibres (satiété +++), vitamines essentielles': 'Very low calorie, rich in fiber (satiety +++), essential vitamins',
+  'Autour de l\'entraînement seulement · Energie durable sans pic de glycémie': 'Around training only · Sustained energy without glycemic spike',
+  '20 min vélo ou corde à sauter · Intensité modérée · Zone de brûlage des graisses': '20 min bike or jump rope · Moderate intensity · Fat burning zone',
+  '10 min vélo ou corde à sauter · Intensité modérée · Zone de brûlage des graisses': '10 min bike or jump rope · Moderate intensity · Fat burning zone',
+  'Zone 2 (60-70% FC max) · Optimal pour oxydation des graisses · Ne pas aller trop vite': 'Zone 2 (60-70% max HR) · Optimal for fat oxidation · Don\'t go too fast',
+  'Zone 2 (65% FC max) · Brûle les graisses sans casser le muscle': 'Zone 2 (65% max HR) · Burns fat without breaking down muscle',
+  'Inclinaison 8-10% sur tapis · Brûle les graisses sans catabolisme musculaire': '8-10% incline on treadmill · Burns fat without muscle catabolism',
+  'Intervals : 1 min vite / 2 min lent × 8 rounds · HIIT optimal après squats': 'Intervals: 1 min fast / 2 min slow × 8 rounds · Optimal HIIT after squats',
+  'Soulevé de terre 4×8 · Repos 2 min · Maintien masse musculaire pendant le déficit': 'Deadlift 4×8 · 2 min rest · Maintain muscle mass during deficit',
+  'Tapis roulant (marche rapide 6km/h incliné 8%) OU vélo OU elliptique · Zone 2 : 65-70% FC max · Parle sans être essoufflé': 'Treadmill (brisk walk 6km/h 8% incline) OR bike OR elliptical · Zone 2: 65-70% max HR · Talk without being out of breath',
+  'Chaque séance : 30 min muscu full body + 25-30 min cardio · Total ~60 min · Accessible à tous': 'Each session: 30 min full body weights + 25-30 min cardio · Total ~60 min · Accessible to all',
+  'Récupération active · Essentiel pour reduire les courbatures et performer la semaine suivante': 'Active recovery · Essential to reduce soreness and perform next week',
+
+  // WEIGHT LOSS CIRCUIT CONTENT
+  'Principe : circuits intenses → brûle les calories pendant ET après l\'entraînement (EPOC)': 'Principle: intense circuits → burns calories during AND after training (EPOC)',
+  'Circuit 1 × 4 tours': 'Circuit 1 × 4 rounds',
+  'Circuit 2 × 3 tours': 'Circuit 2 × 3 rounds',
+  'Circuit Core · 3 tours': 'Core Circuit · 3 rounds',
+  'Circuits légers : 3 tours': 'Light circuits: 3 rounds',
+  'Burpees 12 reps → Pompes 15 reps → Tirage poulie 15 reps → Jumping Jacks 30 sec · Repos 90 sec': 'Burpees 12 reps → Push-ups 15 reps → Cable pulldown 15 reps → Jumping Jacks 30 sec · 90 sec rest',
+  'CARDIO — 25-30 min après la muscu': 'CARDIO — 25-30 min after weights',
+  'MUSCU — 30 min · 3 séries de chaque': 'WEIGHTS — 30 min · 3 sets of each',
+  'Cardio finition': 'Cardio finisher',
+  'CARDIO': 'CARDIO',
+  'MUSCU': 'WEIGHTS',
+  'STRETCH': 'STRETCH',
+  'TABATA': 'TABATA',
+  'FORCE': 'STRENGTH',
+  'CORE': 'CORE',
+  'FIN': 'END',
+  'Tabata x 5 rounds (20 sec travail / 10 sec repos)': 'Tabata x 5 rounds (20 sec work / 10 sec rest)',
+  'Force compound : 4×8': 'Compound strength: 4×8',
+  'Squat sauté 15 reps → Fentes alternées 20 reps → Box step-up 12/jambe → High Knees 30 sec': 'Jump squats 15 reps → Alternating lunges 20 reps → Box step-up 12/leg → High Knees 30 sec',
+  'Leg Press 15 reps → RDL haltères 15 reps → Fentes bulgares 10/jambe → Corde à sauter 40 sec': 'Leg Press 15 reps → Dumbbell RDL 15 reps → Bulgarian split squat 10/leg → Jump rope 40 sec',
+  'Développé haltères 15 reps → Pull-down 15 reps → OHP 12 reps → Squat 15 reps · Repos 60 sec': 'Dumbbell press 15 reps → Pull-down 15 reps → OHP 12 reps → Squat 15 reps · 60 sec rest',
+  'Développé haltères 15 reps → Row haltère 15 reps → OHP haltères 12 reps → Mountain climbers 20 sec': 'Dumbbell press 15 reps → Dumbbell row 15 reps → Dumbbell OHP 12 reps → Mountain climbers 20 sec',
+  'Squat × 15 reps → Développé haltères × 12 reps → Rowing haltère × 12 reps → Fentes × 10/jambe → OHP × 10 reps': 'Squat × 15 reps → Dumbbell press × 12 reps → Dumbbell row × 12 reps → Lunges × 10/leg → OHP × 10 reps',
+  'Ab wheel 10 → Planche 45 sec → Russian twist 20 · Brûle plus de calories': 'Ab wheel 10 → Plank 45 sec → Russian twist 20 · Burns more calories',
+
+  // 8-WEEK PROGRESSION
+  'Semaines 1-2 : Adaptation': 'Weeks 1-2: Adaptation',
+  'Semaines 3-4 : Augmente le cardio': 'Weeks 3-4: Increase cardio',
+  'Semaines 5-6 : Intensifie la muscu': 'Weeks 5-6: Intensify weights',
+  'Semaines 7-8 : Dépassement': 'Weeks 7-8: Push past limits',
+  '3×10 reps · Cardio 20 min · Poids légers · L\'objectif c\'est de bouger, pas de souffrir': '3×10 reps · 20 min cardio · Light weights · Goal is to move, not suffer',
+  '3×12 reps · Cardio 25 min · Légère hausse des charges · Premières pertes visibles': '3×12 reps · 25 min cardio · Slight weight increase · First visible losses',
+  '4×12 reps · Cardio 30 min · Hausse des charges · Le corps s\'adapte vite maintenant': '4×12 reps · 30 min cardio · Weight increase · Body adapts quickly now',
+  '4×15 reps · Cardio 30 min + 1 HIIT optionnel · Passe au programme CIRCUIT HIIT 4j ensuite': '4×15 reps · 30 min cardio + 1 optional HIIT · Move to HIIT Circuit 4d program next',
+
+  // CALORIE CALCULATOR
+  'Calcule tes besoins caloriques précis pour la prise de masse avec la formule de Mifflin-St Jeor, puis ajoute un surplus adapté à tes objectifs.': 'Calculate your precise caloric needs for muscle gain using the Mifflin-St Jeor formula, then add a surplus adapted to your goals.',
+  'Métabolisme de base (BMR)': 'Basal Metabolic Rate (BMR)',
+  'Maintenance (TDEE)': 'Maintenance (TDEE)',
+  'Surplus calorique': 'Caloric surplus',
+  'Déficit calorique': 'Caloric deficit',
+  'Protéines': 'Protein',
+  'Glucides': 'Carbs',
+  'Lipides': 'Fat',
+  'Âge': 'Age',
+  'Sexe': 'Sex',
+  'Poids (kg)': 'Weight (kg)',
+  'Taille (cm)': 'Height (cm)',
+  'Niveau d\'activité physique': 'Physical activity level',
+  'Objectif prise de masse': 'Muscle gain goal',
+  'Objectif perte de poids': 'Weight loss goal',
+  'Objectif': 'Goal',
+  'CALCULER MES BESOINS': 'CALCULATE MY NEEDS',
+  'Calories quotidiennes pour la prise de masse': 'Daily calories for muscle gain',
+  'Calories quotidiennes pour la perte de poids': 'Daily calories for weight loss',
+  'KCAL / JOUR': 'KCAL / DAY',
+  '📋 Copier mes résultats': '📋 Copy my results',
+  'Homme': 'Male',
+  'Femme': 'Female',
+  'Sédentaire (peu ou pas d\'exercice)': 'Sedentary (little or no exercise)',
+  'Légèrement actif (sport 1-3 j/sem)': 'Lightly active (sport 1-3 d/week)',
+  'Modérément actif (sport 3-5 j/sem)': 'Moderately active (sport 3-5 d/week)',
+  'Très actif (sport intense 6-7 j/sem)': 'Very active (intense sport 6-7 d/week)',
+  'Extrêmement actif (sport 2× par jour)': 'Extremely active (sport 2× per day)',
+  'Lean Bulk — +250 kcal (prise lente, peu de gras)': 'Lean Bulk — +250 kcal (slow gain, low fat)',
+  'Prise de masse — +500 kcal (recommandé)': 'Muscle Gain — +500 kcal (recommended)',
+  'Prise de masse rapide — +750 kcal': 'Fast Bulk — +750 kcal',
+  'Déficit léger — -300 kcal (perte lente, idéale)': 'Light deficit — -300 kcal (slow, ideal)',
+  'Déficit modéré — -500 kcal (recommandé)': 'Moderate deficit — -500 kcal (recommended)',
+  'Déficit agressif — -750 kcal (pour avancés)': 'Aggressive deficit — -750 kcal (for advanced)',
+  'Remplis le formulaire ci-contre pour obtenir tes besoins caloriques personnalisés et la répartition optimale des macronutriments pour la prise de masse.': 'Fill in the form to get your personalized caloric needs and optimal macronutrient breakdown for muscle gain.',
+
+  // MEAL TIMES
+  '🌅 RÉVEIL — 7h00': '🌅 WAKE UP — 7:00 AM',
+  '🥜 COLLATION — 10h30': '🥜 SNACK — 10:30 AM',
+  '🍽️ DÉJEUNER — 13h00': '🍽️ LUNCH — 1:00 PM',
+  '⚡ PRÉ-WORKOUT — 16h30': '⚡ PRE-WORKOUT — 4:30 PM',
+  '💪 POST-WORKOUT — 19h30': '💪 POST-WORKOUT — 7:30 PM',
+  '🌙 DÎNER — 20h30': '🌙 DINNER — 8:30 PM',
+  '🌅 PREMIER REPAS': '🌅 FIRST MEAL',
+  '🌅 PETIT-DÉJEUNER': '🌅 BREAKFAST',
+  '🍽️ DÉJEUNER': '🍽️ LUNCH',
+  '🌙 DÎNER': '🌙 DINNER',
+  'Prot': 'Prot',
+
+  // TIPS SECTION
+  'SURCHARGE PROGRESSIVE': 'PROGRESSIVE OVERLOAD',
+  'SOMMEIL — LE VRAI ANABOLISANT': 'SLEEP — THE REAL ANABOLIC',
+  'HYDRATATION': 'HYDRATION',
+  'TIMING DES REPAS': 'MEAL TIMING',
+  'SUIVRE SA PROGRESSION': 'TRACK YOUR PROGRESS',
+  'DÉLOAD ET RÉCUPÉRATION': 'DELOAD & RECOVERY',
+  'GESTION DU STRESS': 'STRESS MANAGEMENT',
+  'ERREURS À ÉVITER': 'MISTAKES TO AVOID',
+  'GÉRER LE STRESS': 'MANAGING STRESS',
+  'CARDIO ET PRISE DE MASSE': 'CARDIO AND MUSCLE GAIN',
+
+  // SUPPLEMENT NAMES
+  'WHEY PROTÉINE': 'WHEY PROTEIN',
+  'CRÉATINE MONOHYDRATE': 'CREATINE MONOHYDRATE',
+  'CAFÉINE': 'CAFFEINE',
+  'OMÉGA-3': 'OMEGA-3',
+  'VITAMINE D3 + K2': 'VITAMIN D3 + K2',
+  'CASÉINE': 'CASEIN',
+
+  // RECIPE NAMES
+  'BOWL POULET AVOCAT RIZ': 'CHICKEN AVOCADO RICE BOWL',
+  'PORRIDGE PROTÉINÉ': 'PROTEIN PORRIDGE',
+  'OMELETTE MASSIVE': 'MASSIVE OMELETTE',
+  'PASTA THON LÉGUMES': 'TUNA VEGGIE PASTA',
+  'SHAKE FROMAGE BLANC BANANE': 'BANANA COTTAGE SHAKE',
+  'PANCAKES PROTÉINÉS AVOINE': 'OAT PROTEIN PANCAKES',
+  'RIZ THON MAYO ALLÉGÉE': 'RICE TUNA LIGHT MAYO',
+  'SMOOTHIE BOWL AÇAÏ PROTÉINÉ': 'ACAI PROTEIN SMOOTHIE BOWL',
+  'POULET PATATE DOUCE': 'CHICKEN SWEET POTATO',
+  'BŒUF HACHÉ QUINOA': 'GROUND BEEF QUINOA',
+  'SAUMON PATATE DOUCE BROCOLIS': 'SALMON SWEET POTATO BROCCOLI',
+  'WRAP DINDE HUMMUS': 'TURKEY HUMMUS WRAP',
+  'ENTRECÔTE PATATE DOUCE ASPERGES': 'RIBEYE SWEET POTATO ASPARAGUS',
+  'PAVÉ THON SÉSAME NOUILLES SOBA': 'SESAME TUNA SOBA NOODLES',
+  'STEAK TARTARE PROTÉINÉ': 'PROTEIN STEAK TARTARE',
+  'CURRY POULET LENTILLES': 'CHICKEN LENTIL CURRY',
+  'BENTO PROTÉINÉ COMPLET': 'COMPLETE PROTEIN BENTO',
+  'POULET MARINÉ TERIYAKI EDAMAMES': 'TERIYAKI CHICKEN EDAMAME',
+
+  // TRACKER
+  'Séances': 'Sessions',
+  'Volume (t)': 'Volume (t)',
+  'Streak 🔥': 'Streak 🔥',
+  'PRs 🏆': 'PRs 🏆',
+  '📋 Séances': '📋 Sessions',
+  '📈 Progression': '📈 Progression',
+  '🏆 Records': '🏆 Records',
+  'Aucune séance enregistrée.': 'No session recorded.',
+  'Lance ta première séance et sauvegarde-la !': 'Start your first session and save it!',
+  '— Choisir un exercice —': '— Choose an exercise —',
+  'Rappels quotidiens actifs': 'Active daily reminders',
+  'Séances planifiées': 'Scheduled sessions',
+  'Aucune séance planifiée': 'No session scheduled',
+
+  // PROG GENERATOR
+  'Débutant (0-1 an)': 'Beginner (0-1 year)',
+  'Intermédiaire (1-3 ans)': 'Intermediate (1-3 years)',
+  'Avancé (3+ ans)': 'Advanced (3+ years)',
+  '3 jours': '3 days',
+  '4 jours': '4 days',
+  '5 jours': '5 days',
+  '6 jours': '6 days',
+
+  // PROGRAMME PERSO
+  '⚡ MON PROGRAMME PERSO': '⚡ MY CUSTOM PROGRAM',
+  'Poids (kg)': 'Weight (kg)',
+  'Taille (cm)': 'Height (cm)',
+  'Niveau': 'Level',
+  'Jours dispo / semaine': 'Available days / week',
+  'Objectif principal': 'Main goal',
+  'Équipement disponible': 'Available equipment',
+  'Générer mon programme': 'Generate my program',
+  'GÉNÉRER MON PROGRAMME': 'GENERATE MY PROGRAM',
+
+  // FAQ QUESTIONS
+  'Combien de temps faut-il pour voir des résultats en prise de masse ?': 'How long does it take to see muscle gain results?',
+  'Combien de protéines dois-je manger par jour pour prendre de la masse ?': 'How much protein should I eat per day to gain muscle?',
+  'Est-ce que je dois absolument prendre de la whey protéine ?': 'Do I absolutely need to take whey protein?',
+  'Combien de fois par semaine dois-je m\'entraîner pour prendre de la masse ?': 'How many times per week should I train to gain muscle?',
+  'Quelle est la différence entre surplus calorique lean bulk et surplus agressif ?': 'What is the difference between lean bulk and aggressive surplus?',
+  'Faut-il faire du cardio quand on cherche à prendre de la masse ?': 'Should you do cardio when trying to gain muscle?',
+  'Combien de temps se reposer entre les séries ?': 'How long to rest between sets?',
+  'Le sommeil affecte-t-il vraiment les gains musculaires ?': 'Does sleep really affect muscle gains?',
+
+  // FAQ ANSWERS
+  'Les premiers changements visibles (tonus, légère augmentation de volume) apparaissent généralement en 4 à 8 semaines avec un entraînement régulier et une alimentation adaptée. Des gains musculaires significatifs se mesurent sur 3 à 6 mois. La patience est la clé — un gain de 500g à 1kg de muscle par mois est un excellent résultat naturel.':
+    'First visible changes (tone, slight volume increase) generally appear in 4 to 8 weeks with regular training and proper nutrition. Significant muscle gains are measured over 3 to 6 months. Patience is key — gaining 500g to 1kg of muscle per month is an excellent natural result.',
+  'La recommandation scientifique pour la prise de masse est de 1,6g à 2,2g de protéines par kg de poids corporel. Pour un individu de 80kg, cela représente 128g à 176g de protéines par jour. Notre calculateur de calories utilise 2g/kg comme objectif standard, ce qui couvre la majorité des besoins. Répartis l\'apport sur 4 à 6 repas pour une absorption optimale.':
+    'The scientific recommendation for muscle gain is 1.6g to 2.2g of protein per kg of bodyweight. For an 80kg individual, that is 128g to 176g of protein per day. Our calorie calculator uses 2g/kg as a standard target, which covers the majority of needs. Spread intake over 4 to 6 meals for optimal absorption.',
+  'Non, la whey est un complément pratique mais absolument pas indispensable. Si tu atteins tes objectifs en protéines uniquement avec la nourriture (œufs, viande, poisson, fromage blanc, légumineuses), tu n\'as pas besoin de suppléments. La whey est surtout utile pour combler les manques quand c\'est difficile d\'atteindre ses objectifs avec l\'alimentation seule, ou pour un repas post-workout rapide.':
+    'No, whey is a convenient supplement but absolutely not essential. If you reach your protein targets through food alone (eggs, meat, fish, cottage cheese, legumes), you don\'t need supplements. Whey is mainly useful to fill gaps when it\'s hard to hit targets through diet alone, or for a quick post-workout meal.',
+  '3 à 5 séances par semaine est la fréquence optimale pour la majorité des gens. En dessous de 3, le stimulus est insuffisant. Au-delà de 5, le risque de sur-entraînement augmente si la récupération n\'est pas au top. Pour les débutants, 3 séances Full Body sont idéales. Les intermédiaires profiteront davantage d\'une organisation PPL (4-6 jours) ou Upper/Lower (4 jours).':
+    '3 to 5 sessions per week is the optimal frequency for most people. Below 3, the stimulus is insufficient. Above 5, the risk of overtraining increases if recovery isn\'t optimal. For beginners, 3 Full Body sessions are ideal. Intermediates will benefit more from PPL (4-6 days) or Upper/Lower (4 days) organization.',
+  'Le Lean Bulk (+250 kcal/jour) est une approche lente qui minimise la prise de graisse — idéal pour les ectomorphes ou ceux qui veulent rester relativement secs. Le surplus modéré (+500 kcal/jour) est le compromis recommandé pour la plupart. Le surplus agressif (+700-1000 kcal/jour) génère des gains plus rapides mais avec plus de graisse accumulée. Si tu es débutant, un surplus modéré à agressif est acceptable car tu gagnes plus facilement du muscle au début.':
+    'Lean Bulk (+250 kcal/day) is a slow approach that minimizes fat gain — ideal for ectomorphs or those wanting to stay relatively lean. The moderate surplus (+500 kcal/day) is the recommended compromise for most. The aggressive surplus (+700-1000 kcal/day) generates faster gains but with more fat accumulated. If you\'re a beginner, a moderate to aggressive surplus is acceptable as you gain muscle more easily at the start.',
+  'Le cardio n\'est pas l\'ennemi de la prise de masse — il améliore même la récupération, la santé cardiovasculaire et l\'endurance générale. L\'idéal est 2 à 3 sessions légères par semaine (marche rapide 30 min, vélo modéré) sans jamais empiéter sur la récupération musculaire. Évite le cardio HIIT intense les jours qui précèdent tes séances de force lourdes.':
+    'Cardio is not the enemy of muscle gain — it actually improves recovery, cardiovascular health and general endurance. The ideal is 2 to 3 light sessions per week (brisk walk 30 min, moderate cycling) without ever cutting into muscle recovery. Avoid intense HIIT cardio the days before your heavy strength sessions.',
+  'Ça dépend de l\'objectif : pour la force (1-5 reps lourdes), repose-toi 3 à 5 minutes. Pour l\'hypertrophie (6-12 reps), 90 secondes à 2 minutes suffisent généralement. Pour les exercices d\'isolation (12-20 reps), 60 à 90 secondes. Des repos trop courts réduisent la qualité des séries ; trop longs, tu perds le signal hormonal. Utilise notre timer intégré pour être précis !':
+    'It depends on the goal: for strength (1-5 heavy reps), rest 3 to 5 minutes. For hypertrophy (6-12 reps), 90 seconds to 2 minutes generally suffices. For isolation exercises (12-20 reps), 60 to 90 seconds. Too-short rest reduces set quality; too long, you lose the hormonal signal. Use our built-in timer to be precise!',
+  'Absolument — c\'est même l\'un des facteurs les plus importants. La majorité de la synthèse protéique et de la sécrétion de GH (hormone de croissance) se produit pendant le sommeil profond. Des études montrent qu\'une nuit à 5h de sommeil réduit la synthèse protéique de 18% comparé à 8h. Vise 7h30 à 9h de sommeil par nuit, avec des horaires réguliers, pour maximiser tes résultats.':
+    'Absolutely — it\'s even one of the most important factors. The majority of protein synthesis and GH (growth hormone) secretion occurs during deep sleep. Studies show that 5 hours of sleep reduces protein synthesis by 18% compared to 8 hours. Aim for 7:30 to 9 hours of sleep per night, with regular hours, to maximize your results.',
+
+  // FOOTER
+  'Guide complet prise de masse — Programme · Nutrition · Exercices': 'Complete muscle gain guide — Program · Nutrition · Exercises',
+  '⚠ Consulte un professionnel de santé avant de commencer un programme intensif. Ces informations sont fournies à titre éducatif uniquement.': '⚠ Consult a healthcare professional before starting an intense program. This information is provided for educational purposes only.',
+
+  // SECTION DESCRIPTIONS
+  "L'échauffement est la partie la plus négligée — et la plus importante. 10 minutes bien faites = zéro blessure, meilleures performances, et plus de progression sur le long terme.":
+    "Warm-up is the most neglected part — and the most important. 10 well-done minutes = zero injuries, better performance, and more progression long-term.",
+
+  // MOBILE MENU LABELS
+  '💪 Prise de Masse': '💪 Muscle Gain',
+  '🔥 Perte de Poids': '🔥 Weight Loss',
+
+  // GOAL BANNER
+  '🔥 MODE PERTE DE POIDS ACTIVÉ': '🔥 WEIGHT LOSS MODE ACTIVE',
+
+  // Misc UI
+  'Voir la vidéo': 'Watch video',
+  '— Choisir le programme d\'abord —': '— Choose program first —',
+  'Choisir l\'heure': 'Choose time',
+  'Heures': 'Hours',
+  'Minutes': 'Minutes',
+  'Annuler': 'Cancel',
+  'Valider': 'Confirm',
+  'Supprimer ce programme ?': 'Delete this program?',
+  'Lieu (optionnel)': 'Location (optional)',
+  'Rappel': 'Reminder',
+  'À l\'heure exacte': 'At the exact time',
+  '5 minutes avant': '5 minutes before',
+  '15 minutes avant': '15 minutes before',
+  '30 minutes avant': '30 minutes before',
+  '1 heure avant': '1 hour before',
+  '2 heures avant': '2 hours before',
+};
+
+// Build reverse EN→FR map
+const EN_FR = {};
+Object.entries(FR_EN).forEach(([fr, en]) => { EN_FR[en] = fr; });
+
+// ── CURRENT STATE ─────────────────────────────────────────────
+let _langActive = false; // prevent double-init
+
+// ── TREE WALKER TRANSLATION ───────────────────────────────────
+function translateDOM(fromMap) {
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    {
+      acceptNode(node) {
+        const tag = node.parentElement?.tagName;
+        if (['SCRIPT','STYLE','NOSCRIPT'].includes(tag)) return NodeFilter.FILTER_REJECT;
+        if (node.textContent.trim() === '') return NodeFilter.FILTER_SKIP;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    }
+  );
+
+  const nodes = [];
+  while (walker.nextNode()) nodes.push(walker.currentNode);
+
+  nodes.forEach(node => {
+    const trimmed = node.textContent.trim();
+    if (fromMap[trimmed] !== undefined) {
+      // Preserve surrounding whitespace
+      const leading  = node.textContent.match(/^\s*/)[0];
+      const trailing = node.textContent.match(/\s*$/)[0];
+      node.textContent = leading + fromMap[trimmed] + trailing;
+    }
   });
 }
 
-// ── SET LANGUAGE ─────────────────────────────────────────────
+// Also translate placeholder & value attributes
+function translateAttrs(fromMap) {
+  ['placeholder','title','aria-label','value'].forEach(attr => {
+    document.querySelectorAll('[' + attr + ']').forEach(el => {
+      const v = el.getAttribute(attr);
+      if (fromMap[v]) el.setAttribute(attr, fromMap[v]);
+    });
+  });
+}
+
+// ── APPLY data-i18n ATTRIBUTES ─────────────────────────────────
+const TRANSLATIONS_KEYS = {
+  fr: {
+    nav_programme:'Programme', nav_warmup:'Échauffement', nav_exercises:'Exercices',
+    nav_calories:'Calories', nav_nutrition:'Nutrition', nav_recipes:'Recettes',
+    nav_tips:'Conseils', nav_supplements:'Suppléments',
+    goal_masse:'Prise de masse', goal_poids:'Perte de poids',
+    hero_badge_masse:'⚡ Guide Complet Prise de Masse',
+    hero_badge_poids:'🔥 Guide Complet Perte de Poids',
+    hero_title_span:'TON CORPS',
+    hero_sub:'Programme · Nutrition · Calcul Calorique · Exercices',
+    hero_cta1:'Calculer mes calories', hero_cta2:'Voir le programme',
+    stat1_masse:'Jours / semaine', stat2_masse:'Kcal surplus',
+    stat1_poids:'Séances / semaine', stat2_poids:'Kcal déficit',
+    stat3:'Protéines / kg', stat4:'Sommeil requis',
+    section_programme:"PROGRAMME D'ENTRAÎNEMENT",
+    tabs_general:'Programmes généraux', tabs_spe:'Spécialisation par muscle',
+    tabs_poids:'Programmes perte de poids',
+    calc_goal_label:'Objectif',
+  },
+  en: {
+    nav_programme:'Program', nav_warmup:'Warm-up', nav_exercises:'Exercises',
+    nav_calories:'Calories', nav_nutrition:'Nutrition', nav_recipes:'Recipes',
+    nav_tips:'Tips', nav_supplements:'Supplements',
+    goal_masse:'Muscle gain', goal_poids:'Weight loss',
+    hero_badge_masse:'⚡ Complete Muscle Gain Guide',
+    hero_badge_poids:'🔥 Complete Weight Loss Guide',
+    hero_title_span:'YOUR BODY',
+    hero_sub:'Program · Nutrition · Calorie Calculator · Exercises',
+    hero_cta1:'Calculate my calories', hero_cta2:'View program',
+    stat1_masse:'Days / week', stat2_masse:'Kcal surplus',
+    stat1_poids:'Sessions / week', stat2_poids:'Kcal deficit',
+    stat3:'Protein / kg', stat4:'Sleep required',
+    section_programme:'TRAINING PROGRAM',
+    tabs_general:'General programs', tabs_spe:'Muscle specialization',
+    tabs_poids:'Weight loss programs',
+    calc_goal_label:'Goal',
+  }
+};
+
+function applyDataI18n(lang) {
+  const T = TRANSLATIONS_KEYS[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[key]) el.textContent = T[key];
+  });
+}
+
+// ── SET LANGUAGE ───────────────────────────────────────────────
 function setLang(lang) {
+  const prev = currentLang;
   currentLang = lang;
   localStorage.setItem('if_lang', lang);
 
-  // Toggle button states
-  document.getElementById('langBtnFR').classList.toggle('active', lang === 'fr');
-  document.getElementById('langBtnEN').classList.toggle('active', lang === 'en');
+  // Sync nav buttons
+  const lFR = document.getElementById('langBtnFR');
+  const lEN = document.getElementById('langBtnEN');
+  if (lFR) lFR.classList.toggle('active', lang === 'fr');
+  if (lEN) lEN.classList.toggle('active', lang === 'en');
 
   // Sync hero lang buttons
-  const hlFR = document.getElementById('hmsLangFR');
-  const hlEN = document.getElementById('hmsLangEN');
-  if (hlFR) hlFR.classList.toggle('active', lang === 'fr');
-  if (hlEN) hlEN.classList.toggle('active', lang === 'en');
+  const hFR = document.getElementById('hmsLangFR');
+  const hEN = document.getElementById('hmsLangEN');
+  if (hFR) hFR.classList.toggle('active', lang === 'fr');
+  if (hEN) hEN.classList.toggle('active', lang === 'en');
 
-  // Mobile lang buttons
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    if (btn.textContent === 'FR') btn.classList.toggle('active', lang === 'fr');
-    if (btn.textContent === 'EN') btn.classList.toggle('active', lang === 'en');
-  });
+  // Sync mobile
+  const mFR = document.getElementById('mobileLangFR');
+  const mEN = document.getElementById('mobileLangEN');
+  if (mFR) mFR.style.background = lang==='fr' ? 'linear-gradient(135deg,var(--red),var(--orange))' : 'transparent';
+  if (mFR) mFR.style.color = lang==='fr' ? 'white' : 'var(--gray)';
+  if (mEN) mEN.style.background = lang==='en' ? 'linear-gradient(135deg,var(--red),var(--orange))' : 'transparent';
+  if (mEN) mEN.style.color = lang==='en' ? 'white' : 'var(--gray)';
 
-  // Apply i18n
-  applyTranslations(lang);
+  // Apply data-i18n attributes
+  applyDataI18n(lang);
 
-  // Update goal button text to match lang
-  const T = TRANSLATIONS[lang];
-  document.querySelectorAll('[data-i18n="goal_masse"]').forEach(el => el.textContent = T.goal_masse);
-  document.querySelectorAll('[data-i18n="goal_poids"]').forEach(el => el.textContent = T.goal_poids);
+  // Full DOM translation
+  if (lang === 'en' && prev === 'fr') {
+    translateDOM(FR_EN);
+    translateAttrs(FR_EN);
+  } else if (lang === 'fr' && prev === 'en') {
+    translateDOM(EN_FR);
+    translateAttrs(EN_FR);
+  }
 
-  // Update hero badge based on current goal
-  const D = lang === 'en' ? DYNAMIC_EN : DYNAMIC_FR;
-  const heroBadge = document.getElementById('heroBadge');
-  if (heroBadge) heroBadge.textContent = currentGoal === 'masse' ? D.calcGoalLabel_masse.replace('Calories quotidiennes pour la ', '').replace('Daily calories for ', '').replace('⚡ Guide Complet Prise de Masse', TRANSLATIONS[lang].hero_badge_masse).replace('🔥 Guide Complet Perte de Poids', TRANSLATIONS[lang].hero_badge_poids) : '';
-  if (heroBadge) heroBadge.textContent = currentGoal === 'masse' ? T.hero_badge_masse : T.hero_badge_poids;
-
-  // Update calorie form labels
+  // Update goal-specific labels after translation
   updateCalcGoalOptions(lang, currentGoal);
   updateGoalBanner(lang, currentGoal);
 }
 
-// ── SET GOAL ─────────────────────────────────────────────────
+// ── SET GOAL ───────────────────────────────────────────────────
 function setGoal(goal) {
   currentGoal = goal;
   localStorage.setItem('if_goal', goal);
 
-  // Update body class
   document.body.classList.toggle('mode-poids', goal === 'poids');
   document.body.classList.toggle('mode-masse', goal === 'masse');
 
-  // Toggle button states — nav
-  const btnMasse = document.getElementById('goalBtnMasse');
-  const btnPoids = document.getElementById('goalBtnPoids');
-  if (btnMasse) {
-    btnMasse.classList.toggle('active-masse', goal === 'masse');
-    btnMasse.classList.remove('active-poids');
-  }
-  if (btnPoids) {
-    btnPoids.classList.toggle('active-poids', goal === 'poids');
-    btnPoids.classList.remove('active-masse');
-    btnPoids.classList.toggle('active-masse', false);
-  }
-
-  // Toggle hero mode switch buttons
+  // Hero mode switch
   const hmsM = document.getElementById('hmsModeMasse');
   const hmsP = document.getElementById('hmsModePoids');
   if (hmsM) hmsM.classList.toggle('active', goal === 'masse');
   if (hmsP) hmsP.classList.toggle('active', goal === 'poids');
 
-  // Sync mobile menu goal buttons
-  const mobMasse = document.getElementById('mobileGoalMasse');
-  const mobPoids = document.getElementById('mobileGoalPoids');
-  if (mobMasse) {
-    mobMasse.style.background = goal === 'masse' ? 'linear-gradient(135deg,rgba(230,57,70,0.3),rgba(255,107,53,0.15))' : 'transparent';
-    mobMasse.style.color = goal === 'masse' ? 'var(--light)' : 'var(--gray)';
-  }
-  if (mobPoids) {
-    mobPoids.style.background = goal === 'poids' ? 'linear-gradient(135deg,rgba(17,153,142,0.3),rgba(56,239,125,0.1))' : 'transparent';
-    mobPoids.style.color = goal === 'poids' ? '#38ef7d' : 'var(--gray)';
-  }
+  // Sync mobile goal buttons
+  const mobM = document.getElementById('mobileGoalMasse');
+  const mobP = document.getElementById('mobileGoalPoids');
+  if (mobM) { mobM.style.background = goal==='masse' ? 'linear-gradient(135deg,rgba(230,57,70,0.3),rgba(255,107,53,0.15))' : 'transparent'; mobM.style.color = goal==='masse' ? 'var(--light)' : 'var(--gray)'; }
+  if (mobP) { mobP.style.background = goal==='poids' ? 'linear-gradient(135deg,rgba(17,153,142,0.3),rgba(56,239,125,0.1))' : 'transparent'; mobP.style.color = goal==='poids' ? '#38ef7d' : 'var(--gray)'; }
 
-  // Mobile menu lang buttons sync handled via setLang
-
-  // Show/hide masse vs poids tabs
-  const masseTabs = document.getElementById('masseTabs');
+  // Show/hide programme tabs
+  document.querySelectorAll('.tabs-group.masse-only').forEach(el => el.style.display = goal==='masse' ? '' : 'none');
   const poidsTabs = document.getElementById('poidsTabs');
-  const masseTabSpe = masseTabs ? masseTabs.nextElementSibling : null;
+  if (poidsTabs) poidsTabs.style.display = goal==='poids' ? '' : 'none';
 
-  if (masseTabs) masseTabs.style.display = goal === 'masse' ? '' : 'none';
-  // The spe tabs group is the next sibling with classe masse-only
-  document.querySelectorAll('.tabs-group.masse-only').forEach(el => {
-    el.style.display = goal === 'masse' ? '' : 'none';
-  });
-  if (poidsTabs) poidsTabs.style.display = goal === 'poids' ? '' : 'none';
+  // Hero stats toggle
+  document.querySelectorAll('.stat.masse-only').forEach(el => el.style.display = goal==='masse' ? '' : 'none');
+  document.querySelectorAll('.stat.poids-only').forEach(el => el.style.display = goal==='poids' ? '' : 'none');
 
-  // Show/hide programme content
-  document.querySelectorAll('.programme-content.poids-only').forEach(el => {
-    el.style.display = goal === 'poids' ? '' : 'none';
-  });
-
-  // If switching to poids, activate first poids program
+  // Programme content switch
   if (goal === 'poids') {
-    // remove active from all
     document.querySelectorAll('.programme-content').forEach(el => el.classList.remove('active'));
-    // activate circuit
     const circuit = document.getElementById('prog-circuit');
     if (circuit) circuit.classList.add('active');
-    // Update tab highlight
     const poidsTabBtns = document.querySelectorAll('#poidsTabs .tab-btn');
     poidsTabBtns.forEach((b, i) => {
-      b.style.background = i === 0 ? 'linear-gradient(135deg,#11998e,#38ef7d)' : '';
-      b.style.color = i === 0 ? '#0a0a0c' : '';
-      b.classList.toggle('active', i === 0);
+      b.style.background = i===0 ? 'linear-gradient(135deg,#11998e,#38ef7d)' : '';
+      b.style.color = i===0 ? '#0a0a0c' : '';
+      b.classList.toggle('active', i===0);
     });
   } else {
-    // Switch back to masse: deactivate poids programs and show ppl
     document.querySelectorAll('.programme-content.poids-only').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.programme-content').forEach(el => el.classList.remove('active'));
     const ppl = document.getElementById('prog-ppl');
     if (ppl) ppl.classList.add('active');
-    // Reset main tabs
-    document.querySelectorAll('#prog-tabs-main .tab-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+    document.querySelectorAll('#prog-tabs-main .tab-btn').forEach((b, i) => b.classList.toggle('active', i===0));
   }
 
-  // Hero badge update
+  // Hero badge
   const heroBadge = document.getElementById('heroBadge');
   if (heroBadge) {
-    const T = TRANSLATIONS[currentLang];
-    heroBadge.textContent = goal === 'masse' ? T.hero_badge_masse : T.hero_badge_poids;
+    const T = TRANSLATIONS_KEYS[currentLang];
+    heroBadge.textContent = goal==='masse' ? T.hero_badge_masse : T.hero_badge_poids;
   }
 
-  // Hero stats toggle
-  document.querySelectorAll('.stat.masse-only').forEach(el => el.style.display = goal === 'masse' ? '' : 'none');
-  document.querySelectorAll('.stat.poids-only').forEach(el => el.style.display = goal === 'poids' ? '' : 'none');
-
-  // Calorie calc goal options
   updateCalcGoalOptions(currentLang, goal);
   updateGoalBanner(currentLang, goal);
 }
 
+// ── CALORIE CALC OPTIONS ──────────────────────────────────────
 function updateCalcGoalOptions(lang, goal) {
-  const D = lang === 'en' ? DYNAMIC_EN : DYNAMIC_FR;
+  const isEN = lang === 'en';
   const select = document.getElementById('calcGoal');
   if (!select) return;
 
   const masseOpts = select.querySelectorAll('.masse-option');
   const poidsOpts = select.querySelectorAll('.poids-option');
+  const masseTexts = isEN
+    ? ['Lean Bulk — +250 kcal (slow gain, low fat)', 'Muscle Gain — +500 kcal (recommended)', 'Fast Bulk — +750 kcal']
+    : ['Lean Bulk — +250 kcal (prise lente, peu de gras)', 'Prise de masse — +500 kcal (recommandé)', 'Prise de masse rapide — +750 kcal'];
+  const poidsTexts = isEN
+    ? ['Light deficit — -300 kcal (slow, ideal)', 'Moderate deficit — -500 kcal (recommended)', 'Aggressive deficit — -750 kcal (for advanced)']
+    : ['Déficit léger — -300 kcal (perte lente, idéale)', 'Déficit modéré — -500 kcal (recommandé)', 'Déficit agressif — -750 kcal (pour avancés)'];
 
-  masseOpts.forEach((opt, i) => {
-    opt.style.display = goal === 'masse' ? '' : 'none';
-    if (D.calcGoalOptions_masse[i]) opt.textContent = D.calcGoalOptions_masse[i];
-  });
-  poidsOpts.forEach((opt, i) => {
-    opt.style.display = goal === 'poids' ? '' : 'none';
-    if (D.calcGoalOptions_poids[i]) opt.textContent = D.calcGoalOptions_poids[i];
-  });
+  masseOpts.forEach((opt, i) => { opt.style.display = goal==='masse' ? '' : 'none'; if (masseTexts[i]) opt.textContent = masseTexts[i]; });
+  poidsOpts.forEach((opt, i) => { opt.style.display = goal==='poids' ? '' : 'none'; if (poidsTexts[i]) opt.textContent = poidsTexts[i]; });
 
-  // Select first visible option
-  const firstVisible = select.querySelector('option:not([style*="display: none"])');
-  if (firstVisible) select.value = firstVisible.value;
+  const first = select.querySelector('option:not([style*="display: none"])');
+  if (first) select.value = first.value;
 
-  // Update form label
   const goalLabel = document.querySelector('label[data-i18n="calc_goal_label"]');
-  if (goalLabel) goalLabel.textContent = goal === 'masse' ? D.calcGoalFormLabel_masse : D.calcGoalFormLabel_poids;
+  if (goalLabel) goalLabel.textContent = isEN ? 'Goal' : (goal==='masse' ? 'Objectif prise de masse' : 'Objectif perte de poids');
 
-  // Update result label if visible
   const resultLabel = document.getElementById('resultLabel');
-  if (resultLabel) resultLabel.textContent = goal === 'masse' ? D.calcGoalLabel_masse : D.calcGoalLabel_poids;
+  if (resultLabel) resultLabel.textContent = isEN
+    ? (goal==='masse' ? 'Daily calories for muscle gain' : 'Daily calories for weight loss')
+    : (goal==='masse' ? 'Calories quotidiennes pour la prise de masse' : 'Calories quotidiennes pour la perte de poids');
 
   const surplusLabel = document.getElementById('surplusLabel');
-  if (surplusLabel) surplusLabel.textContent = goal === 'masse' ? D.surplusLabel_masse : D.surplusLabel_poids;
+  if (surplusLabel) surplusLabel.textContent = isEN
+    ? (goal==='masse' ? 'Caloric surplus' : 'Caloric deficit')
+    : (goal==='masse' ? 'Surplus calorique' : 'Déficit calorique');
 }
 
+// ── GOAL BANNER ────────────────────────────────────────────────
 function updateGoalBanner(lang, goal) {
   const banner = document.getElementById('poidsGoalBanner');
   if (!banner) return;
-  const D = lang === 'en' ? DYNAMIC_EN : DYNAMIC_FR;
-  banner.innerHTML = D.goalBannerText;
+  if (lang === 'en') {
+    banner.innerHTML = '🔥 <strong>WEIGHT LOSS MODE ACTIVE</strong> — Programs adapted for caloric deficit with integrated cardio. Keep 2g protein/kg to preserve muscle mass.';
+  } else {
+    banner.innerHTML = '🔥 <strong>MODE PERTE DE POIDS ACTIVÉ</strong> — Programmes adaptés au déficit calorique avec cardio intégré. Maintiens 2g de protéines/kg pour préserver ta masse musculaire.';
+  }
 }
 
 // ── INIT ──────────────────────────────────────────────────────
 (function initGoalLang() {
-  // Apply saved state
   document.body.classList.add('mode-' + currentGoal);
-  setLang(currentLang);
+  // Apply goal first (doesn't need translation)
   setGoal(currentGoal);
+  // Then language (runs translateDOM if EN)
+  setLang(currentLang);
 })();
 </script>
 </html>
